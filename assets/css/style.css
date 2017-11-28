@@ -403,7 +403,7 @@ a,
 }
 
 .bg-dark-60:before {
-  position: absolute;
+  position: fixed;
   background: rgba(34, 34, 34, 0.8);
   content: " ";
   height: 100%;
@@ -1026,6 +1026,12 @@ blockquote {
   font-style: italic;
 }
 
+.font-gen {
+  font-family: "Source Sans Pro", "Times New Roman", sans-serif;
+  font-size: 12px;
+}
+
+
 .font-sub {
   font-family: "Roboto Condensed", "Times New Roman", sans-serif;
   text-align: center;
@@ -1484,6 +1490,7 @@ General Styles - Owlcarousel
 /* Gallery Page Header */
 .gallery-page-header {
   background-position: 50% 0%;
+  background-position: fixed;
   background-repeat: no-repeat;
 }
 
