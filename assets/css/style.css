@@ -403,7 +403,7 @@ a,
 }
 
 .bg-dark-60:before {
-  position: fixed;
+  position: absolute;
   background: rgba(34, 34, 34, 0.8);
   content: " ";
   height: 100%;
