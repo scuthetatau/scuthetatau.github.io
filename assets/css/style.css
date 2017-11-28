@@ -404,7 +404,7 @@ a,
 
 .bg-dark-60:before {
   position: absolute;
-  background: rgba(34, 34, 34, 0.8);
+  background-color: white;
   content: " ";
   height: 100%;
   width: 100%;
