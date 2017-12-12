@@ -825,6 +825,25 @@ a,
   color: #ffffff;
 }
 
+.btn.btn-border-e {
+  background: #F1C40F;
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  color: #000000;
+}
+
+.btn.btn-border-e:hover,
+.btn.btn-border-e:focus {
+  background: transparent;
+  border-color: #000000;
+  color: #000000;
+}
+
+.fa-flag{
+    color:white;
+}
+.fa-flag:hover {
+    color:#F1C40F;
+}
 
 .btn.btn-d {
   background: rgba(17, 17, 17, 0.8);
