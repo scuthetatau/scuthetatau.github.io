@@ -1416,12 +1416,34 @@ General Styles - Owlcarousel
 --------------------------------------------------------------*/
 .page-loader {
   position: fixed;
-  background: #000;
+  /*background: #000;*/
   bottom: 0;
   right: 0;
   left: 0;
   top: 0;
   z-index: 9998;
+  background: linear-gradient(315deg, #8b0000, #ffcc33);
+  background-size: 400% 400%;
+
+  -webkit-animation: loadbg 3s ease infinite;
+  -moz-animation: loadbg 3s ease infinite;
+  animation: loadbg 3s ease infinite;
+}
+
+@-webkit-keyframes loadbg {
+    0%{background-position:0% 0%}
+    50%{background-position:100% 100%}
+    100%{background-position:0% 0%}
+}
+@-moz-keyframes loadbg {
+    0%{background-position:0% 0%}
+    50%{background-position:100% 100%}
+    100%{background-position:0% 0%}
+}
+@keyframes loadbg { 
+    0%{background-position:0% 0%}
+    50%{background-position:100% 100%}
+    100%{background-position:0% 0%}
 }
 
 .loader {
