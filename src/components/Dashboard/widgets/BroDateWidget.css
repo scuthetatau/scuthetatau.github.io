@@ -1,0 +1,19 @@
+/* src/components/dashboard/widgets/BroDateWidget.css */
+
+.brodate-widget {
+    /*padding: 20px;*/
+    /*margin-bottom: 20px;*/
+}
+
+.brodate-widget h2 {
+    margin-bottom: 10px;
+}
+
+.brodate-widget ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.brodate-widget li {
+    margin: 8px 0;
+}

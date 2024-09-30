@@ -1,0 +1,140 @@
+/* EditUsers.css */
+.search-input {
+    width: calc(100% - 40px);
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    font-family: 'IBM Plex Sans Condensed', Arial, sans-serif;
+}
+
+.users-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+}
+
+.user-card {
+    display: flex;
+    align-items: center; /* Center align items vertically */
+    background-color: rgb(248, 248, 248);
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: black;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.user-card:hover {
+    transform: scale(1.05);
+}
+
+.user-card img.profile-pic {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    margin-right: 5px;
+    margin-top: -12%;
+}
+
+.user-info {
+    flex: 1;
+}
+
+.user-info h2 {
+    margin: 5px 0;
+}
+
+.user-info p {
+    margin: 3px 0;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.edit-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.39);
+    z-index: 1000;
+    max-width: 800px;
+    min-width: 400px;
+}
+
+.form-group-group {
+    display: flex;
+    gap: 20px;
+    justify-content: space-between;
+}
+
+.form-group {
+    flex: 1;
+    margin-bottom: 10px; /* Reduced margin-bottom */
+}
+
+.form-group label {
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+    color: black;
+}
+
+input[type="text"],
+input[type="email"],
+input[type="number"],
+select,
+button {
+    padding: 8px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Sans Condensed', Arial, sans-serif;
+}
+
+button {
+    background-color: #ababab;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.5s ease;
+}
+
+button:hover {
+    background-color: #939393;
+}
+
+.success-message {
+    padding-top: 10px;
+    color: #47b611;
+    font-weight: bold;
+    text-align: center;
+}
+
+.error-message {
+    color: #bd1d1d;
+    font-weight: bold;
+    text-align: center;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+}

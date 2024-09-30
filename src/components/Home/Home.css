@@ -1,0 +1,163 @@
+/* src/pages/Home.css */
+
+.home {
+    font-family: 'IBM Plex Sans Condensed', Arial, sans-serif;
+    text-align: center;
+}
+
+.hero {
+    background-size: cover;
+    background-position: center;
+    color: white;
+    height: 92vh; /* Take up the whole vertical height of the viewport */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.title {
+    font-size: 4em;
+    margin: 0;
+    color: white; /* Ensure the title is white */
+    transition: font-size 0.2s ease; /* Add transition for font size */
+}
+
+.subtitle {
+    font-size: 2em;
+    margin: 0;
+}
+
+.history,
+.regent-message,
+.our-pillars {
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.history h2,
+.regent-message h2,
+.our-pillars h2 {
+    font-weight: bold;
+    text-transform: uppercase;
+    color: darkred; /* Change the heading color to dark red */
+}
+
+.regent-message {
+    padding-left: 10%;
+    padding-right: 10%;
+}
+
+.regent-message .regent-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.regent-message .regent-message-text {
+    flex: 1;
+    padding-right: 0px;
+    text-align: left;
+}
+
+.regent-image {
+    flex: 1;
+    border-radius: 50%;
+    max-width: 25%; /* Ensure the image is correctly sized */
+    height: auto;
+}
+
+.our-pillars {
+    background-color: darkred;
+    color: white;
+    padding: 40px 20px; /* Add some padding */
+}
+
+.our-pillars h2 {
+    color: white; /* Ensure the heading is white */
+}
+
+.pillars-content {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+}
+
+.pillar-card {
+    background-color: white;
+    color: darkred;
+    padding: 20px;
+    border-radius: 10px;
+    flex: 1;
+    margin: 10px;
+    transition: transform 0.7s ease;
+    text-align: left;
+}
+
+.pillar-card:hover {
+    transform: scale(1.1);
+}
+
+.pillar-title {
+    font-weight: bold;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+}
+
+.pillar-description {
+    color: darkgray;
+}
+
+.coat-arms {
+    padding: 20px;
+}
+
+.coat-arms img {
+    max-width: 100px; /* Ensure the image is correctly sized */
+    height: auto;
+}
+
+.interested-in-joining {
+    background-size: cover;
+    background-position: center;
+    color: white;
+    height: 65vh; /* Adjust height to take up less vertical space */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.interested-in-joining h2 {
+    font-size: 3em;
+    margin: 20px 0;
+    text-transform: uppercase;
+
+}
+
+.rush-button {
+    background-color: darkred;
+    text-transform: uppercase;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.5em;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.3s ease; /* Add transform transition */
+    border-radius: 0; /* Make the button squared off */
+}
+
+.rush-button:hover {
+    background-color: gold;
+    color: #ffffff;
+    transform: scale(1.1); /* Grow button on hover */
+}
+
+.footer {
+    text-align: center;
+    background-color: #333;
+    color: white;
+    padding: 10px 0;
+}

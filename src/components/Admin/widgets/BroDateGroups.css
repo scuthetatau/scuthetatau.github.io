@@ -1,0 +1,59 @@
+/* BroDateGroups.css */
+.brodate-groups-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.brodate-group-card {
+    display: flex;
+    align-items: center;
+    background-color: rgb(248, 248, 248);
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: black;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.brodate-group-card:hover {
+    transform: scale(1.05);
+}
+
+.brodate-group-content {
+    flex: 1;
+}
+
+.brodate-group-content h2 {
+    margin-bottom: 15px;
+}
+
+.brodate-group-content ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.brodate-group-content li {
+    margin-bottom: 8px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.reshuffle-button,
+.download-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.reshuffle-button:hover,
+.download-button:hover {
+    background-color: #939393;
+}

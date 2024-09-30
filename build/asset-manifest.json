@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/static/css/main.519aeb9c.css",
+    "main.js": "/static/js/main.3be3bea4.js",
+    "static/js/453.9cfc43c3.chunk.js": "/static/js/453.9cfc43c3.chunk.js",
+    "static/media/ZetaClass.png": "/static/media/ZetaClass.faec4ed99eb18cc1e4a2.png",
+    "static/media/ChapterPhoto.jpeg": "/static/media/ChapterPhoto.0a4e08502a0c80cecd14.jpeg",
+    "static/media/LiamSophieSethi.jpeg": "/static/media/LiamSophieSethi.58da76d370a3bc49d62b.jpeg",
+    "static/media/ServiceEvent.JPG": "/static/media/ServiceEvent.b615cbdf5e67f9cf248d.JPG",
+    "static/media/BigLittleReveal.JPG": "/static/media/BigLittleReveal.2685f2600f43a59ac0d6.JPG",
+    "static/media/CoatArms.png": "/static/media/CoatArms.9b161bb16fa37e03b724.png",
+    "static/media/Retreat2024.jpeg": "/static/media/Retreat2024.34ecc8dad7435e4ee509.jpeg",
+    "static/media/regent.jpg": "/static/media/regent.d9c2f415c3dee415e82a.jpg",
+    "static/media/Bonfire.jpeg": "/static/media/Bonfire.f1124e22b7ad92983062.jpeg",
+    "static/media/WhiteTT.png": "/static/media/WhiteTT.14b26e1c46e80582e4df.png",
+    "index.html": "/index.html",
+    "main.519aeb9c.css.map": "/static/css/main.519aeb9c.css.map",
+    "main.3be3bea4.js.map": "/static/js/main.3be3bea4.js.map",
+    "453.9cfc43c3.chunk.js.map": "/static/js/453.9cfc43c3.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.519aeb9c.css",
+    "static/js/main.3be3bea4.js"
+  ]
+}

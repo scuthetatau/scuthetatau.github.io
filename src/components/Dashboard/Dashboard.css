@@ -1,0 +1,106 @@
+/* #file:Dashboard.css */
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@400;700&display=swap');
+
+.dashboard-container {
+    display: flex;
+    justify-content: space-between;
+    margin: 0 auto;
+    padding: 20px;
+    color: white;
+    max-width: 1100px;
+}
+
+.card {
+    background-color: white;
+    border-radius: 10px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    color: black;
+    width: 100%;
+    text-align: left;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.card h2 {
+    margin-bottom: 10px;
+}
+
+.card p {
+    margin-top: 30px;
+    margin-bottom: 0;
+    font-weight: bold;
+    color: black;
+}
+
+.dashboard_profile-picture img {
+    max-width: 200px;
+    max-height: 200px;
+    border-radius: 60%;
+    box-shadow: 0 4px 6px rgba(1, 1, 1, 0.43);
+}
+
+.edit-profile-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    max-width: 600px;
+    min-width: 400px;
+}
+
+.overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+.form-group label {
+    display: flex;
+    flex-direction: column;
+    font-weight: bold;
+    color: black;
+}
+
+input[type="file"],
+input[type="text"],
+button {
+    padding: 10px;
+    margin-top: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 1em;
+    box-sizing: border-box;
+    font-family: 'IBM Plex Sans Condensed', Arial, sans-serif;
+}
+
+.success-message {
+    padding-top: 10px;
+    color: green;
+    font-weight: bold;
+    text-align: center;
+}
+
+.error-message {
+    color: red;
+    font-weight: bold;
+    text-align: center;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+}

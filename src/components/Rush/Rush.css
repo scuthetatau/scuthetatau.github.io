@@ -1,0 +1,142 @@
+/* src/pages/Rush.css */
+
+.rush {
+    font-family: 'IBM Plex Sans Condensed', Arial, sans-serif;
+    color: white;
+    text-align: center;
+}
+
+.rush-hero {
+    background-size: cover;
+    background-position: center;
+    height: 60vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.title {
+    font-size: 4em;
+    margin: 0;
+    color: white; /* Ensure the title is white */
+}
+
+.countdown-section {
+    background-color: #881616;
+    padding: 40px 0;
+    text-align: center;
+}
+
+.countdown-title {
+    font-size: 2.5em;
+    margin-bottom: 20px;
+}
+
+.countdown {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    font-size: 2em;
+}
+
+.countdown-element {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.week-calendar {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-top: 40px;
+}
+
+.day-card {
+    background: rgba(0, 0, 0, 0.7);
+    border-radius: 10px;
+    padding: 20px;
+    width: 120px;
+    text-align: center;
+    transition: transform 1s ease, background 0.3s ease; /* Add transform transition for grow on hover */
+}
+
+.day-card:hover {
+    transform: scale(1.15); /* Grow card on hover */
+    background: rgba(0, 0, 0, 0.9); /* Slightly darker background on hover */
+}
+
+.day-card h3 {
+    margin: 0 0 10px 0;
+    font-size: 1.5em;
+}
+
+.day-card p {
+    margin: 0;
+    font-size: 1em;
+}
+
+p {
+    font-size: 1.2em;
+    max-width: 600px;
+    margin: 40px auto 0;
+}
+
+/* FAQ Section */
+.faq-section {
+    margin-top: 40px;
+    text-align: left; /* Align text left for readability */
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.faq-item {
+    background: rgba(255, 255, 255, 0.9); /* Light background for contrast */
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.3s ease;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.faq-item:hover {
+    background: rgba(255, 255, 255, 1);
+    transform: scale(1.02);
+}
+
+.faq-question {
+    font-size: 1.2em;
+    font-weight: bold;
+    color: black; /* Black text for question */
+}
+
+.faq-answer {
+    font-size: 1em;
+    color: black; /* Black text for answer */
+    margin-top: 10px;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.faq-answer-enter {
+    max-height: 0;
+    opacity: 0;
+}
+
+.faq-answer-enter-active {
+    max-height: 200px; /* Adjust as needed */
+    opacity: 1;
+}
+
+.faq-answer-exit {
+    max-height: 200px; /* Adjust as needed */
+    opacity: 1;
+}
+
+.faq-answer-exit-active {
+    max-height: 0;
+    opacity: 0;
+}

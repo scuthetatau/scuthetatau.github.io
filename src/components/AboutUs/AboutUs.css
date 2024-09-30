@@ -1,0 +1,62 @@
+/* src/pages/AboutUs.css */
+
+.about-us {
+    font-family: 'IBM Plex Sans Condensed', Arial, sans-serif;
+    text-align: center;
+}
+
+/*.hero {*/
+/*    background-size: cover;*/
+/*    background-position: center;*/
+/*    color: white;*/
+/*    height: 60vh; !* Adjust height to take up less vertical space *!*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    position: relative;*/
+/*    text-shadow: 2px 2px 4px #000000; !* Add a shadow to the text to improve readability *!*/
+/*}*/
+
+.title {
+    font-size: 4em;
+    margin: 0;
+    color: white; /* Ensure the title is white */
+    transition: font-size 0.2s ease; /* Add transition for font size */
+}
+
+.subtitle {
+    font-size: 2em;
+    margin: 0;
+}
+
+.history,
+.mission {
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.history h2,
+.mission h2 {
+    font-weight: bold;
+    text-transform: uppercase;
+    color: darkred; /* Change the heading color to dark red */
+}
+
+.history p,
+.mission p {
+    text-align: left;
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+.interactive-timeline {
+    padding: 20px;
+    margin: 20px 0;
+}
+
+.interactive-timeline h2 {
+    font-weight: bold;
+    text-transform: uppercase;
+    color: darkred; /* Change the heading color to dark red */
+}
