@@ -1,0 +1,15 @@
+.aboutus-hero-title {
+    font-size: 100px;
+    font-weight: 700;
+    margin: 0;
+    color: white;
+    text-transform: uppercase;
+}
+
+.aboutus-subtitle {
+    font-size: 36px;
+    color: #ce9f35;
+    margin: 20px 0;
+    text-transform: uppercase;
+    font-style: italic;
+}

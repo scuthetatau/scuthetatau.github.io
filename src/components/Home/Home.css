@@ -1,0 +1,274 @@
+/* Import the Mohave font */
+@import url('https://fonts.googleapis.com/css2?family=Mohave:wght@300;400;700&display=swap');
+
+.hero {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-family: 'Mohave', sans-serif;
+    position: relative;
+    height: 100vh;
+}
+
+.content {
+    position: relative;
+    text-align: center;
+    z-index: 1;
+}
+
+.subheading,
+.title,
+.chapter,
+.description {
+    color: white;
+    user-select: text;
+}
+
+.subheading {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.title {
+    font-size: 4rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.chapter {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #FFD700;
+    margin-bottom: 1rem;
+}
+
+.description {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.rush-btn {
+    background-color: #FFD700;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.25rem;
+    cursor: pointer;
+    font-weight: bold;
+    color: #000;
+    transition: background-color 0.3s ease;
+}
+
+.rush-btn:hover {
+    background-color: #ffcc00;
+}
+
+/* Message from the Regent Section */
+.regent-section-unique {
+    /*background-color: white;*/
+    padding: 4rem 2rem;
+    text-align: center;
+
+    /* A Message from the Regent */
+
+    position: absolute;
+    width: 496px;
+    height: 67px;
+    left: 90px;
+    top: 882px;
+
+    font-family: 'Mohave';
+    font-style: normal;
+    font-weight: 500;
+    font-size: 48px;
+    line-height: 67px;
+    /* identical to box height */
+
+    color: #830f0f;
+
+}
+
+.section-title-unique {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 2rem;
+    color: #d00000;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Mohave:wght@400;500;700&display=swap');
+
+.regent-section {
+    width: 100%;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+}
+
+.regent-title {
+    font-family: 'Mohave', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #B22222; /* Dark Red */
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.regent-content {
+    display: flex;
+    align-items: flex-start;
+}
+
+.regent-image {
+    width: 250px;
+    height: auto;
+    margin-top: 18%;
+    border-radius: 8px;
+    margin-right: 30px;
+    margin-left: -30px;
+}
+
+.regent-text {
+    flex: 1;
+    margin-left: 6%;
+}
+
+.regent-text p {
+    font-family: 'Mohave', sans-serif;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: #000;
+    margin-bottom: 1rem;
+}
+
+.regent-signature {
+    font-family: 'Mohave', sans-serif;
+    font-size: 1rem;
+    font-weight: 500;
+    color: #333;
+    text-align: left;
+    margin-top: 20px;
+}
+
+/*Pillars*/
+.core-pillars-section {
+    width: 100%;
+    max-width: 900px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #fff;
+}
+
+.pillars-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.divider-line {
+    width: 100%;
+    border: none;
+    border-top: 1px solid #000; /* Line at the top */
+    margin-bottom: 20px;
+}
+
+.pillars-title {
+    font-family: 'Mohave', sans-serif;
+    font-size: 2rem;
+    font-weight: 700;
+    color: #B22222; /* Dark Red */
+}
+
+.pillars-content {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+}
+
+.pillar {
+    flex: 1;
+    padding: 0 20px;
+}
+
+.pillar-title {
+    font-family: 'Mohave', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #000;
+    margin-bottom: 10px;
+}
+
+.pillar-description {
+    font-family: 'Mohave', sans-serif;
+    font-size: 1rem;
+    font-style: italic;
+    font-weight: 400;
+    color: #333;
+    line-height: 1.5;
+}
+
+.pillar:not(:last-child) {
+    border-right: 1px solid #333; /* Divider between columns */
+}
+
+@media (max-width: 768px) {
+    .pillars-content {
+        flex-direction: column;
+    }
+
+    .pillar {
+        padding: 20px 0;
+        border-right: none;
+        border-bottom: 1px solid #333;
+    }
+
+    .pillar:last-child {
+        border-bottom: none;
+    }
+}
+
+/*Join section*/
+
+.join-section {
+    position: relative;
+    width: 100%;
+    height: 400px;
+    background-size: cover;
+    background-position: center;
+}
+
+.join-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.join-title {
+    font-family: 'Mohave', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #fff;
+    margin-bottom: 20px;
+}
+
+.rush-button {
+    font-family: 'Mohave', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #000;
+    background-color: #FFD700; /* Gold background */
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.rush-button:hover {
+    background-color: #FFC107; /* Slightly darker on hover */
+}

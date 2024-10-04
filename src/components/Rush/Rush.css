@@ -1,0 +1,102 @@
+@import url('https://fonts.googleapis.com/css2?family=Mohave:wght@400;700&display=swap');
+
+.rush-image {
+    width: 100%;
+    opacity: 0.9;
+    background-color: rgba(0, 0, 0, 0.93);
+}
+
+.rush-hero-title {
+    font-size: 100px;
+    font-weight: 700;
+    margin: 0;
+    color: white;
+    text-transform: uppercase;
+}
+
+.rush-subtitle {
+    font-size: 36px;
+    color: #8f2020;
+    margin: 20px 0;
+    text-transform: uppercase;
+}
+
+.rush-countdown {
+    font-size: 24px;
+    font-weight: 700;
+    color: #ffc243;
+}
+
+.rush-countdown span {
+    margin: 0 20px;
+}
+
+.rush-section {
+    font-family: 'Mohave', sans-serif;
+    color: #000000;
+    background-color: #ffffff;
+    padding: 50px;
+    margin-left: 15%;
+    margin-right: 15%;
+}
+
+.rush-title {
+    font-size: 50px;
+    font-weight: 700;
+    color: #8f2020;
+    margin-bottom: 40px;
+}
+
+.rush-description {
+    margin-bottom: 40px;
+    line-height: 1.6;
+}
+
+.rush-timeline {
+    margin-top: 20px;
+    border-left: 2px solid #ffc243;
+    padding-left: 30px;
+}
+
+.rush-header {
+    font-size: 40px;
+    font-weight: 700;
+    color: #8f2020;
+    margin-bottom: 20px;
+}
+
+.rush-event {
+    display: flex;
+    margin-bottom: 30px;
+}
+
+.rush-date {
+    font-size: 24px;
+    color: #000000;
+    margin-right: 20px;
+    text-align: right;
+    width: 120px;
+    line-height: 1.5;
+}
+
+.rush-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.rush-event-title {
+    font-size: 24px;
+    font-weight: 700;
+    color: #8f2020;
+}
+
+.rush-event-location {
+    font-size: 20px;
+    color: gray;
+    margin-bottom: 5px;
+}
+
+.rush-event-desc {
+    font-size: 18px;
+    color: gray;
+}

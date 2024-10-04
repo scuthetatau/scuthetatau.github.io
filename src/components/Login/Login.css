@@ -1,0 +1,61 @@
+/* File: src/components/Login.css */
+
+body {
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+}
+
+.login-container {
+    background-image: url(../assets/ChapterPhoto.jpeg);
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 92vh;
+    width: 100%;
+}
+
+.login-form {
+    background: rgba(255, 255, 255);
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 300px;
+}
+
+.google-login-button {
+    width: 100%;
+    padding: 10px;
+    background-color: #bd1d1d;
+    border: none;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    margin-top: 20px;
+    text-transform: uppercase;
+}
+
+.google-login-button:hover {
+    background-color: #eaab22;
+}
+
+.login-title {
+    font-size: 1.5em;
+    font-family: 'IBM Plex Sans Condensed', sans-serif;
+    margin-bottom: 20px;
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: bold;
+    width: 100%;
+}
+
+.error-message {
+    color: #bd1d1d;
+    margin-bottom: 10px;
+    text-align: center;
+    width: 100%;
+}
