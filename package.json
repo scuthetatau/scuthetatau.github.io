@@ -24,7 +24,7 @@
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build"
   },
-  "homepage": "http://scuthetatau.github.io/main",
+  "homepage": "http://scuthetatau.github.io",
   "eslintConfig": {
     "extends": [
       "react-app",
