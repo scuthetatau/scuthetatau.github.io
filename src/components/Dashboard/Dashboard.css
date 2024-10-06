@@ -2,6 +2,7 @@
     display: flex;
     height: 100vh;
     background-color: white;
+    overflow-x: hidden; /* Add this line to prevent horizontal scrolling */
 }
 
 .sidebar {

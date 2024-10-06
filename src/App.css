@@ -1,5 +1,6 @@
 body {
     font-family: 'IBM Plex Sans Condensed', Arial, sans-serif;
+    overflow-x: hidden; /* Add this line to prevent horizontal scrolling */
 }
 
 #root {
