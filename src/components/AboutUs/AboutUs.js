@@ -65,11 +65,11 @@ const AboutUs = () => {
                         </p>
                     </div>
                     <div style={{ marginTop: "2rem" }}>
-                        <h2 className="subheading" style={{ color: "darkred", fontWeight: "bold" }}>Our Chapter</h2>
-                        <p style={{ fontSize: "1.2rem", lineHeight: "1.5" }}>
-                            {/*TODO Update this text*/}
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dolor amet orci semper; nascetur vel turpis eros fames. Inceptos nam elementum feugiat vel nullam. Sit velit sollicitudin viverra ligula quisque torquent himenaeos sit...
-                        </p>
+                        {/*<h2 className="subheading" style={{ color: "darkred", fontWeight: "bold" }}>Our Chapter</h2>*/}
+                        {/*<p style={{ fontSize: "1.2rem", lineHeight: "1.5" }}>*/}
+                        {/*    /!*TODO Update this text*!/*/}
+                        {/*    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Dolor amet orci semper; nascetur vel turpis eros fames. Inceptos nam elementum feugiat vel nullam. Sit velit sollicitudin viverra ligula quisque torquent himenaeos sit...*/}
+                        {/*</p>*/}
                     </div>
                 </div>
             </div>
