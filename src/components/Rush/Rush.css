@@ -16,7 +16,7 @@
 
 .rush-subtitle {
     font-size: 36px;
-    color: #8f2020;
+    color: #d21d1d;
     margin: 20px 0;
     text-transform: uppercase;
 }
@@ -99,4 +99,20 @@
 .rush-event-desc {
     font-size: 18px;
     color: gray;
+}
+
+.interest-btn {
+    background-color: #FFD700;
+    border: none;
+    padding: 1rem 2rem;
+    font-size: 1.25rem;
+    cursor: pointer;
+    font-weight: bold;
+    color: #000;
+    transition: background-color 0.3s ease;
+    margin-top: 50px;
+}
+
+.interest-btn:hover {
+    background-color: #ffcc00;
 }

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom'; // Add useLocation
 import './Header.css';
 import WhiteTT from '../assets/WhiteTT.png';
 import { auth } from '../../firebase';
@@ -9,6 +9,7 @@ const Header = () => {
     const [user, setUser] = useState(null);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation(); // Get the current location
 
     // Listen to the authentication state
     useEffect(() => {
@@ -53,11 +54,11 @@ const Header = () => {
             <img src={WhiteTT} alt="Logo" className="logo" onClick={handleIconClick} />
             <div className="nav-links">
                 <ul>
-                    <li><Link to="/">Home</Link></li>
-                    <li><Link to="/about-us">About Us</Link></li>
-                    <li><Link to="/meet-the-brothers">Meet The Brothers</Link></li>
-                    {/*<li><Link to="/events">Events</Link></li>*/}
-                    <li><Link to="/rush">Rush</Link></li>
+                    <li className={location.pathname === '/' ? 'active' : ''}><Link to="/">Home</Link></li>
+                    <li className={location.pathname === '/about-us' ? 'active' : ''}><Link to="/about-us">About Us</Link></li>
+                    <li className={location.pathname === '/meet-the-brothers' ? 'active' : ''}><Link to="/meet-the-brothers">Meet The Brothers</Link></li>
+                    {/*<li className={location.pathname === '/events' ? 'active' : ''}><Link to="/events">Events</Link></li>*/}
+                    <li className={location.pathname === '/rush' ? 'active' : ''}><Link to="/rush">Rush</Link></li>
                 </ul>
             </div>
             <div className="login-link">
@@ -76,7 +77,7 @@ const Header = () => {
                             )}
                         </li>
                     ) : (
-                        <li><Link to="/login">Login</Link></li>
+                        <li className={location.pathname === '/login' ? 'active' : ''}><Link to="/login">Login</Link></li>
                     )}
                 </ul>
             </div>

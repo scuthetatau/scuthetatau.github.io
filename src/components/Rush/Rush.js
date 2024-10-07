@@ -46,13 +46,19 @@ const Rush = () => {
                         <span>{timeLeft.minutes} minutes</span> |
                         <span>{timeLeft.seconds} seconds</span>
                     </div>
+                    <button
+                        className="interest-btn"
+                        onClick={() => window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSftXGQoQa-2I0ANqTsVRYeHeK1s9qK0a8mWzjULW8zO0f9kEQ/viewform?usp=sf_link'}
+                    >
+                        INTEREST FORM
+                    </button>
                 </div>
             </div>
 
             <div className="rush-section">
                 <div className="rush-title">What is Rush?</div>
                 <p className="rush-description">
-                    Rush is a series of events designed to introduce potential new members to the fraternity. During
+                Rush is a series of events designed to introduce potential new members to the fraternity. During
                     Rush,
                     you will have the opportunity to meet current fraternity members, learn about our values, and get a
                     sense of what life in Theta Tau is like. It's a great way to find out if our brotherhood is the
