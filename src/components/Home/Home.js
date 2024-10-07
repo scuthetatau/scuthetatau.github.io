@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import './Home.css';
 import backgroundImage from '../assets/HomePage_Hero.png'; // Replace with the correct image path
 import regentImage from '../assets/regent.jpg'; // Replace with the correct image path
+import thetaClass from '../assets/ThetaClassInitiation.png'; // Import the image here
 
 const Home = () => {
     return (
@@ -61,7 +62,56 @@ const Home = () => {
                             ELECTRICAL AND COMPUTER ENGINEERING, ETA CLASS<br/>
                             JUNIOR | SCU THETA TAU
                         </p>
+                        <p className="regent-signature">Ryan Kiniris | Regent</p>
                     </div>
+                </div>
+            </div>
+
+            <div className="core-pillars-section">
+                <div className="pillars-header">
+                    <hr className="divider-line"/>
+                    <h1 className="regent-title">Our Core Pillars</h1>
+                </div>
+
+                <div className="pillars-content">
+                    <div className="pillar">
+                        <h3 className="pillar-title">Brotherhood</h3>
+                        <p className="pillar-description">
+                            We forge lifelong bonds of fraternal friendship, a journey that develops and delivers a
+                            network of lasting personal and professional relationships. We foster an inviting, safe, and
+                            social environment in which our members become lifelong friends.
+                        </p>
+                    </div>
+
+                    <div className="pillar">
+                        <h3 className="pillar-title">Professional Development</h3>
+                        <p className="pillar-description">
+                            We develop and nurture engineers with strong communication, problem-solving, collaboration,
+                            and leadership skills that we demonstrate in our profession, our community, and in our
+                            lives.
+                        </p>
+                    </div>
+
+                    <div className="pillar">
+                        <h3 className="pillar-title">Service</h3>
+                        <p className="pillar-description">
+                            We are known for our service to our college, university, and the larger community. Our
+                            service projects create a unifying environment for learning and personal growth for our
+                            members.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <div className="join-section" style={{backgroundImage: `url(${thetaClass})`}}>
+                <div className="join-overlay">
+                    <h2 className="join-title">Interested in Joining?</h2>
+                    <button
+                        className="rush-btn"
+                        onClick={() => window.location.href = '/rush'}
+                    >
+                        RUSH
+                    </button>
                 </div>
             </div>
         </>
