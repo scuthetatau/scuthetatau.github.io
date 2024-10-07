@@ -148,3 +148,50 @@
     border-radius: 50%;
     margin-bottom: -35px;
 }
+
+/* Add new styles for the executive board section */
+.meet-the-brothers-executive-board-section {
+    width: 100%;
+    padding: 20px;
+    text-align: center;
+}
+
+.meet-the-brothers-executive-board-section h2 {
+    font-size: 2.5em;
+    margin-bottom: 1em;
+    color: #881616;
+}
+
+.meet-the-brothers-executive-board-grid {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 20px;
+}
+
+.meet-the-brothers-executive-board-profile {
+    text-align: center;
+    padding: 15px;
+}
+
+.meet-the-brothers-executive-board-profile-pic {
+    width: 150px; /* Adjust size as necessary */
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-bottom: 20px;
+}
+
+.meet-the-brothers-executive-board-name {
+    font-size: 1.5em;
+    font-weight: bold;
+    margin-top: -7px;
+}
+
+.meet-the-brothers-executive-board-role {
+    font-size: 1.2em;
+    color: #666;
+    margin-top: 5px;
+    text-transform: none;
+    padding-bottom: 10px;
+}

@@ -46,6 +46,21 @@ const MeetTheBrothers = () => {
         fetchUsers();
     }, []);
 
+    // Helper function to sort users alphabetically by last name
+    const sortByLastName = (users) => {
+        return users.sort((a, b) => {
+            const aLastName = a.lastName ?? "";
+            const bLastName = b.lastName ?? "";
+            return aLastName.localeCompare(bLastName);
+        });
+    };
+
+    const executiveBoardRoles = ['Recording Secretary', 'Corresponding Secretary', 'Regent', 'Treasurer', 'Vice Regent'];
+
+    const executiveBoardUsers = sortByLastName(users.filter(user => executiveBoardRoles.includes(user.role)));
+
+    const leadershipUsers = sortByLastName(users.filter(user => user.role && !executiveBoardRoles.includes(user.role)));
+
     const groupedUsers = users.reduce((groups, user) => {
         const classGroup = user.class || 'Unknown Class';
         if (!groups[classGroup]) {
@@ -54,16 +69,6 @@ const MeetTheBrothers = () => {
         groups[classGroup].push(user);
         return groups;
     }, {});
-
-    const leadershipUsers = users.filter(user => user.role).sort((a, b) => {
-        const roleOrder = ['Regent', 'Vice Regent'];
-        const indexA = roleOrder.indexOf(a.role);
-        const indexB = roleOrder.indexOf(b.role);
-        if (indexA === -1 && indexB === -1) return 0;
-        if (indexA === -1) return 1;
-        if (indexB === -1) return -1;
-        return indexA - indexB;
-    });
 
     const handleImageError = (event) => {
         event.target.onerror = null; // Prevents infinite loop if fallback image fails
@@ -81,6 +86,28 @@ const MeetTheBrothers = () => {
 
             {error && <p className="error-message">{error}</p>}
 
+            {executiveBoardUsers.length > 0 && (
+                <div className="meet-the-brothers-executive-board-section">
+                    <h2>{currentYear} Executive Board</h2>
+                    <div className="meet-the-brothers-executive-board-grid">
+                        {executiveBoardUsers.map(user => (
+                            <div key={user.email} className="meet-the-brothers-executive-board-profile">
+                                {user.profilePicUrl && (
+                                    <img
+                                        src={user.profilePicUrl}
+                                        alt={`${user.firstName} ${user.lastName}`}
+                                        className="meet-the-brothers-executive-board-profile-pic"
+                                        onError={handleImageError}
+                                    />
+                                )}
+                                <div className="meet-the-brothers-executive-board-name">{user.firstName} {user.lastName}</div>
+                                <div className="meet-the-brothers-executive-board-role">{user.role}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {leadershipUsers.length > 0 && (
                 <div className="meet-the-brothers-leadership-section">
                     <h2>{currentYear} Leadership</h2>
@@ -95,8 +122,8 @@ const MeetTheBrothers = () => {
                                         onError={handleImageError}
                                     />
                                 )}
-                                <p className="meet-the-brothers-leadership-name">{user.firstName} {user.lastName}</p>
-                                <p className="meet-the-brothers-leadership-role">{user.role}</p>
+                                <div className="meet-the-brothers-leadership-name">{user.firstName} {user.lastName}</div>
+                                <div className="meet-the-brothers-leadership-role">{user.role}</div>
                             </div>
                         ))}
                     </div>
@@ -107,12 +134,12 @@ const MeetTheBrothers = () => {
                 <div key={classGroup} className="meet-the-brothers-class-group">
                     <h2>{classGroup} Class</h2>
                     <div className="meet-the-brothers-user-grid">
-                        {groupedUsers[classGroup].map(user => (
+                        {sortByLastName(groupedUsers[classGroup]).map(user => (
                             <div key={user.email} className="meet-the-brothers-brother-card">
                                 {user.profilePicUrl && (
                                     <img
                                         src={user.profilePicUrl}
-                                        alt={`${user.firstName} ${user.lastName}`}
+                                        alt={`${user.firstName} {user.lastName}`}
                                         className="meet-the-brothers-profile-pic"
                                         onError={handleImageError}
                                     />
