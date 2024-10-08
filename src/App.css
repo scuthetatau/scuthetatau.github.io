@@ -17,11 +17,3 @@ body {
     flex: 1;
     width: 100%; /* Ensure app width does not exceed 100% */
 }
-
-.footer {
-    text-align: center;
-    background-color: #333;
-    color: white;
-    padding: 10px 0;
-    width: 100%; /* Ensure footer width does not exceed 100% */
-}

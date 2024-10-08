@@ -10,6 +10,7 @@ import Login from './components/Login/Login';
 import Dashboard from './components/Dashboard/Dashboard';
 import Header from './components/Header/Header';
 import Admin from './components/Admin/Admin';
+import './components/Footer.css';
 
 function App() {
     return (
