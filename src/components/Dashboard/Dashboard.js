@@ -4,12 +4,15 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { ref, getDownloadURL } from 'firebase/storage';
 import './Dashboard.css';
+import { AiOutlineEdit } from 'react-icons/ai'; // Edit icon
+import EditUserPopup from './EditUserPopup';
 
 const NewDashboard = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [points, setPoints] = useState(0);
+    const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -52,6 +55,14 @@ const NewDashboard = () => {
         return () => unsubscribe();
     }, []);
 
+    const openEditPopup = () => {
+        setIsEditPopupOpen(true);
+    };
+
+    const closeEditPopup = () => {
+        setIsEditPopupOpen(false);
+    };
+
     if (loading) {
         return <div>Loading...</div>;
     }
@@ -67,17 +78,25 @@ const NewDashboard = () => {
         <div className="new-dashboard-container">
             <div className="dashboard-header">
                 {user && (
-                    <div className="user-info">
-                        <img className="profile-picture" src={user.profilePictureUrl} alt="Profile" />
-                        <div className="welcome-container">
-                            <h1 className="welcome-message">Welcome, {user.firstName}</h1>
-                            <div className="user-details">
-                                <p>{user.email}</p>
-                                <p>{user.role}</p>
-                                <p>{user.team}</p>
+                    <>
+                        <div className="user-info">
+                            <img className="profile-picture" src={user.profilePictureUrl} alt="Profile" />
+                            <div className="welcome-container">
+                                <h1 className="welcome-message">Welcome, {user.firstName}</h1>
+                                <div className="user-details">
+                                    <p>{user.email}</p>
+                                    <p>{user.role}</p>
+                                    <p>{user.major}</p>
+                                    {/*<p>First Name: {user.firstName}</p>*/}
+                                    {/*<p>Last Name: {user.lastName}</p>*/}
+                                    <p>{user.class} Class</p>
+                                    <p>{user.graduationYear}</p>
+                                    <p>{user.family}</p>
+                                </div>
                             </div>
                         </div>
-                    </div>
+                        <AiOutlineEdit className="edit-icon" onClick={openEditPopup} />
+                    </>
                 )}
             </div>
             <div className="widgets">
@@ -92,16 +111,17 @@ const NewDashboard = () => {
                     <p>{points} / {progressGoal} Points</p>
                 </div>
                 <div className="card calendar-card">
-                    {/* Google Calendar widget will go here */}
                     <h2>Upcoming Events</h2>
+                    {/* Google Calendar widget will go here */}
                 </div>
             </div>
             <div className="widgets">
-                <div className="card progress-card">
+                <div className="card brother-card">
                     <h2>BroDates</h2>
-                    <p>Your Brodate's for this week</p>
+                    <p>Your Brodates for this week</p>
                 </div>
             </div>
+            {isEditPopupOpen && <EditUserPopup user={user} onClose={closeEditPopup} />}
         </div>
     );
 };

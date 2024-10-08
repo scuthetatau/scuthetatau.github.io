@@ -8,7 +8,7 @@
     margin-left: 3%;
     margin-top: 3%;
     display: flex;
-    justify-content: flex-start;
+    justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
 }
@@ -32,17 +32,25 @@
 
 .welcome-message {
     font-size: 36px;
-    margin: 0;
     font-weight: bold;
     color: #333;
+    margin: 0 0 0 20px;
 }
 
 .user-details {
     color: grey;
+    margin-left: 20px;
 }
 
 .user-details p {
-    margin: 2px 0;
+    margin: 3px 0;
+}
+
+.edit-icon {
+    cursor: pointer;
+    font-size: 24px;
+    color: #555;
+    margin-right: 5%;
 }
 
 .widgets {
@@ -79,4 +87,3 @@ h2 {
 .calendar-card {
     /* Placeholder for Google Calendar widget */
 }
-
