@@ -1,15 +1,15 @@
 import React, { useEffect, useState } from 'react';
-import { auth, firestore } from '../../firebase';
+import { auth, firestore, storage } from '../../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, query, where, collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { ref, getDownloadURL } from 'firebase/storage';
 import './Dashboard.css';
-import { FaHome, FaBox, FaBullhorn, FaCalendarAlt, FaDollarSign, FaFileAlt, FaCog } from 'react-icons/fa'; // Importing Font Awesome icons
-import Widgets from './pages/Widgets';  // Import Widgets component
 
-const Dashboard = () => {
+const NewDashboard = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [points, setPoints] = useState(0);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -21,10 +21,21 @@ const Dashboard = () => {
 
                     if (!userSnapshot.empty) {
                         const userData = userSnapshot.docs[0].data();
+                        let profilePicUrl = userData.profilePictureUrl;
+
+                        if (profilePicUrl && !profilePicUrl.startsWith('https://lh3.googleusercontent.com/')) {
+                            try {
+                                profilePicUrl = await getDownloadURL(ref(storage, profilePicUrl));
+                            } catch (error) {
+                                console.error(`Error getting image URL for user ${currentUser.email}:`, error);
+                            }
+                        }
+
                         setUser({
                             ...userData,
-                            profilePictureUrl: currentUser.photoURL
+                            profilePictureUrl: profilePicUrl || currentUser.photoURL
                         });
+                        setPoints(userData.points || 0); // Assuming points are stored in user data
                     } else {
                         setError('User data not found');
                     }
@@ -49,41 +60,50 @@ const Dashboard = () => {
         return <div>Error: {error}</div>;
     }
 
+    const progressGoal = 2000;
+    const progressPercentage = (points / progressGoal) * 100;
+
     return (
-        <div className="dashboard-container">
-            {/* Sidebar */}
-            <nav className="sidebar">
-                <div className="profile-section">
-                    {user && (
-                        <>
-                            <img className="profile-picture" src={user.profilePictureUrl} alt="Profile" />
-                            <p className="welcome-message">Welcome, {user.firstName}</p>
-                        </>
-                    )}
+        <div className="new-dashboard-container">
+            <div className="dashboard-header">
+                {user && (
+                    <div className="user-info">
+                        <img className="profile-picture" src={user.profilePictureUrl} alt="Profile" />
+                        <div className="welcome-container">
+                            <h1 className="welcome-message">Welcome, {user.firstName}</h1>
+                            <div className="user-details">
+                                <p>{user.email}</p>
+                                <p>{user.role}</p>
+                                <p>{user.team}</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+            </div>
+            <div className="widgets">
+                <div className="card progress-card">
+                    <h2>Points</h2>
+                    <div className="progress-bar">
+                        <div
+                            className="progress"
+                            style={{ width: `${progressPercentage}%` }}
+                        ></div>
+                    </div>
+                    <p>{points} / {progressGoal} Points</p>
                 </div>
-                <ul className="menu">
-                    <li><a href="/dashboard"><FaHome /> Overview</a></li>
-                    <li><a href="/products"><FaBox /> Products</a></li>
-                    <li><a href="/campaigns"><FaBullhorn /> Campaigns</a></li>
-                    <li><a href="/schedule"><FaCalendarAlt /> Schedules</a></li>
-                    <li><a href="/payouts"><FaDollarSign /> Payouts</a></li>
-                    <li><a href="/statements"><FaFileAlt /> Statements</a></li>
-                    <li><a href="/settings"><FaCog /> Settings</a></li>
-                </ul>
-            </nav>
-
-            {/* Main Dashboard */}
-            <div className="main-dashboard">
-                <header className="dashboard-header">
-                    <h2>Dashboard</h2>
-                    <input type="search" placeholder="Search" className="search-bar" />
-                </header>
-
-                {/* Widgets */}
-                <Widgets user={user} />
+                <div className="card calendar-card">
+                    {/* Google Calendar widget will go here */}
+                    <h2>Upcoming Events</h2>
+                </div>
+            </div>
+            <div className="widgets">
+                <div className="card progress-card">
+                    <h2>BroDates</h2>
+                    <p>Your Brodate's for this week</p>
+                </div>
             </div>
         </div>
     );
 };
 
-export default Dashboard;
+export default NewDashboard;

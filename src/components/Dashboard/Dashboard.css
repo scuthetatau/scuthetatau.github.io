@@ -1,116 +1,82 @@
-.dashboard-container {
-    display: flex;
-    height: 100vh;
-    background-color: white;
-    overflow-x: hidden; /* Add this line to prevent horizontal scrolling */
-}
-
-.sidebar {
-    width: 300px;
-    background-color: #2d2d2d;
-    color: white;
-    padding: 20px;
+.new-dashboard-container {
     display: flex;
     flex-direction: column;
-}
-
-.profile-section {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin-bottom: 20px;
-}
-
-.profile-picture {
-    width: 150px; /* Increased size */
-    height: 150px;
-    border-radius: 50%;
-    margin-bottom: 10px;
-}
-
-.welcome-message {
-    font-size: 24px; /* Larger and bold text */
-    font-weight: bold;
-    text-align: center;
-    color: white;
-}
-
-.menu {
-    list-style: none;
-    padding: 0;
-    margin-top: 20px;
-}
-
-.menu li {
-    margin: 15px 0;
-    display: flex;
-    align-items: center;
-}
-
-.menu li a {
-    text-decoration: none;
-    color: white;
-    display: flex;
-    align-items: center;
-    gap: 10px; /* Spacing between icons and text */
-}
-
-.main-dashboard {
-    flex: 1;
-    padding: 20px;
-    background-color: white;
-    color: black;
+    padding: 10px 3%;
 }
 
 .dashboard-header {
+    margin-left: 3%;
+    margin-top: 3%;
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-start;
     align-items: center;
     margin-bottom: 20px;
 }
 
-.search-bar {
+.user-info {
+    display: flex;
+    align-items: center;
+}
+
+.profile-picture {
+    width: 200px;
+    height: auto;
+    border-radius: 50%;
+    margin-right: 20px;
+}
+
+.welcome-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.welcome-message {
+    font-size: 36px;
+    margin: 0;
+    font-weight: bold;
+    color: #333;
+}
+
+.user-details {
+    color: grey;
+}
+
+.user-details p {
+    margin: 2px 0;
+}
+
+.widgets {
+    display: flex;
     padding: 10px;
+}
+
+.card {
+    background: #fff;
     border-radius: 8px;
-    border: 1px solid #ccc;
-}
-
-.widget-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr; /* Adjust grid for wider widgets */
-    grid-gap: 20px;
-}
-
-.widget {
-    background-color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    width: 100%; /* Ensures widgets fill available space */
+    margin-right: 20px;
+    flex: 1;
 }
 
-.widget.upcoming-event-widget,
-.widget.placeholder-widget {
-    background-color: white; /* Same background for all widgets */
-    /*border-left: 4px solid darkred;*/
+h2 {
+    margin-top: 0;
 }
 
-.placeholder-widget {
-    background-color: white; /* Unified color with other widgets */
-    /*border-left: 4px solid darkred;*/
+.progress-card .progress-bar {
+    width: 100%;
+    background-color: #f3f3f3;
+    border-radius: 5px;
+    overflow: hidden;
+    margin: 10px 0;
 }
 
-/* Adjust widget width */
-.widget-container {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr); /* Two columns for better horizontal spacing */
-    grid-gap: 20px;
+.progress-card .progress {
+    height: 20px;
+    background-color: #bd1d1d;
 }
 
-.widget:nth-child(3) {
-    grid-column: 1 / span 1; /* Placeholder Widget 1 under Points Widget */
+.calendar-card {
+    /* Placeholder for Google Calendar widget */
 }
 
-.widget:nth-child(4) {
-    grid-column: 2 / span 1; /* Placeholder Widget 2 under Upcoming Event */
-}
