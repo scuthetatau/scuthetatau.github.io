@@ -84,13 +84,13 @@ const EditUserPopup = ({ user, onClose }) => {
                         onChange={handleChange}
                     />
                 </div>
-                <div className="admin-input-group">
-                    <label>Profile Picture:</label>
-                    <input
-                        type="file"
-                        onChange={handleFileChange}
-                    />
-                </div>
+                {/*<div className="admin-input-group">*/}
+                {/*    <label>Profile Picture:</label>*/}
+                {/*    <input*/}
+                {/*        type="file"*/}
+                {/*        onChange={handleFileChange}*/}
+                {/*    />*/}
+                {/*</div>*/}
                 <div className="admin-buttons">
                     <button className="close" onClick={onClose}>Cancel</button>
                     <button className="update" onClick={handleSave}>Save</button>
