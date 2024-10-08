@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom'; // Add useLocation
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Header.css';
 import WhiteTT from '../assets/WhiteTT.png';
 import { auth } from '../../firebase';
@@ -8,10 +8,10 @@ import { onAuthStateChanged, signOut } from 'firebase/auth';
 const Header = () => {
     const [user, setUser] = useState(null);
     const [dropdownVisible, setDropdownVisible] = useState(false);
+    const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
     const navigate = useNavigate();
-    const location = useLocation(); // Get the current location
+    const location = useLocation();
 
-    // Listen to the authentication state
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
             if (currentUser) {
@@ -23,7 +23,6 @@ const Header = () => {
             }
         });
 
-        // Cleanup subscription on unmount
         return () => unsubscribe();
     }, []);
 
@@ -46,21 +45,29 @@ const Header = () => {
         navigate('/');
     };
 
-    // Define what users can see the 'Admin' page in the Header drop down
+    const toggleMobileMenu = () => {
+        setMobileMenuVisible(!mobileMenuVisible);
+    };
+
     const isAdminUser = user && (user.role === 'Admin' || user.role === 'Webmaster' || user.role === 'Scribe');
 
     return (
         <nav className="header">
             <img src={WhiteTT} alt="Logo" className="logo" onClick={handleIconClick} />
-            <div className="nav-links">
+
+            <button className="hamburger-icon" onClick={toggleMobileMenu}>
+                ☰
+            </button>
+
+            <div className={`nav-links ${mobileMenuVisible ? 'visible' : ''}`}>
                 <ul>
-                    <li className={location.pathname === '/' ? 'active' : ''}><Link to="/">Home</Link></li>
-                    <li className={location.pathname === '/about-us' ? 'active' : ''}><Link to="/about-us">About Us</Link></li>
-                    <li className={location.pathname === '/meet-the-brothers' ? 'active' : ''}><Link to="/meet-the-brothers">Meet The Brothers</Link></li>
-                    {/*<li className={location.pathname === '/events' ? 'active' : ''}><Link to="/events">Events</Link></li>*/}
-                    <li className={location.pathname === '/rush' ? 'active' : ''}><Link to="/rush">Rush</Link></li>
+                    <li className={location.pathname === '/' ? 'active' : ''}><Link to="/" onClick={toggleMobileMenu}>Home</Link></li>
+                    <li className={location.pathname === '/about-us' ? 'active' : ''}><Link to="/about-us" onClick={toggleMobileMenu}>About Us</Link></li>
+                    <li className={location.pathname === '/meet-the-brothers' ? 'active' : ''}><Link to="/meet-the-brothers" onClick={toggleMobileMenu}>Meet The Brothers</Link></li>
+                    <li className={location.pathname === '/rush' ? 'active' : ''}><Link to="/rush" onClick={toggleMobileMenu}>Rush</Link></li>
                 </ul>
             </div>
+
             <div className="login-link">
                 <ul>
                     {user ? (

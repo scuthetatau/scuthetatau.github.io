@@ -4,6 +4,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    position: relative;
 }
 
 .logo {
@@ -13,15 +14,27 @@
     padding-left: 10px;
 }
 
+.hamburger-icon {
+    display: none;
+    background: none;
+    color: #fff;
+    border: none;
+    font-size: 2rem;
+    cursor: pointer;
+}
+
 .nav-links {
     flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center; /* Centering the nav links */
+    transition: max-height 0.3s ease-in-out;
 }
 
 .nav-links ul {
     list-style: none;
     text-transform: uppercase;
     display: flex;
-    justify-content: center; /* Centering the nav links */
     gap: 20px;
     margin: 0;
     padding: 0;
@@ -46,6 +59,14 @@
 .login-link ul li a {
     color: #fff;
     text-decoration: none;
+    transition: color 0.3s ease; /* Add transition for smooth color change */
+}
+
+.nav-links ul li a:hover,
+.login-link ul li a:hover,
+.nav-links ul li.active a, /* Highlight the active link */
+.login-link ul li.active a { /* Highlight the active link */
+    color: #e7aa20;
 }
 
 .login-link {
@@ -83,16 +104,39 @@
     color: #000; /* Change text color to black on hover */
 }
 
-.nav-links ul li a,
-.login-link ul li a {
-    color: #fff;
-    text-decoration: none;
-    transition: color 0.3s ease; /* Add transition for smooth color change */
-}
+@media (max-width: 768px) {
+    .nav-links {
+        display: none; /* Hide navigation links */
+        max-height: 0; /* Collapse the nav links */
+        flex-direction: column; /* Stack items vertically */
+        align-items: center;
+        background-color: #333;
+        position: absolute;
+        top: 100%;
+        right: 0;
+        left: 0;
+        z-index: 1;
+        /*gap: 10px; !* Remove gaps between items *!*/
+        padding: 10px;
+    }
 
-.nav-links ul li a:hover,
-.login-link ul li a:hover,
-.nav-links ul li.active a, /* Highlight the active link */
-.login-link ul li.active a { /* Highlight the active link */
-    color: #e7aa20;
+    .nav-links.visible {
+        display: flex;
+        max-height: 300px; /* Show the nav links */
+    }
+
+    .nav-links ul {
+        display: block; /* Display list in block format */
+        text-align: center;
+    }
+
+    .nav-links ul li {
+        display: block; /* Make list items block elements */
+        padding: 10px 0; /* Add padding to list items */
+        width: 100%; /* Make items span full width */
+    }
+
+    .hamburger-icon {
+        display: block; /* Show hamburger icon */
+    }
 }
