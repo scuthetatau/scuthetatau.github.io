@@ -1,6 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Mohave:wght@400;700&display=swap');
 
-
 .meet-the-brothers-component {
     font-family: 'Mohave', sans-serif;
     display: flex;
@@ -100,13 +99,13 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.09);
     text-align: center;
-    width: 15%;
+    width: 15%; /* Default width for larger screens */
     background-color: rgb(248, 248, 248);
-    padding: 15px;
+    padding: 20px;
     color: black;
     cursor: pointer;
     transition: transform 0.2s;
-    line-height: 0.6em;
+    line-height: 1.2em; /* Adjust line height for better readability */
 }
 
 .meet-the-brothers-brother-card:hover {
@@ -142,8 +141,9 @@
 
 .meet-the-brothers-profile-pic {
     padding: 10px;
-    max-width: 100%;
-    max-height: 150px;
+    width: 100%; /* Ensure images scale with card */
+    max-width: 150px; /* Limit image width */
+    height: auto; /* Maintain aspect ratio */
     object-fit: cover;
     border-radius: 50%;
     margin-bottom: -35px;
@@ -194,4 +194,46 @@
     margin-top: 5px;
     text-transform: none;
     padding-bottom: 10px;
+}
+
+/* Add responsive styles */
+@media (max-width: 768px) {
+    .meet-the-brothers-user-grid {
+        gap: 10px; /* Reduce gap between cards */
+    }
+
+    .meet-the-brothers-brother-card {
+        width: 45%; /* Set width to 45% to fit two cards side by side with gap */
+        padding: 10px; /* Adjust padding */
+        font-size: 0.9em; /* Adjust text size */
+    }
+
+    .meet-the-brothers-leadership-profile-pic,
+    .meet-the-brothers-profile-pic {
+        width: 100px; /* Smaller image size for mobile */
+        height: 100px;
+    }
+
+    .meet-the-brothers-leadership-name,
+    .meet-the-brothers-user-name {
+        font-size: 1em; /* Adjust name size */
+    }
+
+    .meet-the-brothers-leadership-role,
+    .meet-the-brothers-user-role,
+    .meet-the-brothers-user-major,
+    .meet-the-brothers-user-graduation-year {
+        font-size: 0.8em; /* Adjust role, major, and graduation year text sizes */
+    }
+
+    .meet-the-brothers-component h1,
+    .meet-the-brothers-leadership-section h2,
+    .meet-the-brothers-class-group h2,
+    .meet-the-brothers-executive-board-section h2 {
+        font-size: 1.5em; /* Adjust section header sizes */
+    }
+
+    .meet-the-brothers-hero {
+        height: 200px; /* Reduce hero section height */
+    }
 }
