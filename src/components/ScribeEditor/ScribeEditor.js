@@ -7,6 +7,7 @@ import './ScribeEditor.css'; // Import new CSS file
 
 const ScribeEditor = () => {
     const [users, setUsers] = useState([]);
+    const [searchTerm, setSearchTerm] = useState("");
     const [editingUserId, setEditingUserId] = useState(null);
     const [newPoints, setNewPoints] = useState({});
     const navigate = useNavigate();
@@ -36,11 +37,20 @@ const ScribeEditor = () => {
         const fetchUsers = async () => {
             const usersSnapshot = await getDocs(collection(firestore, 'users'));
             const usersList = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setUsers(usersList);
+            const sortedUsersList = usersList.sort((a, b) => a.lastName.localeCompare(b.lastName));
+            setUsers(sortedUsersList);
         };
 
         fetchUsers();
     }, []);
+
+    const handleSearchChange = (event) => {
+        setSearchTerm(event.target.value);
+    };
+
+    const filteredUsers = users.filter(user =>
+        `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
+    );
 
     const handlePointsUpdate = async (userId, updateType) => {
         const userRef = doc(firestore, 'users', userId);
@@ -91,6 +101,13 @@ const ScribeEditor = () => {
     return (
         <div className="admin-page">
             <h1>Scribe Editor</h1>
+            <input
+                type="text"
+                placeholder="Search users..."
+                value={searchTerm}
+                onChange={handleSearchChange}
+                className="search-bar"
+            />
             <table className="users-table">
                 <thead>
                 <tr>
@@ -100,7 +117,7 @@ const ScribeEditor = () => {
                 </tr>
                 </thead>
                 <tbody>
-                {users.map(user => (
+                {filteredUsers.map(user => (
                     <tr key={user.id}>
                         <td>{user.firstName} {user.lastName}</td>
                         <td className="points-value">
