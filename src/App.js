@@ -1,4 +1,3 @@
-// #file:App.js
 import React from 'react';
 import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Home from './components/Home/Home';
@@ -10,6 +9,7 @@ import Login from './components/Login/Login';
 import Dashboard from './components/Dashboard/Dashboard';
 import Header from './components/Header/Header';
 import Admin from './components/Admin/Admin';
+import ScribeEditor from './components/ScribeEditor/ScribeEditor';
 import './components/Footer.css';
 
 function App() {
@@ -26,6 +26,7 @@ function App() {
                     <Route path="/login" element={<Login/>}/>
                     <Route path="/dashboard" element={<Dashboard/>}/>
                     <Route path="/admin" element={<Admin/>}/>
+                    <Route path="/scribe-editor" element={<ScribeEditor/>}/>
                 </Routes>
             </div>
             <footer className="footer">

@@ -1,0 +1,66 @@
+.admin-page {
+    padding: 20px;
+}
+
+.users-table {
+    width: 80%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 18px;
+    text-align: left;
+}
+
+.users-table thead tr {
+    background-color: #f1f1f1;
+}
+
+.users-table th, .users-table td {
+    border: 1px solid #ddd;
+    padding: 12px;
+}
+
+.users-table th {
+    font-weight: bold;
+}
+
+.points-value {
+    text-align: center;
+    font-size: 18px;
+    padding: 8px 0;
+    border-bottom: 1px solid #ccc;
+}
+
+.points-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.adjust-button {
+    background-color: #f1f1f1;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 40px;
+    height: 40px;
+    font-size: 24px;
+    color: #000000;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+.adjust-button:hover {
+    background-color: #e2e2e2;
+}
+
+.set-points {
+    padding: 8px 12px;
+    font: inherit;
+    font-size: 14px;
+    cursor: pointer;
+    border: none;
+    border-radius: 4p   x;
+    background-color: #000000;
+    color: white;
+    transition: background-color 0.3s;
+    margin-left: 8px;
+}
