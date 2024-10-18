@@ -55,9 +55,18 @@ const MeetTheBrothers = () => {
         });
     };
 
-    const executiveBoardRoles = ['Recording Secretary', 'Corresponding Secretary', 'Regent', 'Treasurer', 'Vice Regent'];
+    const executiveBoardRoles = ['Scribe', 'Corresponding Secretary', 'Regent', 'Treasurer', 'Vice Regent'];
 
-    const executiveBoardUsers = sortByLastName(users.filter(user => executiveBoardRoles.includes(user.role)));
+    const executiveBoardUsers = sortByLastName(users.filter(user => executiveBoardRoles.includes(user.role)))
+        .sort((a, b) => {
+            const roleOrder = ['Regent', 'Vice Regent'];
+            const aIndex = roleOrder.indexOf(a.role);
+            const bIndex = roleOrder.indexOf(b.role);
+            if (aIndex !== -1 || bIndex !== -1) {
+                return (aIndex !== -1 ? aIndex : Infinity) - (bIndex !== -1 ? bIndex : Infinity);
+            }
+            return 0;
+        });
 
     const leadershipUsers = sortByLastName(users.filter(user => user.role && !executiveBoardRoles.includes(user.role)));
 
