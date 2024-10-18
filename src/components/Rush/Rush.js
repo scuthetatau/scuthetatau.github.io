@@ -6,7 +6,7 @@ const Rush = () => {
     const [timeLeft, setTimeLeft] = useState({});
 
     useEffect(() => {
-        const countdownDate = new Date('Jan 1, 2025 00:00:00').getTime();
+        const countdownDate = new Date('Jan 8, 2025 19:00:00').getTime();
 
         const updateCountdown = () => {
             const now = new Date().getTime();
@@ -70,7 +70,7 @@ const Rush = () => {
                     <div className="rush-header">Rush 2025</div>
 
                     <div className="rush-event">
-                        <div className="rush-date">January 10<br/>7:00 PM</div>
+                        <div className="rush-date">January 8<br/>7:00 PM</div>
                         <div className="rush-details">
                             <div className="rush-event-title">Theta Tau Info Night</div>
                             <div className="rush-event-location">Daly 207</div>
@@ -79,16 +79,16 @@ const Rush = () => {
                     </div>
 
                     <div className="rush-event">
-                        <div className="rush-date">January 11<br/>7:00 PM</div>
+                        <div className="rush-date">January 9<br/>7:00 PM</div>
                         <div className="rush-details">
                             <div className="rush-event-title">Meet the Actives</div>
                             <div className="rush-event-location">Vari 129</div>
-                            <div className="rush-event-desc">Chat with actives blah blah.</div>
+                            <div className="rush-event-desc">Chat with actives and get to know them.</div>
                         </div>
                     </div>
 
                     <div className="rush-event">
-                        <div className="rush-date">January 12<br/>5:30 PM</div>
+                        <div className="rush-date">January 10<br/>5:30 PM</div>
                         <div className="rush-details">
                             <div className="rush-event-title">Innovation Night</div>
                             <div className="rush-event-location">Locatelli</div>
@@ -97,7 +97,7 @@ const Rush = () => {
                     </div>
 
                     <div className="rush-event">
-                        <div className="rush-date">January 17 - 23<br/>TBD</div>
+                        <div className="rush-date">January 13-17<br/>TBD</div>
                         <div className="rush-details">
                             <div className="rush-event-title">Coffee Chats</div>
                             <div className="rush-event-location">TBD</div>

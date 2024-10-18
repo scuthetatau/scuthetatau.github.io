@@ -87,3 +87,27 @@ h2 {
 .calendar-card {
     /* Placeholder for Google Calendar widget */
 }
+
+.buttons-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.buttons-container button {
+    font: inherit;
+    font-weight: bold;
+    text-transform: uppercase;
+    padding: 10px 20px;
+    margin: 0 10px;
+    background-color: #b00909;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.buttons-container button:hover {
+    background-color: #9a0706;
+    transition: 0.5s;
+}

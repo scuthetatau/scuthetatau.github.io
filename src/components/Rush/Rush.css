@@ -32,7 +32,7 @@
 
 .rush-subtitle {
     font-size: 36px;
-    color: #d21d1d;
+    color: #ffffff;
     margin: 20px 0;
     text-transform: uppercase;
 }
@@ -45,6 +45,7 @@
 
 .rush-countdown span {
     margin: 0 20px;
+    font-style: italic;
 }
 
 .rush-section {

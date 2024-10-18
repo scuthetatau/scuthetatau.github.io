@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { auth, firestore, storage } from '../../firebase';
-import { onAuthStateChanged } from 'firebase/auth';
-import { collection, getDocs, query, where } from 'firebase/firestore';
-import { ref, getDownloadURL } from 'firebase/storage';
+import React, {useEffect, useState} from 'react';
+import {auth, firestore, storage} from '../../firebase';
+import {onAuthStateChanged} from 'firebase/auth';
+import {collection, getDocs, query, where} from 'firebase/firestore';
+import {getDownloadURL, ref} from 'firebase/storage';
 import './Dashboard.css';
-import { AiOutlineEdit } from 'react-icons/ai'; // Edit icon
+import {AiOutlineEdit} from 'react-icons/ai'; // Edit icon
 import EditUserPopup from './EditUserPopup';
 
 const NewDashboard = () => {
@@ -80,7 +80,7 @@ const NewDashboard = () => {
                 {user && (
                     <>
                         <div className="user-info">
-                            <img className="profile-picture" src={user.profilePictureUrl} alt="Profile" />
+                            <img className="profile-picture" src={user.profilePictureUrl} alt="Profile"/>
                             <div className="welcome-container">
                                 <h1 className="welcome-message">Welcome, {user.firstName}</h1>
                                 <div className="user-details">
@@ -95,7 +95,7 @@ const NewDashboard = () => {
                                 </div>
                             </div>
                         </div>
-                        <AiOutlineEdit className="edit-icon" onClick={openEditPopup} />
+                        <AiOutlineEdit className="edit-icon" onClick={openEditPopup}/>
                     </>
                 )}
             </div>
@@ -105,7 +105,7 @@ const NewDashboard = () => {
                     <div className="progress-bar">
                         <div
                             className="progress"
-                            style={{ width: `${progressPercentage}%` }}
+                            style={{width: `${progressPercentage}%`}}
                         ></div>
                     </div>
                     <p>{points} / {progressGoal} Points</p>
@@ -121,7 +121,18 @@ const NewDashboard = () => {
                     <p>Your Brodates for this week</p>
                 </div>
             </div>
-            {isEditPopupOpen && <EditUserPopup user={user} onClose={closeEditPopup} />}
+            {isEditPopupOpen && <EditUserPopup user={user} onClose={closeEditPopup}/>}
+
+            <div>
+                <div className="buttons-container">
+                    {(user.role === 'Webmaster' || user.role === 'Scribe') && (
+                        <button onClick={() => window.location.href = '/scribe-editor'}>Go to Scribe Editor</button>
+                    )}
+                    {user.role === 'Webmaster' && (
+                        <button onClick={() => window.location.href = '/admin'}>Go to Admin</button>
+                    )}
+                </div>
+            </div>
         </div>
     );
 };
