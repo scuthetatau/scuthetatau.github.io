@@ -99,6 +99,15 @@ const NewDashboard = () => {
                     </>
                 )}
             </div>
+
+            {/*Spoon Assassin Widget*/}
+            {/*<div className="widgets">*/}
+            {/*    <div className="spoon-card spoon-card">*/}
+            {/*        <h2>Spoon Assassins</h2>*/}
+            {/*        <p>Your target: </p>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+
             <div className="widgets">
                 <div className="card progress-card">
                     <h2>Points</h2>

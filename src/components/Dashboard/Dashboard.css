@@ -111,3 +111,13 @@ h2 {
     background-color: #9a0706;
     transition: 0.5s;
 }
+
+.spoon-card {
+    background: #860303;
+    color: white;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    margin-right: 20px;
+    flex: 1;
+}

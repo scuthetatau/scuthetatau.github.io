@@ -2,8 +2,9 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Header.css';
 import WhiteTT from '../assets/WhiteTT.png';
-import { auth } from '../../firebase';
+import { auth, firestore } from '../../firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
 
 const Header = () => {
     const [user, setUser] = useState(null);
@@ -13,11 +14,25 @@ const Header = () => {
     const location = useLocation();
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser) {
-                const { displayName, email } = currentUser;
-                const [firstName, lastName] = displayName ? displayName.split(' ') : [null, null];
-                setUser({ firstName, lastName, email });
+                const { email } = currentUser;
+
+                try {
+                    const authorizedEmailsRef = doc(firestore, 'authorizedEmails', 'emails_array');
+                    const authorizedEmailsDoc = await getDoc(authorizedEmailsRef);
+
+                    if (authorizedEmailsDoc.exists() && authorizedEmailsDoc.data().emails.includes(email)) {
+                        const { displayName } = currentUser;
+                        const [firstName, lastName] = displayName ? displayName.split(' ') : [null, null];
+                        setUser({ firstName, lastName, email });
+                    } else {
+                        setUser(null);
+                    }
+                } catch (error) {
+                    console.error("Failed to check authorization:", error);
+                    setUser(null);
+                }
             } else {
                 setUser(null);
             }
