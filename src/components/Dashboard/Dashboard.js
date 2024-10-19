@@ -1,18 +1,20 @@
-import React, {useEffect, useState} from 'react';
-import {auth, firestore, storage} from '../../firebase';
-import {onAuthStateChanged} from 'firebase/auth';
-import {collection, getDocs, query, where} from 'firebase/firestore';
-import {getDownloadURL, ref} from 'firebase/storage';
+import React, { useEffect, useState } from 'react';
+import { auth, firestore, storage } from '../../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { collection, getDocs, query, where } from 'firebase/firestore';
+import { getDownloadURL, ref } from 'firebase/storage';
 import './Dashboard.css';
-import {AiOutlineEdit} from 'react-icons/ai'; // Edit icon
+import { AiOutlineEdit } from 'react-icons/ai';
 import EditUserPopup from './EditUserPopup';
+import { initClient, getUpcomingEvents } from '../../googleCalendarService';
 
-const NewDashboard = () => {
+const Dashboard = () => {
     const [user, setUser] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [points, setPoints] = useState(0);
     const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
+    const [events, setEvents] = useState([]);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -38,7 +40,7 @@ const NewDashboard = () => {
                             ...userData,
                             profilePictureUrl: profilePicUrl || currentUser.photoURL
                         });
-                        setPoints(userData.points || 0); // Assuming points are stored in user data
+                        setPoints(userData.points || 0);
                     } else {
                         setError('User data not found');
                     }
@@ -53,6 +55,20 @@ const NewDashboard = () => {
         });
 
         return () => unsubscribe();
+    }, []);
+
+    useEffect(() => {
+        // Initialize the Google API client and fetch events
+        const fetchEvents = async () => {
+            try {
+                await initClient();
+                const upcomingEvents = await getUpcomingEvents();
+                setEvents(upcomingEvents);
+            } catch (error) {
+                console.error('Error initializing Google API client or fetching events:', error);
+            }
+        };
+        fetchEvents();
     }, []);
 
     const openEditPopup = () => {
@@ -80,33 +96,23 @@ const NewDashboard = () => {
                 {user && (
                     <>
                         <div className="user-info">
-                            <img className="profile-picture" src={user.profilePictureUrl} alt="Profile"/>
+                            <img className="profile-picture" src={user.profilePictureUrl} alt="Profile" />
                             <div className="welcome-container">
                                 <h1 className="welcome-message">Welcome, {user.firstName}</h1>
                                 <div className="user-details">
                                     <p>{user.email}</p>
                                     <p>{user.role}</p>
                                     <p>{user.major}</p>
-                                    {/*<p>First Name: {user.firstName}</p>*/}
-                                    {/*<p>Last Name: {user.lastName}</p>*/}
                                     <p>{user.class} Class</p>
                                     <p>{user.graduationYear}</p>
                                     <p>{user.family}</p>
                                 </div>
                             </div>
                         </div>
-                        <AiOutlineEdit className="edit-icon" onClick={openEditPopup}/>
+                        <AiOutlineEdit className="edit-icon" onClick={openEditPopup} />
                     </>
                 )}
             </div>
-
-            {/*Spoon Assassin Widget*/}
-            {/*<div className="widgets">*/}
-            {/*    <div className="spoon-card spoon-card">*/}
-            {/*        <h2>Spoon Assassins</h2>*/}
-            {/*        <p>Your target: </p>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
 
             <div className="widgets">
                 <div className="card progress-card">
@@ -114,20 +120,30 @@ const NewDashboard = () => {
                     <div className="progress-bar">
                         <div
                             className="progress"
-                            style={{width: `${progressPercentage}%`}}
+                            style={{ width: `${progressPercentage}%` }}
                         ></div>
                     </div>
                     <p>{points} / {progressGoal} Points</p>
                 </div>
                 <div className="card calendar-card">
                     <h2>Upcoming Events</h2>
-                    {/* Google Calendar widget will go here */}
+                    {events.length > 0 ? (
+                        events.map((event, index) => (
+                            <div className="event" key={index}>
+                                <div className="event-name">{event.summary}</div>
+                                <div
+                                    className="event-date">{new Date(event.start.dateTime || event.start.date).toLocaleString()}</div>
+                            </div>
+                        ))
+                    ) : (
+                        <p>No upcoming events</p> // If no events are found, display this message
+                    )}
                 </div>
             </div>
             <div className="widgets">
                 <div className="card brother-card">
                     <h2>BroDates</h2>
-                    <p>Your Brodates for this week</p>
+                    <p>Your BroDates for this week</p>
                 </div>
             </div>
             {isEditPopupOpen && <EditUserPopup user={user} onClose={closeEditPopup}/>}
@@ -146,4 +162,4 @@ const NewDashboard = () => {
     );
 };
 
-export default NewDashboard;
+export default Dashboard;

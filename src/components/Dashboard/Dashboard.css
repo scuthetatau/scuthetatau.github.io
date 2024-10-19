@@ -84,10 +84,6 @@ h2 {
     background-color: #bd1d1d;
 }
 
-.calendar-card {
-    /* Placeholder for Google Calendar widget */
-}
-
 .buttons-container {
     display: flex;
     justify-content: center;
@@ -120,4 +116,27 @@ h2 {
     padding: 20px;
     margin-right: 20px;
     flex: 1;
+}
+
+.calendar-card {
+    display: flex;
+    flex-direction: column;
+}
+
+.calendar-card .event {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.calendar-card .event-name {
+    font-weight: bold;
+    color: #333;
+}
+
+.calendar-card .event-date {
+    color: #666;
+    text-align: right;
 }
