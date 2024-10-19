@@ -66,7 +66,7 @@
 .login-link ul li a:hover,
 .nav-links ul li.active a, /* Highlight the active link */
 .login-link ul li.active a { /* Highlight the active link */
-    color: #e7aa20;
+    color: #FFD700FF;
 }
 
 .login-link {

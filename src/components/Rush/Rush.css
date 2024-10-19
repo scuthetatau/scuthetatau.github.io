@@ -40,7 +40,7 @@
 .rush-countdown {
     font-size: 24px;
     font-weight: 700;
-    color: #ffc243;
+    color: #FFD700FF;
 }
 
 .rush-countdown span {
@@ -71,7 +71,7 @@
 
 .rush-timeline {
     margin-top: 20px;
-    border-left: 2px solid #ffc243;
+    border-left: 2px solid #FFD700FF;
     padding-left: 30px;
 }
 
@@ -119,7 +119,7 @@
 }
 
 .interest-btn {
-    background-color: #FFD700;
+    background-color: #FFD700FF;
     border: none;
     padding: 1rem 2rem;
     font-size: 1.25rem;
@@ -131,5 +131,5 @@
 }
 
 .interest-btn:hover {
-    background-color: #ffcc00;
+    background-color: #FFD700FF;
 }
