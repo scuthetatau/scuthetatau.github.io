@@ -6,7 +6,7 @@ import { getDownloadURL, ref } from 'firebase/storage';
 import './Dashboard.css';
 import { AiOutlineEdit } from 'react-icons/ai';
 import EditUserPopup from './EditUserPopup';
-import { initClient, getUpcomingEvents } from '../../googleCalendarService';
+import { initClient, getUpcomingEvents } from './googleCalendarService';
 
 const Dashboard = () => {
     const [user, setUser] = useState(null);
@@ -96,7 +96,7 @@ const Dashboard = () => {
                 {user && (
                     <>
                         <div className="user-info">
-                            <img className="profile-picture" src={user.profilePictureUrl} alt="Profile" />
+                            <img className="profile-picture" src={user.profilePictureUrl} alt="Profile"/>
                             <div className="welcome-container">
                                 <h1 className="welcome-message">Welcome, {user.firstName}</h1>
                                 <div className="user-details">
@@ -109,10 +109,19 @@ const Dashboard = () => {
                                 </div>
                             </div>
                         </div>
-                        <AiOutlineEdit className="edit-icon" onClick={openEditPopup} />
+                        <AiOutlineEdit className="edit-icon" onClick={openEditPopup}/>
                     </>
                 )}
             </div>
+
+            {/*Spoon Assassins widget*/}
+
+            {/*<div className="widgets">*/}
+            {/*    <div className="card spoon-card">*/}
+            {/*        <h2>Spoon Assassin</h2>*/}
+            {/*        <p>Your target: </p>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
 
             <div className="widgets">
                 <div className="card progress-card">
@@ -120,7 +129,7 @@ const Dashboard = () => {
                     <div className="progress-bar">
                         <div
                             className="progress"
-                            style={{ width: `${progressPercentage}%` }}
+                            style={{width: `${progressPercentage}%`}}
                         ></div>
                     </div>
                     <p>{points} / {progressGoal} Points</p>
@@ -140,12 +149,14 @@ const Dashboard = () => {
                     )}
                 </div>
             </div>
+
             <div className="widgets">
                 <div className="card brother-card">
                     <h2>BroDates</h2>
                     <p>Your BroDates for this week</p>
                 </div>
             </div>
+
             {isEditPopupOpen && <EditUserPopup user={user} onClose={closeEditPopup}/>}
 
             <div>

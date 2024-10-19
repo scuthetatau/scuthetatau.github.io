@@ -81,7 +81,7 @@ h2 {
 
 .progress-card .progress {
     height: 20px;
-    background-color: #bd1d1d;
+    background-color: #9a0706;
 }
 
 .buttons-container {
@@ -96,7 +96,7 @@ h2 {
     text-transform: uppercase;
     padding: 10px 20px;
     margin: 0 10px;
-    background-color: #b00909;
+    background-color: #9a0706;
     color: white;
     border: none;
     border-radius: 5px;
