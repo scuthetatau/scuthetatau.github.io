@@ -134,20 +134,39 @@ const Dashboard = () => {
                     </div>
                     <p>{points} / {progressGoal} Points</p>
                 </div>
+
                 <div className="card calendar-card">
                     <h2>Upcoming Events</h2>
                     {events.length > 0 ? (
-                        events.map((event, index) => (
-                            <div className="event" key={index}>
-                                <div className="event-name">{event.summary}</div>
-                                <div
-                                    className="event-date">{new Date(event.start.dateTime || event.start.date).toLocaleString()}</div>
-                            </div>
-                        ))
+                        events.map((event, index) => {
+                            let eventDate;
+
+                            if (event.start.date && !event.start.dateTime) {
+                                // Handle all-day events by treating the date as-is
+                                const dateParts = event.start.date.split('-');
+                                const year = parseInt(dateParts[0], 10);
+                                const month = parseInt(dateParts[1], 10) - 1; // JavaScript months are 0-indexed
+                                const day = parseInt(dateParts[2], 10);
+
+                                const localDate = new Date(year, month, day);
+                                eventDate = localDate.toLocaleDateString(); // Display only the date without time adjustments
+                            } else {
+                                // Handle timed events
+                                eventDate = new Date(event.start.dateTime).toLocaleString(); // Display date and time for timed events
+                            }
+
+                            return (
+                                <div className="event" key={index}>
+                                    <div className="event-name">{event.summary}</div>
+                                    <div className="event-date">{eventDate}</div>
+                                </div>
+                            );
+                        })
                     ) : (
-                        <p>No upcoming events</p> // If no events are found, display this message
+                        <p>No upcoming events</p>
                     )}
                 </div>
+
             </div>
 
             <div className="widgets">
