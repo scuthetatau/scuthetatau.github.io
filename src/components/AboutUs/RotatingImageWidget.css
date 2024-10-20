@@ -1,0 +1,64 @@
+.rotating-image-container {
+    width: 100%;
+    height: auto;
+    overflow: hidden;
+    position: relative;
+    text-align: center; /* Center the image horizontally */
+    padding: 20px;
+}
+
+.rotating-image {
+    width: auto;
+    max-height: 400px;
+    object-fit: cover; /* Ensures the image covers the container while maintaining aspect ratio */
+    border-radius: 15px; /* Adjust the value to change the corner rounding */
+    display: block;
+    margin: 0 auto; /* Center the image */
+}
+
+.prev-button,
+.next-button {
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%); /* Vertically center the buttons */
+    width: auto;
+    padding: 16px;
+    color: white;
+    font-weight: bold;
+    font-size: 24px;
+    border: none;
+    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent background */
+    user-select: none;
+    border-radius: 50%;
+    outline: none;
+    transition: background-color 0.2s ease-in-out;
+
+}
+
+.prev-button {
+    left: 10%;
+}
+
+.next-button {
+    right: 10%;
+}
+
+.prev-button:hover,
+.next-button:hover {
+    background-color: rgba(0, 0, 0, 0.6 );
+}
+
+/* Optional: Add transition effect when changing images */
+.rotating-image {
+    transition: opacity 0.5s ease-in-out;
+}
+
+/* Optional: Fade-in effect */
+.rotating-image-enter {
+    opacity: 0;
+}
+
+.rotating-image-enter-active {
+    opacity: 1;
+}
