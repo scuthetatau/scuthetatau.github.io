@@ -15,6 +15,7 @@ const Dashboard = () => {
     const [points, setPoints] = useState(0);
     const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
     const [events, setEvents] = useState([]);
+    const [broDateGroup, setBroDateGroup] = useState([]);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -23,6 +24,35 @@ const Dashboard = () => {
                 try {
                     const userQuery = query(collection(firestore, 'users'), where('email', '==', currentUser.email));
                     const userSnapshot = await getDocs(userQuery);
+
+                    if (!userSnapshot.empty) {
+                        const userData = userSnapshot.docs[0].data();
+                        let profilePicUrl = userData.profilePictureUrl;
+
+                        if (profilePicUrl && !profilePicUrl.startsWith('https://lh3.googleusercontent.com/')) {
+                            try {
+                                profilePicUrl = await getDownloadURL(ref(storage, profilePicUrl));
+                            } catch (error) {
+                                console.error(`Error getting image URL for user ${currentUser.email}:`, error);
+                            }
+                        }
+                        setUser({
+                            ...userData,
+                            profilePictureUrl: profilePicUrl || currentUser.photoURL
+                        });
+                        setPoints(userData.points || 0);
+
+                        // Fetch BroDate group
+                        const broDatesQuery = query(collection(firestore, 'brodates'));
+                        const broDatesSnapshot = await getDocs(broDatesQuery);
+                        const broDates = broDatesSnapshot.docs.map(doc => doc.data());
+                        const userGroup = broDates.find(group => group.members.some(member => member.email === currentUser.email));
+                        if (userGroup) {
+                            setBroDateGroup(userGroup.members);
+                        }
+                    } else {
+                        setError('User data not found');
+                    }
 
                     if (!userSnapshot.empty) {
                         const userData = userSnapshot.docs[0].data();
@@ -170,9 +200,17 @@ const Dashboard = () => {
             </div>
 
             <div className="widgets">
-                <div className="card brother-card">
-                    <h2>BroDates</h2>
-                    <p>Your BroDates for this week</p>
+            <div className="card brother-card">
+                <h2>BroDates</h2>
+                {broDateGroup.length > 0 ? (
+                    <ul>
+                        {broDateGroup.map((member, index) => (
+                            <li key={index}>{member.firstName} {member.lastName}</li>
+                        ))}
+                    </ul>
+                ) : (
+                    <p>No BroDate group found.</p>
+                )}
                 </div>
             </div>
 

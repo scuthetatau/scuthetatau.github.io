@@ -4,6 +4,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, collection, getDocs, addDoc, updateDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { auth, firestore, storage } from '../../firebase';
+import { deleteDoc } from 'firebase/firestore';
 import './Admin.css';
 
 const Admin = () => {
@@ -18,11 +19,12 @@ const Admin = () => {
         major: '',
         role: '',
         points: 0,
-        profilePictureUrl: '' // Add this field
+        profilePictureUrl: ''
     });
     const [editingUser, setEditingUser] = useState(null);
-    const [profilePicture, setProfilePicture] = useState(null); // New state for file
-    const [profilePictureEdit, setProfilePictureEdit] = useState(null); // New state for editing file
+    const [profilePicture, setProfilePicture] = useState(null);
+    const [profilePictureEdit, setProfilePictureEdit] = useState(null);
+    const [groups, setGroups] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -30,7 +32,6 @@ const Admin = () => {
             if (user) {
                 const userRef = doc(firestore, 'users', user.uid);
                 const userDoc = await getDoc(userRef);
-
                 if (userDoc.exists()) {
                     const userData = userDoc.data();
                     if (userData.role !== 'Webmaster') {
@@ -40,10 +41,9 @@ const Admin = () => {
                     navigate('/'); // Redirect if user document does not exist
                 }
             } else {
-                navigate('/'); // Redirect not logged in users to the home page
+                navigate('/'); // Redirect non-logged-in users to the home page
             }
         });
-
         return () => unsub();
     }, [navigate]);
 
@@ -53,8 +53,16 @@ const Admin = () => {
             const usersList = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             setUsers(usersList);
         };
-
         fetchUsers();
+    }, []);
+
+    useEffect(() => {
+        const fetchGroups = async () => {
+            const groupsSnapshot = await getDocs(collection(firestore, 'brodates'));
+            const groupsList = groupsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setGroups(groupsList);
+        };
+        fetchGroups();
     }, []);
 
     const handleAddUser = async () => {
@@ -64,10 +72,20 @@ const Admin = () => {
             const profilePictureUrl = await getDownloadURL(profilePictureRef);
             newUser.profilePictureUrl = profilePictureUrl;
         }
-
         try {
             await addDoc(collection(firestore, 'users'), newUser);
-            setNewUser({ email: '', firstName: '', lastName: '', class: '', graduationYear: '', family: '', major: '', role: '', points: 0, profilePictureUrl: '' });
+            setNewUser({
+                email: '',
+                firstName: '',
+                lastName: '',
+                class: '',
+                graduationYear: '',
+                family: '',
+                major: '',
+                role: '',
+                points: 0,
+                profilePictureUrl: ''
+            });
             setProfilePicture(null); // Reset the file input
             alert('User added successfully');
         } catch (error) {
@@ -77,14 +95,12 @@ const Admin = () => {
 
     const handleUpdateUser = async () => {
         if (!editingUser) return;
-
         if (profilePictureEdit) {
             const profilePictureRef = ref(storage, `profilePictures/${new Date().getTime()}_${profilePictureEdit.name}`);
             await uploadBytes(profilePictureRef, profilePictureEdit);
             const profilePictureUrl = await getDownloadURL(profilePictureRef);
             editingUser.profilePictureUrl = profilePictureUrl;
         }
-
         const userRef = doc(firestore, 'users', editingUser.id);
         await updateDoc(userRef, editingUser);
         setEditingUser(null);
@@ -95,14 +111,63 @@ const Admin = () => {
     const handleCloseEditUser = () => {
         setEditingUser(null);
         setProfilePictureEdit(null);
-    }
+    };
+
+    const fetchGroups = async () => {
+        const groupsSnapshot = await getDocs(collection(firestore, 'brodates'));
+        const groupsList = groupsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        setGroups(groupsList);
+    };
+
+    const shuffleGroups = async () => {
+        const usersSnapshot = await getDocs(collection(firestore, 'users'));
+        const userList = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const shuffledUsers = userList.sort(() => 0.5 - Math.random());
+
+        const newGroups = [];
+        let remainingUsers = shuffledUsers.length;
+
+        let groupSize = 4;
+
+        // Calculate number of groups of 4 and handle any remainders
+        while (remainingUsers > 0) {
+            if (remainingUsers === 5 || remainingUsers === 10 || remainingUsers === 15) {
+                // If remainder users form exact groups of 5
+                newGroups.push(shuffledUsers.splice(0, 5));
+                remainingUsers -= 5;
+            } else if (remainingUsers < 4) {
+                // Handle very small remainders
+                groupSize = remainingUsers;
+                newGroups.push(shuffledUsers.splice(0, groupSize));
+                remainingUsers -= groupSize;
+            } else {
+                // Default group size of 4
+                groupSize = 4;
+                newGroups.push(shuffledUsers.splice(0, groupSize));
+                remainingUsers -= groupSize;
+            }
+        }
+
+        // Clear the existing 'brodates' collection
+        const brodatesSnapshot = await getDocs(collection(firestore, 'brodates'));
+        brodatesSnapshot.forEach(async (doc) => {
+            await deleteDoc(doc.ref);
+        });
+
+        // Add new groups to 'brodates' collection
+        for (const group of newGroups) {
+            await addDoc(collection(firestore, 'brodates'), { members: group });
+        }
+
+        // Fetch the updated groups
+        fetchGroups();
+    };
 
     return (
         <div className="admin-page">
             <h1>Admin Page</h1>
             <div className="admin-add-user">
                 <h2>Add New User</h2>
-                {/* Add Input for Profile Picture */}
                 <div className="admin-input-group">
                     <label>Profile Picture</label>
                     <input
@@ -110,7 +175,6 @@ const Admin = () => {
                         onChange={(e) => setProfilePicture(e.target.files[0])}
                     />
                 </div>
-                {/* Other input fields unchanged */}
                 <div className="admin-input-group">
                     <label>Email</label>
                     <input
@@ -215,7 +279,6 @@ const Admin = () => {
                     <div className="admin-edit-user-overlay" onClick={handleCloseEditUser}></div>
                     <div className="admin-edit-user">
                         <h2>Edit User</h2>
-                        {/* Add Input for Profile Picture */}
                         <div className="admin-input-group">
                             <label>Profile Picture</label>
                             <input
@@ -223,7 +286,6 @@ const Admin = () => {
                                 onChange={(e) => setProfilePictureEdit(e.target.files[0])}
                             />
                         </div>
-                        {/* Other input fields unchanged */}
                         <div className="admin-input-group">
                             <label>Email</label>
                             <input
@@ -312,6 +374,21 @@ const Admin = () => {
                     </div>
                 </>
             )}
+
+            <div className="admin-groups">
+                <h2>Brodate Groups</h2>
+                <button onClick={shuffleGroups}>Create/Reshuffle Groups</button>
+                {groups.map((group, index) => (
+                    <div key={index} className="group">
+                        <h3>Group {index + 1}</h3>
+                        <ul>
+                            {group.members.map(member => (
+                                <li key={member.id}>{member.firstName} {member.lastName}</li>
+                            ))}
+                        </ul>
+                    </div>
+                ))}
+            </div>
         </div>
     );
 };
