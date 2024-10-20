@@ -1,10 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, collection, getDocs, addDoc, updateDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { auth, firestore, storage } from '../../firebase';
-import { deleteDoc } from 'firebase/firestore';
+import { checkUserRole } from './auth';
+import { fetchUsers, addUser, updateUser } from './userService';
+import { fetchGroups, shuffleGroups as shuffleBroGroups } from './groupService';
 import './Admin.css';
 
 const Admin = () => {
@@ -28,65 +26,31 @@ const Admin = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const unsub = onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const userRef = doc(firestore, 'users', user.uid);
-                const userDoc = await getDoc(userRef);
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    if (userData.role !== 'Webmaster') {
-                        navigate('/'); // Redirect non-Webmasters to the home page
-                    }
-                } else {
-                    navigate('/'); // Redirect if user document does not exist
-                }
-            } else {
-                navigate('/'); // Redirect non-logged-in users to the home page
-            }
-        });
+        const unsub = checkUserRole(navigate);
         return () => unsub();
     }, [navigate]);
 
     useEffect(() => {
-        const fetchUsers = async () => {
-            const usersSnapshot = await getDocs(collection(firestore, 'users'));
-            const usersList = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const fetchAllUsers = async () => {
+            const usersList = await fetchUsers();
             setUsers(usersList);
         };
-        fetchUsers();
+        fetchAllUsers();
     }, []);
 
     useEffect(() => {
-        const fetchGroups = async () => {
-            const groupsSnapshot = await getDocs(collection(firestore, 'brodates'));
-            const groupsList = groupsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        const fetchAllGroups = async () => {
+            const groupsList = await fetchGroups();
             setGroups(groupsList);
         };
-        fetchGroups();
+        fetchAllGroups();
     }, []);
 
     const handleAddUser = async () => {
-        if (profilePicture) {
-            const profilePictureRef = ref(storage, `profilePictures/${new Date().getTime()}_${profilePicture.name}`);
-            await uploadBytes(profilePictureRef, profilePicture);
-            const profilePictureUrl = await getDownloadURL(profilePictureRef);
-            newUser.profilePictureUrl = profilePictureUrl;
-        }
         try {
-            await addDoc(collection(firestore, 'users'), newUser);
-            setNewUser({
-                email: '',
-                firstName: '',
-                lastName: '',
-                class: '',
-                graduationYear: '',
-                family: '',
-                major: '',
-                role: '',
-                points: 0,
-                profilePictureUrl: ''
-            });
-            setProfilePicture(null); // Reset the file input
+            await addUser(newUser, profilePicture);
+            setNewUser({ email: '', firstName: '', lastName: '', class: '', graduationYear: '', family: '', major: '', role: '', points: 0, profilePictureUrl: '' });
+            setProfilePicture(null);
             alert('User added successfully');
         } catch (error) {
             console.error('Error adding user:', error);
@@ -95,17 +59,14 @@ const Admin = () => {
 
     const handleUpdateUser = async () => {
         if (!editingUser) return;
-        if (profilePictureEdit) {
-            const profilePictureRef = ref(storage, `profilePictures/${new Date().getTime()}_${profilePictureEdit.name}`);
-            await uploadBytes(profilePictureRef, profilePictureEdit);
-            const profilePictureUrl = await getDownloadURL(profilePictureRef);
-            editingUser.profilePictureUrl = profilePictureUrl;
+        try {
+            await updateUser(editingUser, profilePictureEdit);
+            setEditingUser(null);
+            setProfilePictureEdit(null);
+            alert('User updated successfully');
+        } catch (error) {
+            console.error('Error updating user:', error);
         }
-        const userRef = doc(firestore, 'users', editingUser.id);
-        await updateDoc(userRef, editingUser);
-        setEditingUser(null);
-        setProfilePictureEdit(null); // Reset the file input
-        alert('User updated successfully');
     };
 
     const handleCloseEditUser = () => {
@@ -113,54 +74,9 @@ const Admin = () => {
         setProfilePictureEdit(null);
     };
 
-    const fetchGroups = async () => {
-        const groupsSnapshot = await getDocs(collection(firestore, 'brodates'));
-        const groupsList = groupsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        setGroups(groupsList);
-    };
-
     const shuffleGroups = async () => {
-        const usersSnapshot = await getDocs(collection(firestore, 'users'));
-        const userList = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-        const shuffledUsers = userList.sort(() => 0.5 - Math.random());
-
-        const newGroups = [];
-        let remainingUsers = shuffledUsers.length;
-
-        let groupSize = 4;
-
-        // Calculate number of groups of 4 and handle any remainders
-        while (remainingUsers > 0) {
-            if (remainingUsers === 5 || remainingUsers === 10 || remainingUsers === 15) {
-                // If remainder users form exact groups of 5
-                newGroups.push(shuffledUsers.splice(0, 5));
-                remainingUsers -= 5;
-            } else if (remainingUsers < 4) {
-                // Handle very small remainders
-                groupSize = remainingUsers;
-                newGroups.push(shuffledUsers.splice(0, groupSize));
-                remainingUsers -= groupSize;
-            } else {
-                // Default group size of 4
-                groupSize = 4;
-                newGroups.push(shuffledUsers.splice(0, groupSize));
-                remainingUsers -= groupSize;
-            }
-        }
-
-        // Clear the existing 'brodates' collection
-        const brodatesSnapshot = await getDocs(collection(firestore, 'brodates'));
-        brodatesSnapshot.forEach(async (doc) => {
-            await deleteDoc(doc.ref);
-        });
-
-        // Add new groups to 'brodates' collection
-        for (const group of newGroups) {
-            await addDoc(collection(firestore, 'brodates'), { members: group });
-        }
-
-        // Fetch the updated groups
-        fetchGroups();
+        const groupsList = await shuffleBroGroups();
+        setGroups(groupsList);
     };
 
     return (
@@ -168,93 +84,46 @@ const Admin = () => {
             <h1>Admin Page</h1>
             <div className="admin-add-user">
                 <h2>Add New User</h2>
+                {/* Render input fields for new user details */}
                 <div className="admin-input-group">
                     <label>Profile Picture</label>
-                    <input
-                        type="file"
-                        onChange={(e) => setProfilePicture(e.target.files[0])}
-                    />
+                    <input type="file" onChange={(e) => setProfilePicture(e.target.files[0])} />
                 </div>
                 <div className="admin-input-group">
                     <label>Email</label>
-                    <input
-                        type="text"
-                        value={newUser.email}
-                        onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                        placeholder="Email"
-                    />
+                    <input type="text" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} placeholder="Email" />
                 </div>
                 <div className="admin-input-group">
                     <label>First Name</label>
-                    <input
-                        type="text"
-                        value={newUser.firstName}
-                        onChange={(e) => setNewUser({ ...newUser, firstName: e.target.value })}
-                        placeholder="First Name"
-                    />
+                    <input type="text" value={newUser.firstName} onChange={(e) => setNewUser({ ...newUser, firstName: e.target.value })} placeholder="First Name" />
                 </div>
                 <div className="admin-input-group">
                     <label>Last Name</label>
-                    <input
-                        type="text"
-                        value={newUser.lastName}
-                        onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })}
-                        placeholder="Last Name"
-                    />
+                    <input type="text" value={newUser.lastName} onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })} placeholder="Last Name" />
                 </div>
                 <div className="admin-input-group">
                     <label>Class</label>
-                    <input
-                        type="text"
-                        value={newUser.class}
-                        onChange={(e) => setNewUser({ ...newUser, class: e.target.value })}
-                        placeholder="Class"
-                    />
+                    <input type="text" value={newUser.class} onChange={(e) => setNewUser({ ...newUser, class: e.target.value })} placeholder="Class" />
                 </div>
                 <div className="admin-input-group">
                     <label>Graduation Year</label>
-                    <input
-                        type="text"
-                        value={newUser.graduationYear}
-                        onChange={(e) => setNewUser({ ...newUser, graduationYear: e.target.value })}
-                        placeholder="Graduation Year"
-                    />
+                    <input type="text" value={newUser.graduationYear} onChange={(e) => setNewUser({ ...newUser, graduationYear: e.target.value })} placeholder="Graduation Year" />
                 </div>
                 <div className="admin-input-group">
                     <label>Family</label>
-                    <input
-                        type="text"
-                        value={newUser.family}
-                        onChange={(e) => setNewUser({ ...newUser, family: e.target.value })}
-                        placeholder="Family"
-                    />
+                    <input type="text" value={newUser.family} onChange={(e) => setNewUser({ ...newUser, family: e.target.value })} placeholder="Family" />
                 </div>
                 <div className="admin-input-group">
                     <label>Major</label>
-                    <input
-                        type="text"
-                        value={newUser.major}
-                        onChange={(e) => setNewUser({ ...newUser, major: e.target.value })}
-                        placeholder="Major"
-                    />
+                    <input type="text" value={newUser.major} onChange={(e) => setNewUser({ ...newUser, major: e.target.value })} placeholder="Major" />
                 </div>
                 <div className="admin-input-group">
                     <label>Role</label>
-                    <input
-                        type="text"
-                        value={newUser.role}
-                        onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-                        placeholder="Role"
-                    />
+                    <input type="text" value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })} placeholder="Role" />
                 </div>
                 <div className="admin-input-group">
                     <label>Points</label>
-                    <input
-                        type="number"
-                        value={newUser.points}
-                        onChange={(e) => setNewUser({ ...newUser, points: parseInt(e.target.value, 10) })}
-                        placeholder="Points"
-                    />
+                    <input type="number" value={newUser.points} onChange={(e) => setNewUser({ ...newUser, points: parseInt(e.target.value, 10) })} placeholder="Points" />
                 </div>
                 <div className="admin-buttons">
                     <button className="add" onClick={handleAddUser}>Add User</button>
@@ -267,8 +136,12 @@ const Admin = () => {
                     <div key={user.id} className="user-card" onClick={() => setEditingUser(user)}>
                         <div className="user-card-info">
                             <span className="user-card-name">{user.firstName} {user.lastName}</span>
+                            <br/>
                             <span className="user-card-role">{user.role}</span>
-                            {user.profilePictureUrl && <img src={user.profilePictureUrl} alt={`${user.firstName} ${user.lastName}`} width="50" height="50" />}
+                            <br/>
+                            {user.profilePictureUrl &&
+                                <img src={user.profilePictureUrl} alt={`${user.firstName} ${user.lastName}`} width="50"
+                                     height="50"/>}
                         </div>
                     </div>
                 ))}
@@ -281,91 +154,43 @@ const Admin = () => {
                         <h2>Edit User</h2>
                         <div className="admin-input-group">
                             <label>Profile Picture</label>
-                            <input
-                                type="file"
-                                onChange={(e) => setProfilePictureEdit(e.target.files[0])}
-                            />
+                            <input type="file" onChange={(e) => setProfilePictureEdit(e.target.files[0])} />
                         </div>
                         <div className="admin-input-group">
                             <label>Email</label>
-                            <input
-                                type="text"
-                                value={editingUser.email}
-                                onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
-                                placeholder="Email"
-                            />
+                            <input type="text" value={editingUser.email} onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })} placeholder="Email" />
                         </div>
                         <div className="admin-input-group">
                             <label>First Name</label>
-                            <input
-                                type="text"
-                                value={editingUser.firstName}
-                                onChange={(e) => setEditingUser({ ...editingUser, firstName: e.target.value })}
-                                placeholder="First Name"
-                            />
+                            <input type="text" value={editingUser.firstName} onChange={(e) => setEditingUser({ ...editingUser, firstName: e.target.value })} placeholder="First Name" />
                         </div>
                         <div className="admin-input-group">
                             <label>Last Name</label>
-                            <input
-                                type="text"
-                                value={editingUser.lastName}
-                                onChange={(e) => setEditingUser({ ...editingUser, lastName: e.target.value })}
-                                placeholder="Last Name"
-                            />
+                            <input type="text" value={editingUser.lastName} onChange={(e) => setEditingUser({ ...editingUser, lastName: e.target.value })} placeholder="Last Name" />
                         </div>
                         <div className="admin-input-group">
                             <label>Class</label>
-                            <input
-                                type="text"
-                                value={editingUser.class}
-                                onChange={(e) => setEditingUser({ ...editingUser, class: e.target.value })}
-                                placeholder="Class"
-                            />
+                            <input type="text" value={editingUser.class} onChange={(e) => setEditingUser({ ...editingUser, class: e.target.value })} placeholder="Class" />
                         </div>
                         <div className="admin-input-group">
                             <label>Graduation Year</label>
-                            <input
-                                type="text"
-                                value={editingUser.graduationYear}
-                                onChange={(e) => setEditingUser({ ...editingUser, graduationYear: e.target.value })}
-                                placeholder="Graduation Year"
-                            />
+                            <input type="text" value={editingUser.graduationYear} onChange={(e) => setEditingUser({ ...editingUser, graduationYear: e.target.value })} placeholder="Graduation Year" />
                         </div>
                         <div className="admin-input-group">
                             <label>Family</label>
-                            <input
-                                type="text"
-                                value={editingUser.family}
-                                onChange={(e) => setEditingUser({ ...editingUser, family: e.target.value })}
-                                placeholder="Family"
-                            />
+                            <input type="text" value={editingUser.family} onChange={(e) => setEditingUser({ ...editingUser, family: e.target.value })} placeholder="Family" />
                         </div>
                         <div className="admin-input-group">
                             <label>Major</label>
-                            <input
-                                type="text"
-                                value={editingUser.major}
-                                onChange={(e) => setEditingUser({ ...editingUser, major: e.target.value })}
-                                placeholder="Major"
-                            />
+                            <input type="text" value={editingUser.major} onChange={(e) => setEditingUser({ ...editingUser, major: e.target.value })} placeholder="Major" />
                         </div>
                         <div className="admin-input-group">
                             <label>Role</label>
-                            <input
-                                type="text"
-                                value={editingUser.role}
-                                onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
-                                placeholder="Role"
-                            />
+                            <input type="text" value={editingUser.role} onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })} placeholder="Role" />
                         </div>
                         <div className="admin-input-group">
                             <label>Points</label>
-                            <input
-                                type="number"
-                                value={editingUser.points}
-                                onChange={(e) => setEditingUser({ ...editingUser, points: parseInt(e.target.value, 10) })}
-                                placeholder="Points"
-                            />
+                            <input type="number" value={editingUser.points} onChange={(e) => setEditingUser({ ...editingUser, points: parseInt(e.target.value, 10) })} placeholder="Points"/>
                         </div>
                         <div className="admin-buttons">
                             <button className="close" onClick={handleCloseEditUser}>Close</button>
@@ -375,19 +200,24 @@ const Admin = () => {
                 </>
             )}
 
-            <div className="admin-groups">
+            <div className="brodate-groups">
                 <h2>Brodate Groups</h2>
-                <button onClick={shuffleGroups}>Create/Reshuffle Groups</button>
-                {groups.map((group, index) => (
-                    <div key={index} className="group">
-                        <h3>Group {index + 1}</h3>
-                        <ul>
-                            {group.members.map(member => (
-                                <li key={member.id}>{member.firstName} {member.lastName}</li>
-                            ))}
-                        </ul>
-                    </div>
-                ))}
+                <div className="buttons-container">
+                    <button onClick={shuffleGroups}>Create/Reshuffle Groups</button>
+                </div>
+
+                <div className="groups-container">
+                    {groups.map((group, index) => (
+                        <div key={index} className="group brodate-group">
+                            <h3>Group {index + 1}</h3>
+                            <ul>
+                                {group.members.map(member => (
+                                    <li key={member.id}>{member.firstName} {member.lastName}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))}
+                </div>
             </div>
         </div>
     );
