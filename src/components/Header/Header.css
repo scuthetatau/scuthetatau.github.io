@@ -3,7 +3,7 @@
     padding: 15px;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: center; /* Ensure items are centered vertically */
     position: relative;
 }
 
@@ -27,9 +27,22 @@
     flex-grow: 1;
     display: flex;
     align-items: center;
-    justify-content: center; /* Centering the nav links */
+    justify-content: center;
     transition: max-height 0.3s ease-in-out;
 }
+
+.header-profile {
+    display: flex;
+    align-items: center;
+} /* Container for profile name and picture */
+
+.header-profile-picture {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: -20px;
+    margin-left: 10px;
+} /* Profile picture styling */
 
 .nav-links ul {
     list-style: none;
@@ -46,8 +59,7 @@
     display: flex;
     gap: 20px;
     margin: 0;
-    padding: 0;
-    padding-right: 20px;
+    padding: 0 20px 0 0;
 }
 
 .nav-links ul li,
@@ -59,13 +71,13 @@
 .login-link ul li a {
     color: #fff;
     text-decoration: none;
-    transition: color 0.3s ease; /* Add transition for smooth color change */
+    transition: color 0.3s ease;
 }
 
 .nav-links ul li a:hover,
 .login-link ul li a:hover,
-.nav-links ul li.active a, /* Highlight the active link */
-.login-link ul li.active a { /* Highlight the active link */
+.nav-links ul li.active a,
+.login-link ul li.active a {
     color: #FFD700FF;
 }
 
@@ -90,7 +102,7 @@
 }
 
 .dropdown-item {
-    color: #fff; /* Make text white for all dropdown items */
+    color: #fff;
     text-decoration: none;
     display: block;
     padding: 8px 16px;
@@ -101,14 +113,14 @@
 
 .dropdown-item:hover {
     background-color: #f1f1f1;
-    color: #000; /* Change text color to black on hover */
+    color: #000;
 }
 
 @media (max-width: 768px) {
     .nav-links {
-        display: none; /* Hide navigation links */
-        max-height: 0; /* Collapse the nav links */
-        flex-direction: column; /* Stack items vertically */
+        display: none;
+        max-height: 0;
+        flex-direction: column;
         align-items: center;
         background-color: #333;
         position: absolute;
@@ -116,27 +128,26 @@
         right: 0;
         left: 0;
         z-index: 1;
-        /*gap: 10px; !* Remove gaps between items *!*/
         padding: 10px;
     }
 
     .nav-links.visible {
         display: flex;
-        max-height: 300px; /* Show the nav links */
+        max-height: 300px;
     }
 
     .nav-links ul {
-        display: block; /* Display list in block format */
+        display: block;
         text-align: center;
     }
 
     .nav-links ul li {
-        display: block; /* Make list items block elements */
-        padding: 10px 0; /* Add padding to list items */
-        width: 100%; /* Make items span full width */
+        display: block;
+        padding: 10px 0;
+        width: 100%;
     }
 
     .hamburger-icon {
-        display: block; /* Show hamburger icon */
+        display: block;
     }
 }

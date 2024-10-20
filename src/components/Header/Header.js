@@ -2,8 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import './Header.css';
 import WhiteTT from '../assets/WhiteTT.png';
-import { auth } from '../../firebase';
+import { auth, firestore, storage } from '../../firebase';
 import { onAuthStateChanged, signOut } from 'firebase/auth';
+import { doc, getDoc } from 'firebase/firestore';
+import { getDownloadURL, ref } from 'firebase/storage';
 
 const Header = () => {
     const [user, setUser] = useState(null);
@@ -13,11 +15,54 @@ const Header = () => {
     const location = useLocation();
 
     useEffect(() => {
-        const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+        const checkAuthorization = async (email) => {
+            const authorizedEmailsRef = doc(firestore, 'authorizedEmails', 'emails_array');
+            const authorizedEmailsDoc = await getDoc(authorizedEmailsRef);
+
+            if (!authorizedEmailsDoc.exists()) {
+                console.error("Authorization list not found.");
+                return false;
+            }
+
+            const authorizedEmails = authorizedEmailsDoc.data().email;
+            if (!authorizedEmails || !Array.isArray(authorizedEmails) || !authorizedEmails.includes(email)) {
+                console.error("Your email is not listed as an authorized email.");
+                return false;
+            }
+            return true;
+        };
+
+        const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser) {
                 const { displayName, email } = currentUser;
-                const [firstName, lastName] = displayName ? displayName.split(' ') : [null, null];
-                setUser({ firstName, lastName, email });
+
+                const isAuthorized = await checkAuthorization(email);
+                if (!isAuthorized) {
+                    setUser(null);
+                    return;
+                }
+
+                try {
+                    const userQuery = doc(firestore, 'users', currentUser.uid);
+                    const userSnapshot = await getDoc(userQuery);
+                    const userData = userSnapshot.data();
+                    let profilePicUrl = userData?.profilePictureUrl;
+
+                    if (profilePicUrl && !profilePicUrl.startsWith('https://lh3.googleusercontent.com/')) {
+                        profilePicUrl = await getDownloadURL(ref(storage, profilePicUrl));
+                    }
+
+                    const [firstName, lastName] = displayName ? displayName.split(' ') : [null, null];
+                    setUser({
+                        firstName,
+                        lastName,
+                        email,
+                        profilePictureUrl: profilePicUrl || currentUser.photoURL
+                    });
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                    setUser(null);
+                }
             } else {
                 setUser(null);
             }
@@ -72,8 +117,11 @@ const Header = () => {
                 <ul>
                     {user ? (
                         <li className="dropdown" onClick={toggleDropdown}>
-                            <span style={{ color: 'white', cursor: 'pointer' }}>
-                                {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.email}
+                            <span className="header-profile" style={{ color: 'white', cursor: 'pointer' }}>
+                                <span className="header-profile-name">
+                                    {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.email}
+                                </span>
+                                <img src={user.profilePictureUrl} alt="Profile" className="header-profile-picture"/>
                             </span>
                             {dropdownVisible && (
                                 <div className="dropdown-menu">
