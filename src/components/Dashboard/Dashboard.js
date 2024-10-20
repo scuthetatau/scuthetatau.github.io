@@ -91,7 +91,7 @@ const Dashboard = () => {
     const progressPercentage = (points / progressGoal) * 100;
 
     return (
-        <div className="new-dashboard-container">
+        <div className="dashboard-container">
             <div className="dashboard-header">
                 {user && (
                     <>

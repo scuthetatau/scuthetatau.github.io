@@ -63,8 +63,8 @@
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    margin-right: 20px;
     flex: 1;
+    margin: -5px 10px 10px;
 }
 
 h2 {
@@ -76,7 +76,7 @@ h2 {
     background-color: #f3f3f3;
     border-radius: 5px;
     overflow: hidden;
-    margin: 10px 0;
+    margin: 13px 0;
 }
 
 .progress-card .progress {
@@ -87,7 +87,7 @@ h2 {
 .buttons-container {
     display: flex;
     justify-content: center;
-    margin-top: 20px;
+    padding-bottom: 10px;
 }
 
 .buttons-container button {
@@ -114,8 +114,8 @@ h2 {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
-    margin-right: 20px;
     flex: 1;
+    margin: -5px 10px 10px;
 }
 
 .calendar-card {
