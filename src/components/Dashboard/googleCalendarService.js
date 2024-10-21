@@ -30,7 +30,7 @@ export const getUpcomingEvents = () => {
         .list({
             calendarId: CALENDAR_ID,
             timeMin: new Date().toISOString(),
-            maxResults: 2, // How many events will be returned.
+            maxResults: 3, // How many events will be returned.
             singleEvents: true,
             orderBy: 'startTime',
         })

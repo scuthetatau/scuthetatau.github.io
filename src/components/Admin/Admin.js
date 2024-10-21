@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { checkUserRole } from './auth';
 import { fetchUsers, addUser, updateUser } from './userService';
 import { fetchGroups, shuffleGroups as shuffleBroGroups } from './groupService';
+import { firestore } from '../../firebase';
+import { collection, getDocs, setDoc, doc } from 'firebase/firestore';
 import './Admin.css';
 
 const Admin = () => {
@@ -23,6 +25,7 @@ const Admin = () => {
     const [profilePicture, setProfilePicture] = useState(null);
     const [profilePictureEdit, setProfilePictureEdit] = useState(null);
     const [groups, setGroups] = useState([]);
+    const [targets, setTargets] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -82,6 +85,37 @@ const Admin = () => {
         const groupsList = await shuffleBroGroups();
         setGroups(groupsList);
     };
+
+    const assignTargets = async () => {
+        if (!users.length) return;
+        const shuffledUsers = [...users];
+        for (let i = shuffledUsers.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffledUsers[i], shuffledUsers[j]] = [shuffledUsers[j], shuffledUsers[i]];
+        }
+        const targets = shuffledUsers.map((user, index) => ({
+            userId: user.id,
+            firstName: user.firstName,
+            lastName: user.lastName,
+            targetId: shuffledUsers[(index + 1) % shuffledUsers.length].id,
+            targetName: `${shuffledUsers[(index + 1) % shuffledUsers.length].firstName} ${shuffledUsers[(index + 1) % shuffledUsers.length].lastName}`
+        }));
+
+        await Promise.all(targets.map(target =>
+            setDoc(doc(firestore, 'targets', target.userId), target)
+        ));
+
+        setTargets(targets);
+    };
+
+    useEffect(() => {
+        const fetchTargets = async () => {
+            const targetsSnapshot = await getDocs(collection(firestore, 'targets'));
+            const targetsList = targetsSnapshot.docs.map(doc => doc.data());
+            setTargets(targetsList);
+        };
+        fetchTargets();
+    }, [users]);
 
     return (
         <div className="admin-page">
@@ -144,8 +178,7 @@ const Admin = () => {
                             <span className="user-card-role">{user.role}</span>
                             <br/>
                             {user.profilePictureUrl &&
-                                <img src={user.profilePictureUrl} alt={`${user.firstName} ${user.lastName}`} width="50"
-                                     height="50"/>}
+                                <img src={user.profilePictureUrl} alt={`${user.firstName} ${user.lastName}`} width="50" height="50"/>}
                         </div>
                     </div>
                 ))}
@@ -219,6 +252,18 @@ const Admin = () => {
                                     <li key={member.id}>{member.firstName} {member.lastName}</li>
                                 ))}
                             </ul>
+                        </div>
+                    ))}
+                </div>
+            </div>
+
+            <div className="targets">
+                <h2>Spoon Assassins Targets</h2>
+                <button onClick={assignTargets}>Assign Targets</button>
+                <div className="targets-container">
+                    {targets.map(target => (
+                        <div key={target.userId} className="target">
+                            <strong>{target.firstName} {target.lastName}</strong> has target: {target.targetName}
                         </div>
                     ))}
                 </div>
