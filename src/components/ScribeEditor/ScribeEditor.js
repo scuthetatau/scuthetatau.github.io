@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, collection, getDocs, updateDoc } from 'firebase/firestore';
 import { auth, firestore } from '../../firebase';
+import { checkUserRoles } from './auth';
 import './ScribeEditor.css'; // Import new CSS file
 
 const ScribeEditor = () => {
@@ -13,24 +14,12 @@ const ScribeEditor = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const unsub = onAuthStateChanged(auth, async (user) => {
-            if (user) {
-                const userRef = doc(firestore, 'users', user.uid);
-                const userDoc = await getDoc(userRef);
-                if (userDoc.exists()) {
-                    const userData = userDoc.data();
-                    if (userData.role !== 'Scribe' && userData.role !== 'Webmaster') {
-                        navigate('/'); // Redirect users who are not Scribes or Webmasters
-                    }
-                } else {
-                    navigate('/'); // Redirect if user document does not exist
-                }
-            } else {
-                navigate('/'); // Redirect not logged in users
-            }
-        });
-
-        return () => unsub();
+        // console.log("Setting up role check subscription");
+        const unsub = checkUserRoles(['Webmaster', 'Scribe'], navigate);
+        return () => {
+            // console.log("Cleaning up role check subscription");
+            unsub();
+        };
     }, [navigate]);
 
     useEffect(() => {

@@ -2,7 +2,7 @@ import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, query, where, collection, getDocs } from 'firebase/firestore';
 import { auth, firestore } from '../../firebase';
 
-export const checkUserRole = (navigate) => {
+export const checkUserRoles = (allowedRoles, navigate) => {
     return onAuthStateChanged(auth, async (user) => {
         if (user) {
             // console.log("Authenticated account");
@@ -13,11 +13,11 @@ export const checkUserRole = (navigate) => {
                     const userDoc = userSnapshot.docs[0];
                     const userData = userDoc.data();
                     // console.log("User data:", userData);
-                    if (userData.role !== 'Webmaster') {
+                    if (!allowedRoles.includes(userData.role)) {
                         // console.log(`User role is ${userData.role}, redirecting to home page`);
                         navigate('/');
                     } else {
-                        // console.log("User role is Webmaster, access granted");
+                        // console.log(`User role is ${userData.role}, access granted`);
                     }
                 } else {
                     // console.log("User data does not exist in Firestore, redirecting to home page");
@@ -28,7 +28,7 @@ export const checkUserRole = (navigate) => {
                 navigate('/');
             }
         } else {
-            // console.log("No authenticated account, redirecting to home page");
+            console.log("No authenticated account, redirecting to home page");
             navigate('/');
         }
     });

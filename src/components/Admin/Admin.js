@@ -26,8 +26,12 @@ const Admin = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
+        console.log("Setting up role check subscription");
         const unsub = checkUserRole(navigate);
-        return () => unsub();
+        return () => {
+            console.log("Cleaning up role check subscription");
+            unsub();
+        };
     }, [navigate]);
 
     useEffect(() => {
