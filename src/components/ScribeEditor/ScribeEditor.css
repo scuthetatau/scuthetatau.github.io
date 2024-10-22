@@ -17,10 +17,33 @@
 .users-table th, .users-table td {
     border: 1px solid #ddd;
     padding: 12px;
+    position: relative; /* To position the arrow */
+    cursor: pointer;
 }
 
 .users-table th {
     font-weight: bold;
+}
+
+.users-table th::after {
+    content: ''; /* Empty content for default state */
+    font-size: 12px;
+    position: absolute;
+    right: 10px; /* Align arrow to the right */
+}
+
+.users-table th.sortable-asc::after {
+    content: '▲';
+    font-size: 12px;
+    position: absolute;
+    right: 10px; /* Align arrow to the right */
+}
+
+.users-table th.sortable-desc::after {
+    content: '▼';
+    font-size: 12px;
+    position: absolute;
+    right: 10px; /* Align arrow to the right */
 }
 
 .points-value {

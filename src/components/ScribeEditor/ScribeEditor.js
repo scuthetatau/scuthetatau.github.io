@@ -11,13 +11,12 @@ const ScribeEditor = () => {
     const [searchTerm, setSearchTerm] = useState("");
     const [editingUserId, setEditingUserId] = useState(null);
     const [newPoints, setNewPoints] = useState({});
+    const [sortConfig, setSortConfig] = useState({ key: 'lastName', direction: 'ascending' });
     const navigate = useNavigate();
 
     useEffect(() => {
-        // console.log("Setting up role check subscription");
         const unsub = checkUserRoles(['Webmaster', 'Scribe'], navigate);
         return () => {
-            // console.log("Cleaning up role check subscription");
             unsub();
         };
     }, [navigate]);
@@ -26,10 +25,8 @@ const ScribeEditor = () => {
         const fetchUsers = async () => {
             const usersSnapshot = await getDocs(collection(firestore, 'users'));
             const usersList = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            const sortedUsersList = usersList.sort((a, b) => a.lastName.localeCompare(b.lastName));
-            setUsers(sortedUsersList);
+            setUsers(usersList);
         };
-
         fetchUsers();
     }, []);
 
@@ -37,7 +34,27 @@ const ScribeEditor = () => {
         setSearchTerm(event.target.value);
     };
 
-    const filteredUsers = users.filter(user =>
+    const handleSort = (key) => {
+        let direction = 'ascending';
+        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
+            direction = 'descending';
+        }
+        setSortConfig({ key, direction });
+    };
+
+    const sortedUsers = [...users].sort((a, b) => {
+        if (sortConfig.key === 'points') {
+            return sortConfig.direction === 'ascending'
+                ? a.points - b.points
+                : b.points - a.points;
+        } else {
+            return sortConfig.direction === 'ascending'
+                ? a.lastName.localeCompare(b.lastName)
+                : b.lastName.localeCompare(a.lastName);
+        }
+    });
+
+    const filteredUsers = sortedUsers.filter(user =>
         `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
@@ -87,6 +104,10 @@ const ScribeEditor = () => {
         }
     };
 
+    const getPointsIndicator = (points) => {
+        return points > 2000 ? '✅' : '❌';
+    };
+
     return (
         <div className="admin-page">
             <h1>Scribe Editor</h1>
@@ -100,8 +121,13 @@ const ScribeEditor = () => {
             <table className="users-table">
                 <thead>
                 <tr>
-                    <th>Name</th>
-                    <th>Points</th>
+                    <th onClick={() => handleSort('lastName')}>
+                        Name {sortConfig.key === 'lastName' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : null}
+                    </th>
+                    <th onClick={() => handleSort('points')}>
+                        Points {sortConfig.key === 'points' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : null}
+                    </th>
+                    <th>Reached 2000</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
@@ -125,6 +151,7 @@ const ScribeEditor = () => {
                                     </span>
                             )}
                         </td>
+                        <td>{getPointsIndicator(user.points)}</td>
                         <td className="points-actions">
                             <button className="adjust-button" onClick={() => handlePointsUpdate(user.id, 'remove')}>-</button>
                             <button className="adjust-button" onClick={() => handlePointsUpdate(user.id, 'add')}>+</button>

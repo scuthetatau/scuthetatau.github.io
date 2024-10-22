@@ -200,7 +200,7 @@ const Dashboard = () => {
             </div>
 
             <div className="widgets">
-            <div className="card brother-card">
+                <div className="card brother-card">
                 <h2>BroDates</h2>
                 {broDateGroup.length > 0 ? (
                     <ul>
