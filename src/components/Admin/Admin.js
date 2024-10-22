@@ -28,6 +28,7 @@ const Admin = () => {
     const [targets, setTargets] = useState([]);
     const navigate = useNavigate();
 
+    // Check for correct permission to access this page (take a look at auth.js for more info)
     useEffect(() => {
         console.log("Setting up role check subscription");
         const unsub = checkUserRole(navigate);
@@ -76,6 +77,7 @@ const Admin = () => {
         }
     };
 
+    // BroDates
     const handleCloseEditUser = () => {
         setEditingUser(null);
         setProfilePictureEdit(null);
@@ -86,6 +88,8 @@ const Admin = () => {
         setGroups(groupsList);
     };
 
+
+    // Spoon Assassins
     const assignTargets = async () => {
         if (!users.length) return;
         const shuffledUsers = [...users];
@@ -93,7 +97,7 @@ const Admin = () => {
             const j = Math.floor(Math.random() * (i + 1));
             [shuffledUsers[i], shuffledUsers[j]] = [shuffledUsers[j], shuffledUsers[i]];
         }
-        const targets = shuffledUsers.map((user, index) => ({
+        const targets = shuffledUsers.map((user, index) => ({ // Argument user is the user object, argument index is the index of the user in the shuffledUsers array
             userId: user.id,
             firstName: user.firstName,
             lastName: user.lastName,
@@ -102,24 +106,26 @@ const Admin = () => {
         }));
 
         await Promise.all(targets.map(target =>
-            setDoc(doc(firestore, 'targets', target.userId), target)
+            setDoc(doc(firestore, 'targets', target.userId), target) // Set the target document in Firestore
         ));
 
-        setTargets(targets);
+        setTargets(targets); // Set the targets state to the targets array
     };
 
     useEffect(() => {
         const fetchTargets = async () => {
             const targetsSnapshot = await getDocs(collection(firestore, 'targets'));
             const targetsList = targetsSnapshot.docs.map(doc => doc.data());
-            setTargets(targetsList);
+            setTargets(targetsList); // Set the targets state to the targets array
         };
-        fetchTargets();
+        fetchTargets(); // Fetch targets from Firestore
     }, [users]);
 
     return (
         <div className="admin-page">
             <h1>Admin Page</h1>
+
+            {/*Add user*/}
             <div className="admin-add-user">
                 <h2>Add New User</h2>
                 {/* Render input fields for new user details */}
@@ -184,6 +190,7 @@ const Admin = () => {
                 ))}
             </div>
 
+            {/*Edit user*/}
             {editingUser && (
                 <>
                     <div className="admin-edit-user-overlay" onClick={handleCloseEditUser}></div>
@@ -237,6 +244,7 @@ const Admin = () => {
                 </>
             )}
 
+            {/*BroDate Groups*/}
             <div className="brodate-groups">
                 <h2>Brodate Groups</h2>
                 <div className="buttons-container">
@@ -257,9 +265,12 @@ const Admin = () => {
                 </div>
             </div>
 
+            {/*Spoon Assassins*/}
             <div className="targets">
                 <h2>Spoon Assassins Targets</h2>
-                <button onClick={assignTargets}>Assign Targets</button>
+                <div className="buttons-container">
+                    <button onClick={assignTargets}>Assign Targets</button>
+                </div>
                 <div className="targets-container">
                     {targets.map(target => (
                         <div key={target.userId} className="target">

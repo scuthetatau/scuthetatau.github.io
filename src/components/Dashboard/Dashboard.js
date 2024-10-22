@@ -16,6 +16,7 @@ const Dashboard = () => {
     const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
     const [events, setEvents] = useState([]);
     const [broDateGroup, setBroDateGroup] = useState([]);
+    const [target, setTarget] = useState(null);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -42,6 +43,13 @@ const Dashboard = () => {
                         });
                         setPoints(userData.points || 0);
 
+                        // Fetch target information
+                        const targetsQuery = query(collection(firestore, 'targets'), where('userId', '==', userData.id));
+                        const targetsSnapshot = await getDocs(targetsQuery);
+                        if (!targetsSnapshot.empty) {
+                            setTarget(targetsSnapshot.docs[0].data());
+                        }
+
                         // Fetch BroDate group
                         const broDatesQuery = query(collection(firestore, 'brodates'));
                         const broDatesSnapshot = await getDocs(broDatesQuery);
@@ -53,37 +61,15 @@ const Dashboard = () => {
                     } else {
                         setError('User data not found');
                     }
-
-                    if (!userSnapshot.empty) {
-                        const userData = userSnapshot.docs[0].data();
-                        let profilePicUrl = userData.profilePictureUrl;
-
-                        if (profilePicUrl && !profilePicUrl.startsWith('https://lh3.googleusercontent.com/')) {
-                            try {
-                                profilePicUrl = await getDownloadURL(ref(storage, profilePicUrl));
-                            } catch (error) {
-                                console.error(`Error getting image URL for user ${currentUser.email}:`, error);
-                            }
-                        }
-
-                        setUser({
-                            ...userData,
-                            profilePictureUrl: profilePicUrl || currentUser.photoURL
-                        });
-                        setPoints(userData.points || 0);
-                    } else {
-                        setError('User data not found');
-                    }
                 } catch (err) {
                     console.error('Error fetching Firestore data:', err);
                     setError('Failed to fetch user data.');
                 }
             } else {
-                setError('No authenticated user found.');
+                setUser(null);
             }
             setLoading(false);
         });
-
         return () => unsubscribe();
     }, []);
 
@@ -123,7 +109,7 @@ const Dashboard = () => {
     return (
         <div className="dashboard-container">
             <div className="dashboard-header">
-                {user && (
+                {user ? (
                     <>
                         <div className="user-info">
                             <img className="profile-picture" src={user.profilePictureUrl} alt="Profile"/>
@@ -141,17 +127,10 @@ const Dashboard = () => {
                         </div>
                         <AiOutlineEdit className="edit-icon" onClick={openEditPopup}/>
                     </>
+                ) : (
+                    <p>User is not logged in.</p>
                 )}
             </div>
-
-            {/*Spoon Assassins widget*/}
-
-            {/*<div className="widgets">*/}
-            {/*    <div className="card spoon-card">*/}
-            {/*        <h2>Spoon Assassin</h2>*/}
-            {/*        <p>Your target: </p>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
 
             <div className="widgets">
                 <div className="card progress-card">
@@ -201,16 +180,16 @@ const Dashboard = () => {
 
             <div className="widgets">
                 <div className="card brother-card">
-                <h2>BroDates</h2>
-                {broDateGroup.length > 0 ? (
-                    <ul>
-                        {broDateGroup.map((member, index) => (
-                            <li key={index}>{member.firstName} {member.lastName}</li>
-                        ))}
-                    </ul>
-                ) : (
-                    <p>No BroDate group found.</p>
-                )}
+                    <h2>BroDates</h2>
+                    {broDateGroup.length > 0 ? (
+                        <ul>
+                            {broDateGroup.map((member, index) => (
+                                <li key={index}>{member.firstName} {member.lastName}</li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p>No BroDate group found.</p>
+                    )}
                 </div>
             </div>
 
@@ -218,10 +197,10 @@ const Dashboard = () => {
 
             <div>
                 <div className="buttons-container">
-                    {(user.role === 'Webmaster' || user.role === 'Scribe') && (
+                    {user && (user.role === 'Webmaster' || user.role === 'Scribe') && (
                         <button onClick={() => window.location.href = '/scribe-editor'}>Go to Scribe Editor</button>
                     )}
-                    {user.role === 'Webmaster' && (
+                    {user && user.role === 'Webmaster' && (
                         <button onClick={() => window.location.href = '/admin'}>Go to Admin</button>
                     )}
                 </div>
