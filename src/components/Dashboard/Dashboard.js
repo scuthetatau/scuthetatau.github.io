@@ -132,6 +132,14 @@ const Dashboard = () => {
                 )}
             </div>
 
+            {/*Spoon Assassins widget*/}
+            {/*<div className="widgets">*/}
+            {/*    <div className="card spoon-card">*/}
+            {/*        <h2>Spoon Assassin</h2>*/}
+            {/*        <p>Your target: {target.targetName}</p>*/}
+            {/*    </div>*/}
+            {/*</div>*/}
+
             <div className="widgets">
                 <div className="card progress-card">
                     <h2>Points</h2>
