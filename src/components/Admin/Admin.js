@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { checkUserRole } from './auth';
-import { fetchUsers, addUser, updateUser } from './userService';
-import { fetchGroups, shuffleGroups as shuffleBroGroups } from './groupService';
-import { firestore } from '../../firebase';
-import { collection, getDocs, setDoc, doc } from 'firebase/firestore';
+import React, {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {checkUserRole} from './auth';
+import {addUser, fetchUsers, updateUser} from './userService';
+import {fetchGroups, shuffleGroups as shuffleBroGroups} from './groupService';
+import {firestore} from '../../firebase';
+import {collection, doc, getDocs, setDoc} from 'firebase/firestore';
 import './Admin.css';
 
 const Admin = () => {
@@ -57,7 +57,18 @@ const Admin = () => {
     const handleAddUser = async () => {
         try {
             await addUser(newUser, profilePicture);
-            setNewUser({ email: '', firstName: '', lastName: '', class: '', graduationYear: '', family: '', major: '', role: '', points: 0, profilePictureUrl: '' });
+            setNewUser({
+                email: '',
+                firstName: '',
+                lastName: '',
+                class: '',
+                graduationYear: '',
+                family: '',
+                major: '',
+                role: '',
+                points: 0,
+                profilePictureUrl: ''
+            });
             setProfilePicture(null);
             alert('User added successfully');
         } catch (error) {
@@ -131,43 +142,56 @@ const Admin = () => {
                 {/* Render input fields for new user details */}
                 <div className="admin-input-group">
                     <label>Profile Picture</label>
-                    <input type="file" onChange={(e) => setProfilePicture(e.target.files[0])} />
+                    <input type="file" onChange={(e) => setProfilePicture(e.target.files[0])}/>
                 </div>
                 <div className="admin-input-group">
                     <label>Email</label>
-                    <input type="text" value={newUser.email} onChange={(e) => setNewUser({ ...newUser, email: e.target.value })} placeholder="Email" />
+                    <input type="text" value={newUser.email}
+                           onChange={(e) => setNewUser({...newUser, email: e.target.value})} placeholder="Email"/>
                 </div>
                 <div className="admin-input-group">
                     <label>First Name</label>
-                    <input type="text" value={newUser.firstName} onChange={(e) => setNewUser({ ...newUser, firstName: e.target.value })} placeholder="First Name" />
+                    <input type="text" value={newUser.firstName}
+                           onChange={(e) => setNewUser({...newUser, firstName: e.target.value})}
+                           placeholder="First Name"/>
                 </div>
                 <div className="admin-input-group">
                     <label>Last Name</label>
-                    <input type="text" value={newUser.lastName} onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })} placeholder="Last Name" />
+                    <input type="text" value={newUser.lastName}
+                           onChange={(e) => setNewUser({...newUser, lastName: e.target.value})}
+                           placeholder="Last Name"/>
                 </div>
                 <div className="admin-input-group">
                     <label>Class</label>
-                    <input type="text" value={newUser.class} onChange={(e) => setNewUser({ ...newUser, class: e.target.value })} placeholder="Class" />
+                    <input type="text" value={newUser.class}
+                           onChange={(e) => setNewUser({...newUser, class: e.target.value})} placeholder="Class"/>
                 </div>
                 <div className="admin-input-group">
                     <label>Graduation Year</label>
-                    <input type="text" value={newUser.graduationYear} onChange={(e) => setNewUser({ ...newUser, graduationYear: e.target.value })} placeholder="Graduation Year" />
+                    <input type="text" value={newUser.graduationYear}
+                           onChange={(e) => setNewUser({...newUser, graduationYear: e.target.value})}
+                           placeholder="Graduation Year"/>
                 </div>
                 <div className="admin-input-group">
                     <label>Family</label>
-                    <input type="text" value={newUser.family} onChange={(e) => setNewUser({ ...newUser, family: e.target.value })} placeholder="Family" />
+                    <input type="text" value={newUser.family}
+                           onChange={(e) => setNewUser({...newUser, family: e.target.value})} placeholder="Family"/>
                 </div>
                 <div className="admin-input-group">
                     <label>Major</label>
-                    <input type="text" value={newUser.major} onChange={(e) => setNewUser({ ...newUser, major: e.target.value })} placeholder="Major" />
+                    <input type="text" value={newUser.major}
+                           onChange={(e) => setNewUser({...newUser, major: e.target.value})} placeholder="Major"/>
                 </div>
                 <div className="admin-input-group">
                     <label>Role</label>
-                    <input type="text" value={newUser.role} onChange={(e) => setNewUser({ ...newUser, role: e.target.value })} placeholder="Role" />
+                    <input type="text" value={newUser.role}
+                           onChange={(e) => setNewUser({...newUser, role: e.target.value})} placeholder="Role"/>
                 </div>
                 <div className="admin-input-group">
                     <label>Points</label>
-                    <input type="number" value={newUser.points} onChange={(e) => setNewUser({ ...newUser, points: parseInt(e.target.value, 10) })} placeholder="Points" />
+                    <input type="number" value={newUser.points}
+                           onChange={(e) => setNewUser({...newUser, points: parseInt(e.target.value, 10)})}
+                           placeholder="Points"/>
                 </div>
                 <div className="admin-buttons">
                     <button className="add" onClick={handleAddUser}>Add User</button>
@@ -179,12 +203,15 @@ const Admin = () => {
                 {users.map(user => (
                     <div key={user.id} className="user-card" onClick={() => setEditingUser(user)}>
                         <div className="user-card-info">
-                            <span className="user-card-name">{user.firstName} {user.lastName}</span>
-                            <br/>
-                            <span className="user-card-role">{user.role}</span>
-                            <br/>
                             {user.profilePictureUrl &&
-                                <img src={user.profilePictureUrl} alt={`${user.firstName} ${user.lastName}`} width="50" height="50"/>}
+                                <img src={user.profilePictureUrl} alt={`${user.firstName} ${user.lastName}`}
+                                     className="user-card-img-small"/>}
+                            <div className="user-card-text">
+                                <span className="user-card-name">{user.firstName} {user.lastName}</span>
+                                <br/>
+                                <span className="user-card-role">{user.role}</span>
+                                <br/>
+                            </div>
                         </div>
                     </div>
                 ))}
@@ -198,43 +225,62 @@ const Admin = () => {
                         <h2>Edit User</h2>
                         <div className="admin-input-group">
                             <label>Profile Picture</label>
-                            <input type="file" onChange={(e) => setProfilePictureEdit(e.target.files[0])} />
+                            <input type="file" onChange={(e) => setProfilePictureEdit(e.target.files[0])}/>
                         </div>
                         <div className="admin-input-group">
                             <label>Email</label>
-                            <input type="text" value={editingUser.email} onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })} placeholder="Email" />
+                            <input type="text" value={editingUser.email}
+                                   onChange={(e) => setEditingUser({...editingUser, email: e.target.value})}
+                                   placeholder="Email"/>
                         </div>
                         <div className="admin-input-group">
                             <label>First Name</label>
-                            <input type="text" value={editingUser.firstName} onChange={(e) => setEditingUser({ ...editingUser, firstName: e.target.value })} placeholder="First Name" />
+                            <input type="text" value={editingUser.firstName}
+                                   onChange={(e) => setEditingUser({...editingUser, firstName: e.target.value})}
+                                   placeholder="First Name"/>
                         </div>
                         <div className="admin-input-group">
                             <label>Last Name</label>
-                            <input type="text" value={editingUser.lastName} onChange={(e) => setEditingUser({ ...editingUser, lastName: e.target.value })} placeholder="Last Name" />
+                            <input type="text" value={editingUser.lastName}
+                                   onChange={(e) => setEditingUser({...editingUser, lastName: e.target.value})}
+                                   placeholder="Last Name"/>
                         </div>
                         <div className="admin-input-group">
                             <label>Class</label>
-                            <input type="text" value={editingUser.class} onChange={(e) => setEditingUser({ ...editingUser, class: e.target.value })} placeholder="Class" />
+                            <input type="text" value={editingUser.class}
+                                   onChange={(e) => setEditingUser({...editingUser, class: e.target.value})}
+                                   placeholder="Class"/>
                         </div>
                         <div className="admin-input-group">
                             <label>Graduation Year</label>
-                            <input type="text" value={editingUser.graduationYear} onChange={(e) => setEditingUser({ ...editingUser, graduationYear: e.target.value })} placeholder="Graduation Year" />
+                            <input type="text" value={editingUser.graduationYear}
+                                   onChange={(e) => setEditingUser({...editingUser, graduationYear: e.target.value})}
+                                   placeholder="Graduation Year"/>
                         </div>
                         <div className="admin-input-group">
                             <label>Family</label>
-                            <input type="text" value={editingUser.family} onChange={(e) => setEditingUser({ ...editingUser, family: e.target.value })} placeholder="Family" />
+                            <input type="text" value={editingUser.family}
+                                   onChange={(e) => setEditingUser({...editingUser, family: e.target.value})}
+                                   placeholder="Family"/>
                         </div>
                         <div className="admin-input-group">
                             <label>Major</label>
-                            <input type="text" value={editingUser.major} onChange={(e) => setEditingUser({ ...editingUser, major: e.target.value })} placeholder="Major" />
+                            <input type="text" value={editingUser.major}
+                                   onChange={(e) => setEditingUser({...editingUser, major: e.target.value})}
+                                   placeholder="Major"/>
                         </div>
                         <div className="admin-input-group">
                             <label>Role</label>
-                            <input type="text" value={editingUser.role} onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })} placeholder="Role" />
+                            <input type="text" value={editingUser.role}
+                                   onChange={(e) => setEditingUser({...editingUser, role: e.target.value})}
+                                   placeholder="Role"/>
                         </div>
                         <div className="admin-input-group">
                             <label>Points</label>
-                            <input type="number" value={editingUser.points} onChange={(e) => setEditingUser({ ...editingUser, points: parseInt(e.target.value, 10) })} placeholder="Points"/>
+                            <input type="number" value={editingUser.points} onChange={(e) => setEditingUser({
+                                ...editingUser,
+                                points: parseInt(e.target.value, 10)
+                            })} placeholder="Points"/>
                         </div>
                         <div className="admin-buttons">
                             <button className="close" onClick={handleCloseEditUser}>Close</button>
