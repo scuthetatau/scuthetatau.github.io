@@ -1,3 +1,5 @@
+/* Header.css */
+
 .header {
     background-color: #333;
     padding: 15px;
@@ -5,6 +7,7 @@
     justify-content: space-between;
     align-items: center; /* Ensure items are centered vertically */
     position: relative;
+    z-index: 10; /* Set high z-index for the header */
 }
 
 .logo {
@@ -29,6 +32,7 @@
     align-items: center;
     justify-content: center;
     transition: max-height 0.3s ease-in-out;
+    z-index: 10; /* Set high z-index for the nav links */
 }
 
 .header-profile {
@@ -96,7 +100,7 @@
     right: 0;
     background-color: #2a2a2a;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 1;
+    z-index: 20; /* Set higher z-index for the dropdown menu */
     padding: 12px;
     border-radius: 4px;
 }

@@ -1,7 +1,10 @@
+/* Dashboard.css */
+
 .new-dashboard-container {
     display: flex;
     flex-direction: column;
     padding: 10px 3%;
+    z-index: 1; /* Lower z-index to avoid overlapping */
 }
 
 .dashboard-header {
@@ -11,11 +14,13 @@
     justify-content: space-between;
     align-items: center;
     margin-bottom: 20px;
+    z-index: 1; /* Lower z-index to avoid overlapping */
 }
 
 .user-info {
     display: flex;
     align-items: center;
+    z-index: 1; /* Lower z-index to avoid overlapping */
 }
 
 .profile-picture {
