@@ -1,32 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import './AboutUs.css'; // Import the CSS file
-import backgroundImage from '../assets/ThetaClassInitiation.png'; // Update with the correct path to your image
+import backgroundImage from '../assets/ChapterPhoto.jpeg'; // Update with the correct path to your image
 import chapterImage from '../assets/CoatArms.png';
 import RotatingImageWidget from "./RotatingImageWidget"; // Update with the correct path to your image
 
 const AboutUs = () => {
-    const [timeLeft, setTimeLeft] = useState({});
-
-    useEffect(() => {
-        const countdownDate = new Date('Jan 1, 2025 00:00:00').getTime();
-
-        const updateCountdown = () => {
-            const now = new Date().getTime();
-            const difference = countdownDate - now;
-
-            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-            setTimeLeft({ days, hours, minutes, seconds });
-        };
-
-        const interval = setInterval(updateCountdown, 1000);
-
-        return () => clearInterval(interval);
-    }, []);
-
     const RotatingImagesWidget = ({ images }) => {
         const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -61,7 +39,7 @@ const AboutUs = () => {
                     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${backgroundImage})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
-                    height: '91.7vh',
+                    height: '93vh',
                     // position: 'relative',
                 }}
             >
