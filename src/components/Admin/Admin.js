@@ -123,6 +123,21 @@ const Admin = () => {
         setTargets(targets); // Set the targets state to the targets array
     };
 
+    const generateBroDatesText = () => {
+        return groups.map((group, index) => {
+            return `Group ${index + 1}:\n` + group.members.map(member => `${member.firstName} ${member.lastName}`).join('\n');
+        }).join('\n\n');
+    };
+
+    const handleDownloadBroDates = () => {
+        const element = document.createElement("a");
+        const file = new Blob([generateBroDatesText()], {type: 'text/plain'});
+        element.href = URL.createObjectURL(file);
+        element.download = "brodates.txt";
+        document.body.appendChild(element);
+        element.click();
+    };
+
     useEffect(() => {
         const fetchTargets = async () => {
             const targetsSnapshot = await getDocs(collection(firestore, 'targets'));
@@ -295,6 +310,7 @@ const Admin = () => {
                 <h2>Brodate Groups</h2>
                 <div className="buttons-container">
                     <button onClick={shuffleGroups}>Create/Reshuffle Groups</button>
+                    <button onClick={handleDownloadBroDates}>Download Brodates</button>
                 </div>
 
                 <div className="groups-container">
