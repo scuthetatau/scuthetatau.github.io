@@ -133,7 +133,7 @@ const Admin = () => {
         const element = document.createElement("a");
         const file = new Blob([generateBroDatesText()], {type: 'text/plain'});
         element.href = URL.createObjectURL(file);
-        element.download = "brodates.txt";
+        element.download = `brodates_${new Date().toLocaleDateString('en-CA')}.txt`;
         document.body.appendChild(element);
         element.click();
     };
