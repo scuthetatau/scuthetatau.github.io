@@ -45,11 +45,18 @@ const Rush = () => {
                         <span>{timeLeft.minutes} minutes</span> |
                         <span>{timeLeft.seconds} seconds</span>
                     </div>
+                    {/*<button*/}
+                    {/*    className="rush-interest-button"*/}
+                    {/*    onClick={() => window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSftXGQoQa-2I0ANqTsVRYeHeK1s9qK0a8mWzjULW8zO0f9kEQ/viewform?usp=sf_link'}*/}
+                    {/*>*/}
+                    {/*    INTEREST FORM*/}
+                    {/*</button>*/}
+
                     <button
                         className="rush-interest-button"
-                        onClick={() => window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSftXGQoQa-2I0ANqTsVRYeHeK1s9qK0a8mWzjULW8zO0f9kEQ/viewform?usp=sf_link'}
+                        onClick={() => window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSddcxPgVoKzHPi-s0sfoEvfPr_J_Sv56HLCq_o7NDAX7dwWiA/viewform'}
                     >
-                        INTEREST FORM
+                        RUSH RSVP
                     </button>
                 </div>
             </div>
