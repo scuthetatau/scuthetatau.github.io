@@ -264,3 +264,26 @@
 .rush-button:hover {
     background-color: #FFC107; /* Slightly darker on hover */
 }
+
+.rush-highlight-section {
+    background-color: #bd1d1d; /* Light red background to grab attention */
+    color: #ffffff; /* Darker text for contrast */
+    padding: 60px 20px;
+    text-align: center;
+}
+
+.rush-highlight-content {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.rush-highlight-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.rush-highlight-text {
+    font-size: 1.25rem;
+    margin-bottom: 40px;
+}

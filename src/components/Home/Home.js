@@ -23,11 +23,27 @@ const Home = () => {
                     <h1 className="title">THETA TAU</h1>
                     <h2 className="chapter">Upsilon Epsilon Chapter</h2>
                     <p className="description">Co-Ed Professional Engineering Fraternity</p>
+                    {/*<button*/}
+                    {/*    className="rush-btn"*/}
+                    {/*    onClick={() => window.location.href = '/rush'}*/}
+                    {/*>*/}
+                    {/*    RUSH*/}
+                    {/*</button>*/}
+                </div>
+            </div>
+
+            <div className="rush-highlight-section">
+                <div className="rush-highlight-content">
+                    <h2 className="rush-highlight-title">Rush Week is Here!</h2>
+                    <p className="rush-highlight-text">
+                        Don’t miss out on this exciting opportunity to join Theta Tau! Fill out
+                        the RSVP form and be part of our amazing community.
+                    </p>
                     <button
                         className="rush-btn"
-                        onClick={() => window.location.href = '/rush'}
+                        onClick={() => window.open('https://docs.google.com/forms/d/e/1FAIpQLSddcxPgVoKzHPi-s0sfoEvfPr_J_Sv56HLCq_o7NDAX7dwWiA/viewform', '_blank')}
                     >
-                        RUSH
+                        RSVP NOW
                     </button>
                 </div>
             </div>
