@@ -45,6 +45,13 @@ const Home = () => {
                     >
                         RSVP NOW
                     </button>
+
+                    <button
+                        className="rush-btn"
+                        onClick={() => window.open('https://docs.google.com/forms/d/e/1FAIpQLSetXOreUJqcYHXZJtVaqlhIKE7ek57W74BiVqrCNjX_5ZM58g/viewform?usp=sf_link', '_blank')}
+                    >
+                        APPLICATION FORM
+                    </button>
                 </div>
             </div>
 

@@ -60,6 +60,7 @@
     color: #000;
     transition: background-color 0.3s ease;
     font-family: 'Mohave', sans-serif;
+    margin: 10px;
 }
 
 .rush-btn:hover {

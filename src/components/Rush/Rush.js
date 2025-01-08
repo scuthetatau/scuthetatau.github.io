@@ -61,6 +61,29 @@ const Rush = () => {
                 </div>
             </div>
 
+            <div className="rush-highlight-section">
+                <div className="rush-highlight-content">
+                    <h2 className="rush-highlight-title">Rush Week is Here!</h2>
+                    <p className="rush-highlight-text">
+                        Don’t miss out on this exciting opportunity to join Theta Tau! Fill out
+                        the RSVP form and be part of our amazing community.
+                    </p>
+                    <button
+                        className="rush-btn"
+                        onClick={() => window.open('https://docs.google.com/forms/d/e/1FAIpQLSddcxPgVoKzHPi-s0sfoEvfPr_J_Sv56HLCq_o7NDAX7dwWiA/viewform', '_blank')}
+                    >
+                        RSVP NOW
+                    </button>
+
+                    <button
+                        className="rush-btn"
+                        onClick={() => window.open('https://docs.google.com/forms/d/e/1FAIpQLSetXOreUJqcYHXZJtVaqlhIKE7ek57W74BiVqrCNjX_5ZM58g/viewform?usp=sf_link', '_blank')}
+                    >
+                        APPLICATION FORM
+                    </button>
+                </div>
+            </div>
+
             <div className="rush-info-section">
                 <div className="rush-info-title">What is Rush?</div>
                 <p className="rush-info-description">
