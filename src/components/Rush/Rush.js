@@ -38,13 +38,15 @@ const Rush = () => {
             >
                 <div className="rush-hero-content">
                     <h1 className="rush-hero-title">Winter Rush 2025</h1>
-                    <h2 className="rush-hero-subtitle">Countdown to Rush</h2>
-                    <div className="rush-countdown">
-                        <span>{timeLeft.days} days</span> |
-                        <span>{timeLeft.hours} hours</span> |
-                        <span>{timeLeft.minutes} minutes</span> |
-                        <span>{timeLeft.seconds} seconds</span>
-                    </div>
+                    {/*<h2 className="rush-hero-subtitle">Countdown to Rush</h2>*/}
+                    {/*<div className="rush-countdown">*/}
+                    {/*    <span>{timeLeft.days} days</span> |*/}
+                    {/*    <span>{timeLeft.hours} hours</span> |*/}
+                    {/*    <span>{timeLeft.minutes} minutes</span> |*/}
+                    {/*    <span>{timeLeft.seconds} seconds</span>*/}
+                    {/*</div>*/}
+
+
                     {/*<button*/}
                     {/*    className="rush-interest-button"*/}
                     {/*    onClick={() => window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSftXGQoQa-2I0ANqTsVRYeHeK1s9qK0a8mWzjULW8zO0f9kEQ/viewform?usp=sf_link'}*/}
