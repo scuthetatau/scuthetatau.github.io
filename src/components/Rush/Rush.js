@@ -113,7 +113,7 @@ const Rush = () => {
                         <div className="rush-event-date">January 9<br/>7:00 PM</div>
                         <div className="rush-event-details">
                             <div className="rush-event-title">Meet the Actives</div>
-                            <div className="rush-event-location">Vari 129</div>
+                            <div className="rush-event-location">Kenna 216</div>
                             <div className="rush-event-description">Chat with actives and get to know them.</div>
                         </div>
                     </div>
@@ -122,16 +122,25 @@ const Rush = () => {
                         <div className="rush-event-date">January 10<br/>5:30 PM</div>
                         <div className="rush-event-details">
                             <div className="rush-event-title">Innovation Night</div>
-                            <div className="rush-event-location">Locatelli</div>
+                            <div className="rush-event-location">California Mission Room</div>
                             <div className="rush-event-description">Engage with peers and show skills, etc.</div>
                         </div>
                     </div>
 
                     <div className="rush-event-item">
-                        <div className="rush-event-date">January 13-17<br/>TBD</div>
+                        <div className="rush-event-date">January 13-15</div>
                         <div className="rush-event-details">
                             <div className="rush-event-title">Coffee Chats</div>
-                            <div className="rush-event-location">TBD</div>
+                            {/*<div className="rush-event-location">TBD</div>*/}
+                            <div className="rush-event-description">Invite Only</div>
+                        </div>
+                    </div>
+
+                    <div className="rush-event-item">
+                        <div className="rush-event-date">January 16-17</div>
+                        <div className="rush-event-details">
+                            <div className="rush-event-title">Interviews</div>
+                            {/*<div className="rush-event-location">TBD</div>*/}
                             <div className="rush-event-description">Invite Only</div>
                         </div>
                     </div>
