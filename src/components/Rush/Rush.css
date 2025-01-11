@@ -44,9 +44,10 @@
 
 .rush-interest-button {
     background-color: #FFD700FF;
+    font-family: 'Mohave', sans-serif;
     border: none;
     padding: 1rem 2rem;
-    font-size: 1.25rem;
+    font-size: 1.6rem;
     cursor: pointer;
     font-weight: bold;
     color: #000;
