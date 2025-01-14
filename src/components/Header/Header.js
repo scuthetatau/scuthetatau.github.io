@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {Link, useLocation, useNavigate} from 'react-router-dom';
 import './Header.css';
 import WhiteTT from '../assets/WhiteTT.png';
-import { auth, firestore, storage } from '../../firebase';
-import { onAuthStateChanged, signOut } from 'firebase/auth';
-import { doc, getDoc } from 'firebase/firestore';
-import { getDownloadURL, ref } from 'firebase/storage';
+import {auth, firestore, storage} from '../../firebase';
+import {onAuthStateChanged, signOut} from 'firebase/auth';
+import {doc, getDoc} from 'firebase/firestore';
+import {getDownloadURL, ref} from 'firebase/storage';
 
 const Header = () => {
     const [user, setUser] = useState(null);
@@ -34,7 +34,7 @@ const Header = () => {
 
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser) {
-                const { displayName, email } = currentUser;
+                const {displayName, email} = currentUser;
 
                 const isAuthorized = await checkAuthorization(email);
                 if (!isAuthorized) {
@@ -48,8 +48,12 @@ const Header = () => {
                     const userData = userSnapshot.data();
                     let profilePicUrl = userData?.profilePictureUrl;
 
-                    if (profilePicUrl && !profilePicUrl.startsWith('https://lh3.googleusercontent.com/')) {
-                        profilePicUrl = await getDownloadURL(ref(storage, profilePicUrl));
+                    if (profilePicUrl && !profilePicUrl.startsWith('https://lh3.googleusercontent.com/')) { // Profile picture is a Firebase Storage URL
+                        try {
+                            profilePicUrl = await getDownloadURL(ref(storage, profilePicUrl));
+                        } catch (error) {
+                            console.error(`Error getting image URL for user ${currentUser.email}:`, error);
+                        }
                     }
 
                     const [firstName, lastName] = displayName ? displayName.split(' ') : [null, null];
@@ -98,7 +102,7 @@ const Header = () => {
 
     return (
         <nav className="header">
-            <img src={WhiteTT} alt="Logo" className="logo" onClick={handleIconClick} />
+            <img src={WhiteTT} alt="Logo" className="logo" onClick={handleIconClick}/>
 
             <button className="hamburger-icon" onClick={toggleMobileMenu}>
                 ☰
@@ -106,10 +110,19 @@ const Header = () => {
 
             <div className={`nav-links ${mobileMenuVisible ? 'visible' : ''}`}>
                 <ul>
-                    <li className={location.pathname === '/' ? 'active' : ''}><Link to="/" onClick={toggleMobileMenu}>Home</Link></li>
-                    <li className={location.pathname === '/about-us' ? 'active' : ''}><Link to="/about-us" onClick={toggleMobileMenu}>About Us</Link></li>
-                    <li className={location.pathname === '/meet-the-brothers' ? 'active' : ''}><Link to="/meet-the-brothers" onClick={toggleMobileMenu}>Meet The Brothers</Link></li>
-                    <li className={location.pathname === '/rush' ? 'active' : ''}><Link to="/rush" onClick={toggleMobileMenu}>Rush</Link></li>
+                    <li className={location.pathname === '/' ? 'active' : ''}><Link to="/"
+                                                                                    onClick={toggleMobileMenu}>Home</Link>
+                    </li>
+                    <li className={location.pathname === '/about-us' ? 'active' : ''}><Link to="/about-us"
+                                                                                            onClick={toggleMobileMenu}>About
+                        Us</Link></li>
+                    <li className={location.pathname === '/meet-the-brothers' ? 'active' : ''}><Link
+                        to="/meet-the-brothers" onClick={toggleMobileMenu}>Meet The Brothers</Link></li>
+                    <li className={location.pathname === '/rush' ? 'active' : ''}><Link to="/rush"
+                                                                                        onClick={toggleMobileMenu}>Rush</Link>
+                    </li>
+                    <li className={location.pathname === '/alumni' ? 'active' : ''}><Link to="/alumni" onClick={toggleMobileMenu}>Alumni</Link>
+                    </li>
                 </ul>
             </div>
 
@@ -117,7 +130,7 @@ const Header = () => {
                 <ul>
                     {user ? (
                         <li className="dropdown" onClick={toggleDropdown}>
-                            <span className="header-profile" style={{ color: 'white', cursor: 'pointer' }}>
+                            <span className="header-profile" style={{color: 'white', cursor: 'pointer'}}>
                                 <span className="header-profile-name">
                                     {user.firstName && user.lastName ? `${user.firstName} ${user.lastName}` : user.email}
                                 </span>
@@ -132,7 +145,8 @@ const Header = () => {
                             )}
                         </li>
                     ) : (
-                        <li className={location.pathname === '/login' ? 'active' : ''}><Link to="/login">Login</Link></li>
+                        <li className={location.pathname === '/login' ? 'active' : ''}><Link to="/login">Login</Link>
+                        </li>
                     )}
                 </ul>
             </div>

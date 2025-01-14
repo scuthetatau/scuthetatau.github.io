@@ -3,6 +3,7 @@ import {BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Home from './components/Home/Home';
 import AboutUs from './components/AboutUs/AboutUs';
 import MeetTheBrothers from './components/MeetTheBrothers/MeetTheBrothers';
+import Alumni from './components/Alumni';
 import Events from './components/Events/Events';
 import Rush from './components/Rush/Rush';
 import Login from './components/Login/Login';
@@ -27,6 +28,7 @@ function App() {
                     <Route path="/dashboard" element={<Dashboard/>}/>
                     <Route path="/admin" element={<Admin/>}/>
                     <Route path="/scribe-editor" element={<ScribeEditor/>}/>
+                    <Route path="/alumni" element={<Alumni/>}/>
                 </Routes>
             </div>
             <footer className="footer">
