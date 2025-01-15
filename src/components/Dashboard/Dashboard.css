@@ -95,24 +95,6 @@ h2 {
     padding-bottom: 10px;
 }
 
-.buttons-container button {
-    font: inherit;
-    font-weight: bold;
-    text-transform: uppercase;
-    padding: 10px 20px;
-    margin: 0 10px;
-    background-color: #9a0706;
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.buttons-container button:hover {
-    background-color: #9a0706;
-    transition: 0.5s;
-}
-
 .spoon-card {
     background: #860303;
     color: white;

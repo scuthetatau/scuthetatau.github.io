@@ -26,11 +26,11 @@ const Dashboard = () => {
                     const userQuery = query(collection(firestore, 'users'), where('email', '==', currentUser.email));
                     const userSnapshot = await getDocs(userQuery);
 
-                    if (!userSnapshot.empty) {
+                    if (!userSnapshot.empty) { // User exists in Firestore
                         const userData = userSnapshot.docs[0].data();
-                        let profilePicUrl = userData.profilePictureUrl;
+                        let profilePicUrl = userData?.profilePictureUrl; // Profile picture is a Firebase Storage URL or a Google profile picture URL
 
-                        if (profilePicUrl && !profilePicUrl.startsWith('https://lh3.googleusercontent.com/')) {
+                        if (profilePicUrl && !profilePicUrl.startsWith('https://lh3.googleusercontent.com/')) { // Profile picture is a Firebase Storage URL
                             try {
                                 profilePicUrl = await getDownloadURL(ref(storage, profilePicUrl));
                             } catch (error) {
@@ -206,10 +206,19 @@ const Dashboard = () => {
             <div>
                 <div className="buttons-container">
                     {user && (user.role === 'Webmaster' || user.role === 'Scribe') && (
-                        <button onClick={() => window.location.href = '/scribe-editor'}>Go to Scribe Editor</button>
+                        <button className="rush-btn" onClick={() => window.location.href = '/scribe-editor'}>Go to Scribe Editor</button>
                     )}
                     {user && user.role === 'Webmaster' && (
-                        <button onClick={() => window.location.href = '/admin'}>Go to Admin</button>
+                        <button className="rush-btn" onClick={() => window.location.href = '/admin'}>Admin</button>
+                    )}
+                    {user && user.role === 'Webmaster' && (
+                        <button className="rush-btn" onClick={() => window.location.href = '/admin/user-management'}>User Management</button>
+                    )}
+                    {user && user.role === 'Webmaster' && (
+                        <button className="rush-btn" onClick={() => window.location.href = '/admin/bro-dates'}>Manage Brodates</button>
+                    )}
+                    {user && user.role === 'Webmaster' && (
+                        <button className="rush-btn" onClick={() => window.location.href = '/admin/spoon-assassins'}>Spoon Assassins</button>
                     )}
                 </div>
             </div>

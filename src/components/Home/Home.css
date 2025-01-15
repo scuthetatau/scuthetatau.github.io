@@ -61,6 +61,7 @@
     transition: background-color 0.3s ease;
     font-family: 'Mohave', sans-serif;
     margin: 10px;
+    text-transform: uppercase;
 }
 
 .rush-btn:hover {

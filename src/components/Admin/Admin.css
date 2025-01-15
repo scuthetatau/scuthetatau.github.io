@@ -224,3 +224,24 @@
     margin: 10px;
     width: 45%;
 }
+
+.admin-dashboard ul {
+    list-style-type: none;
+    padding: 0;
+    display: flex;
+    gap: 20px;
+}
+
+.admin-dashboard li {
+    text-transform: uppercase;
+}
+
+.admin-dashboard li a {
+    text-decoration: none;
+    color: #1c0f0f;
+    font-size: 1.2em;
+}
+
+.admin-dashboard li a:hover {
+    /*color: #6b1212;*/
+}
