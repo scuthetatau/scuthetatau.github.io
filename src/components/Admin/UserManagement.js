@@ -22,6 +22,18 @@ const UserManagement = () => {
     const [profilePicture, setProfilePicture] = useState(null);
     const [profilePictureEdit, setProfilePictureEdit] = useState(null);
 
+    const [alumni, setAlumni] = useState([]);
+    const [editingAlumni, setEditingAlumni] = useState(null);
+    const [newAlumni, setNewAlumni] = useState({
+        firstName: '',
+        lastName: '',
+        graduationYear: '',
+        major: '',
+        profilePictureUrl: '',
+    });
+    const [alumniProfilePicture, setAlumniProfilePicture] = useState(null);
+    const [alumniProfilePictureEdit, setAlumniProfilePictureEdit] = useState(null);
+
     // Fetch users from Firestore
     const fetchUsers = async () => {
         const usersSnapshot = await getDocs(collection(firestore, 'users'));
@@ -31,7 +43,7 @@ const UserManagement = () => {
     // Add a new user to Firestore
     const addUser = async (newUser, profilePicture) => {
         if (profilePicture) {
-            const profilePictureRef = ref(storage, `profilePictures/${new Date().getTime()}_${profilePicture.name}`);
+            const profilePictureRef = ref(storage, `alumniProfilePictures/${new Date().getTime()}_${profilePicture.name}`);
             await uploadBytes(profilePictureRef, profilePicture);
             newUser.profilePictureUrl = await getDownloadURL(profilePictureRef);
         }
@@ -49,13 +61,87 @@ const UserManagement = () => {
         await updateDoc(userRef, editingUser);
     };
 
+    // Fetch alumni from Firestore
+    const fetchAlumni = async () => {
+        const alumniSnapshot = await getDocs(collection(firestore, 'alumni'));
+        return alumniSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+    };
+
+    // Add a new alumni to Firestore
+    const addAlumni = async (newAlumni, alumniProfilePicture) => {
+        if (alumniProfilePicture) {
+            const profilePictureRef = ref(
+                storage,
+                `alumniProfilePictures/${new Date().getTime()}_${alumniProfilePicture.name}`
+            );
+            await uploadBytes(profilePictureRef, alumniProfilePicture);
+            newAlumni.profilePictureUrl = await getDownloadURL(profilePictureRef);
+        }
+        await addDoc(collection(firestore, 'alumni'), newAlumni);
+    };
+
+    // Update an existing alumni in Firestore
+    const updateAlumni = async (editingAlumni, alumniProfilePictureEdit) => {
+        if (alumniProfilePictureEdit) {
+            const profilePictureRef = ref(
+                storage,
+                `alumniProfilePictures/${new Date().getTime()}_${alumniProfilePictureEdit.name}`
+            );
+            await uploadBytes(profilePictureRef, alumniProfilePictureEdit);
+            editingAlumni.profilePictureUrl = await getDownloadURL(profilePictureRef);
+        }
+        const alumniRef = doc(firestore, 'alumni', editingAlumni.id);
+        await updateDoc(alumniRef, editingAlumni);
+    };
+
     useEffect(() => {
-        const fetchAllUsers = async () => {
+        const fetchAllData = async () => {
             const usersList = await fetchUsers();
+            const alumniList = await fetchAlumni();
             setUsers(usersList);
+            setAlumni(alumniList);
         };
-        fetchAllUsers();
+        fetchAllData();
     }, []);
+
+    const handleAddAlumni = async () => {
+        try {
+            await addAlumni(newAlumni, alumniProfilePicture);
+            setNewAlumni({
+                firstName: '',
+                lastName: '',
+                graduationYear: '',
+                major: '',
+                profilePictureUrl: '',
+            });
+            setAlumniProfilePicture(null);
+            alert('Alumni added successfully');
+            const alumniList = await fetchAlumni(); // Refresh alumni list
+            setAlumni(alumniList);
+        } catch (error) {
+            console.error('Error adding alumni:', error);
+        }
+    };
+
+    const handleUpdateAlumni = async () => {
+        if (!editingAlumni) return;
+        try {
+            await updateAlumni(editingAlumni, alumniProfilePictureEdit);
+            setEditingAlumni(null);
+            setAlumniProfilePictureEdit(null);
+            alert('Alumni updated successfully');
+            const alumniList = await fetchAlumni(); // Refresh alumni list
+            setAlumni(alumniList);
+        } catch (error) {
+            console.error('Error updating alumni:', error);
+        }
+    };
+
+    const handleCloseEditAlumni = () => {
+        setEditingAlumni(null);
+        setAlumniProfilePictureEdit(null);
+    };
+
 
     const handleAddUser = async () => {
         try {
@@ -324,6 +410,145 @@ const UserManagement = () => {
                             </button>
                             <button className="update" onClick={handleUpdateUser}>
                                 Update User
+                            </button>
+                        </div>
+                    </div>
+                </>
+            )}
+
+            <div className="admin-add-user">
+                <h2>Add New Alumni</h2>
+                <div className="admin-input-group">
+                    <label>Profile Picture</label>
+                    <input type="file" onChange={(e) => setAlumniProfilePicture(e.target.files[0])} />
+                </div>
+                <div className="admin-input-group">
+                    <label>First Name</label>
+                    <input
+                        type="text"
+                        value={newAlumni.firstName}
+                        onChange={(e) => setNewAlumni({ ...newAlumni, firstName: e.target.value })}
+                        placeholder="First Name"
+                    />
+                </div>
+                <div className="admin-input-group">
+                    <label>Last Name</label>
+                    <input
+                        type="text"
+                        value={newAlumni.lastName}
+                        onChange={(e) => setNewAlumni({ ...newAlumni, lastName: e.target.value })}
+                        placeholder="Last Name"
+                    />
+                </div>
+                <div className="admin-input-group">
+                    <label>Graduation Year</label>
+                    <input
+                        type="text"
+                        value={newAlumni.graduationYear}
+                        onChange={(e) => setNewAlumni({ ...newAlumni, graduationYear: e.target.value })}
+                        placeholder="Graduation Year"
+                    />
+                </div>
+                <div className="admin-input-group">
+                    <label>Major</label>
+                    <input
+                        type="text"
+                        value={newAlumni.major}
+                        onChange={(e) => setNewAlumni({ ...newAlumni, major: e.target.value })}
+                        placeholder="Major"
+                    />
+                </div>
+                <div className="admin-buttons">
+                    <button className="add" onClick={handleAddAlumni}>
+                        Add Alumni
+                    </button>
+                </div>
+            </div>
+
+            {/* Display all alumni */}
+            <h2>Alumni</h2>
+            <div className="admin-user-cards">
+                {alumni.map((alum) => (
+                    <div key={alum.id} className="user-card" onClick={() => setEditingAlumni(alum)}>
+                        <div className="user-card-info">
+                            {alum.profilePictureUrl && (
+                                <img
+                                    src={alum.profilePictureUrl}
+                                    alt={`${alum.firstName} ${alum.lastName}`}
+                                    className="user-card-img-small"
+                                />
+                            )}
+                            <div className="user-card-text">
+                                <span className="user-card-name">
+                                    {alum.firstName} {alum.lastName}
+                                </span>
+                                <br />
+                                <span className="user-card-role">{alum.graduationYear}</span>
+                                <br />
+                            </div>
+                        </div>
+                    </div>
+                ))}
+            </div>
+
+            {/* Edit alumni modal */}
+            {editingAlumni && (
+                <>
+                    <div className="admin-edit-user-overlay" onClick={handleCloseEditAlumni}></div>
+                    <div className="admin-edit-user">
+                        <h2>Edit Alumni</h2>
+                        <div className="admin-input-group">
+                            <label>Profile Picture</label>
+                            <input type="file" onChange={(e) => setAlumniProfilePictureEdit(e.target.files[0])} />
+                        </div>
+                        <div className="admin-input-group">
+                            <label>First Name</label>
+                            <input
+                                type="text"
+                                value={editingAlumni.firstName}
+                                onChange={(e) =>
+                                    setEditingAlumni({ ...editingAlumni, firstName: e.target.value })
+                                }
+                                placeholder="First Name"
+                            />
+                        </div>
+                        <div className="admin-input-group">
+                            <label>Last Name</label>
+                            <input
+                                type="text"
+                                value={editingAlumni.lastName}
+                                onChange={(e) =>
+                                    setEditingAlumni({ ...editingAlumni, lastName: e.target.value })
+                                }
+                                placeholder="Last Name"
+                            />
+                        </div>
+                        <div className="admin-input-group">
+                            <label>Graduation Year</label>
+                            <input
+                                type="text"
+                                value={editingAlumni.graduationYear}
+                                onChange={(e) =>
+                                    setEditingAlumni({ ...editingAlumni, graduationYear: e.target.value })
+                                }
+                                placeholder="Graduation Year"
+                            />
+                        </div>
+                        <div className="admin-input-group">
+                            <label>Major</label>
+                            <input
+                                type="text"
+                                value={editingAlumni.major}
+                                onChange={(e) => setEditingAlumni({ ...editingAlumni, major: e.target.value })}
+                                placeholder="Major"
+                            />
+                        </div>
+                        <div className="admin-buttons">
+                            <button className="close" onClick={handleCloseEditAlumni}>
+                                Close
+                            </button>
+                            <button className="update" onClick={handleUpdateAlumni}>
+                                Update Alumni
                             </button>
                         </div>
                     </div>
