@@ -103,7 +103,7 @@ const Dashboard = () => {
         return <div>Error: {error}</div>;
     }
 
-    const progressGoal = 2000;
+    const progressGoal = 2500;
     const progressPercentage = (points / progressGoal) * 100;
 
     return (
