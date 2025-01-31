@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { auth, firestore, storage } from '../../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
 import { getDownloadURL, ref } from 'firebase/storage';
 import './Dashboard.css';
 import { AiOutlineEdit } from 'react-icons/ai';
@@ -39,26 +39,34 @@ const Dashboard = () => {
                                 const fileRef = ref(storage, profilePicUrl);
                                 profilePicUrl = await getDownloadURL(fileRef);
                             } catch (error) {
-                                console.error(`Error getting profile picture URL for ${currentUser.email}:`, error);
+                                console.error(
+                                    `Error getting profile picture URL for ${currentUser.email}:`,
+                                    error
+                                );
                             }
                         }
 
                         // Retrieve BroDate group associated with the user
-                        const broDatesSnapshot = await getDocs(collection(firestore, 'brodates'));
-                        const broDates = broDatesSnapshot.docs.map(doc => ({
+                        const broDatesSnapshot = await getDocs(
+                            collection(firestore, 'brodates')
+                        );
+                        const broDates = broDatesSnapshot.docs.map((doc) => ({
                             id: doc.id,
                             ...doc.data(),
                         }));
 
                         // Find the group that contains the current user
-                        const userGroup = broDates.find(group =>
-                            group.members.some(member => member.email === currentUser.email)
+                        const userGroup = broDates.find((group) =>
+                            group.members.some(
+                                (member) => member.email === currentUser.email
+                            )
                         );
 
                         setUser({
                             ...userData,
                             id: userSnapshot.docs[0].id, // Add Firestore document ID to the user object
-                            profilePictureUrl: profilePicUrl || currentUser.photoURL, // Default to Google photo if not available
+                            profilePictureUrl:
+                                profilePicUrl || currentUser.photoURL, // Default to Google photo if not available
                         });
                         setPoints(userData.points || 0);
 
@@ -66,6 +74,16 @@ const Dashboard = () => {
                             setBroDateGroup(userGroup.members); // Set the user's BroDate group
                         } else {
                             setBroDateGroup([]); // No group found
+                        }
+
+                        // Fetch the current user's target for Spoon Assassins
+                        const targetDocRef = doc(firestore, 'targets', userSnapshot.docs[0].id);
+                        const targetDoc = await getDoc(targetDocRef);
+                        if (targetDoc.exists()) {
+                            setTarget(targetDoc.data());
+                        } else {
+                            console.warn('User target not found in targets collection.');
+                            setTarget(null);
                         }
                     } else {
                         setError('User data not found');
@@ -91,7 +109,10 @@ const Dashboard = () => {
                 const upcomingEvents = await getUpcomingEvents();
                 setEvents(upcomingEvents);
             } catch (error) {
-                console.error('Error initializing Google API client or fetching events:', error);
+                console.error(
+                    'Error initializing Google API client or fetching events:',
+                    error
+                );
             }
         };
         fetchEvents();
@@ -122,9 +143,15 @@ const Dashboard = () => {
                 {user ? (
                     <>
                         <div className="user-info">
-                            <img className="profile-picture" src={user.profilePictureUrl} alt="Profile"/>
+                            <img
+                                className="profile-picture"
+                                src={user.profilePictureUrl}
+                                alt="Profile"
+                            />
                             <div className="welcome-container">
-                                <h1 className="welcome-message">Welcome, {user.firstName}</h1>
+                                <h1 className="welcome-message">
+                                    Welcome, {user.firstName}
+                                </h1>
                                 <div className="user-details">
                                     <p>{user.email}</p>
                                     <p>{user.role}</p>
@@ -135,18 +162,20 @@ const Dashboard = () => {
                                 </div>
                             </div>
                         </div>
-                        <AiOutlineEdit className="edit-icon" onClick={openEditPopup}/>
+                        <AiOutlineEdit className="edit-icon" onClick={openEditPopup} />
                     </>
                 ) : (
                     <p>User is not logged in.</p>
                 )}
             </div>
 
-            {/*Spoon Assassins widget*/}
+            {/* Spoon Assassins widget */}
             {/*<div className="widgets">*/}
             {/*    <div className="card spoon-card">*/}
             {/*        <h2>Spoon Assassin</h2>*/}
-            {/*        <p>Your target: {target.targetName}</p>*/}
+            {/*        <p>*/}
+            {/*            Your target: {target ? target.targetName : 'No target assigned'}*/}
+            {/*        </p>*/}
             {/*    </div>*/}
             {/*</div>*/}
 
@@ -156,10 +185,12 @@ const Dashboard = () => {
                     <div className="progress-bar">
                         <div
                             className="progress"
-                            style={{width: `${progressPercentage}%`}}
+                            style={{ width: `${progressPercentage}%` }}
                         ></div>
                     </div>
-                    <p>{points} / {progressGoal} Points</p>
+                    <p>
+                        {points} / {progressGoal} Points
+                    </p>
                 </div>
 
                 <div className="card calendar-card">
@@ -169,17 +200,17 @@ const Dashboard = () => {
                             let eventDate;
 
                             if (event.start.date && !event.start.dateTime) {
-                                // Handle all-day events by treating the date as-is
                                 const dateParts = event.start.date.split('-');
                                 const year = parseInt(dateParts[0], 10);
-                                const month = parseInt(dateParts[1], 10) - 1; // JavaScript months are 0-indexed
+                                const month = parseInt(dateParts[1], 10) - 1;
                                 const day = parseInt(dateParts[2], 10);
 
                                 const localDate = new Date(year, month, day);
-                                eventDate = localDate.toLocaleDateString(); // Display only the date without time adjustments
+                                eventDate = localDate.toLocaleDateString();
                             } else {
-                                // Handle timed events
-                                eventDate = new Date(event.start.dateTime).toLocaleString(); // Display date and time for timed events
+                                eventDate = new Date(
+                                    event.start.dateTime
+                                ).toLocaleString();
                             }
 
                             return (
@@ -193,7 +224,6 @@ const Dashboard = () => {
                         <p>No upcoming events</p>
                     )}
                 </div>
-
             </div>
 
             <div className="widgets">
@@ -202,7 +232,9 @@ const Dashboard = () => {
                     {broDateGroup.length > 0 ? (
                         <ul>
                             {broDateGroup.map((member, index) => (
-                                <li key={index}>{member.firstName} {member.lastName}</li>
+                                <li key={index}>
+                                    {member.firstName} {member.lastName}
+                                </li>
                             ))}
                         </ul>
                     ) : (
@@ -211,24 +243,62 @@ const Dashboard = () => {
                 </div>
             </div>
 
-            {isEditPopupOpen && <EditUserPopup user={user} onClose={closeEditPopup}/>}
+            {isEditPopupOpen && (
+                <EditUserPopup user={user} onClose={closeEditPopup} />
+            )}
 
             <div>
                 <div className="buttons-container">
-                    {user && (user.role === 'Webmaster' || user.role === 'Scribe') && (
-                        <button className="rush-btn" onClick={() => window.location.href = '/scribe-editor'}>Go to Scribe Editor</button>
+                    {user &&
+                        (user.role === 'Webmaster' || user.role === 'Scribe') && (
+                            <button
+                                className="rush-btn"
+                                onClick={() =>
+                                    (window.location.href = '/scribe-editor')
+                                }
+                            >
+                                Go to Scribe Editor
+                            </button>
+                        )}
+                    {user && user.role === 'Webmaster' && (
+                        <button
+                            className="rush-btn"
+                            onClick={() => (window.location.href = '/admin')}
+                        >
+                            Admin
+                        </button>
                     )}
                     {user && user.role === 'Webmaster' && (
-                        <button className="rush-btn" onClick={() => window.location.href = '/admin'}>Admin</button>
+                        <button
+                            className="rush-btn"
+                            onClick={() =>
+                                (window.location.href =
+                                    '/admin/user-management')
+                            }
+                        >
+                            User Management
+                        </button>
                     )}
                     {user && user.role === 'Webmaster' && (
-                        <button className="rush-btn" onClick={() => window.location.href = '/admin/user-management'}>User Management</button>
+                        <button
+                            className="rush-btn"
+                            onClick={() =>
+                                (window.location.href = '/admin/bro-dates')
+                            }
+                        >
+                            Manage Brodates
+                        </button>
                     )}
                     {user && user.role === 'Webmaster' && (
-                        <button className="rush-btn" onClick={() => window.location.href = '/admin/bro-dates'}>Manage Brodates</button>
-                    )}
-                    {user && user.role === 'Webmaster' && (
-                        <button className="rush-btn" onClick={() => window.location.href = '/admin/spoon-assassins'}>Spoon Assassins</button>
+                        <button
+                            className="rush-btn"
+                            onClick={() =>
+                                (window.location.href =
+                                    '/admin/spoon-assassins')
+                            }
+                        >
+                            Spoon Assassins
+                        </button>
                     )}
                 </div>
             </div>
