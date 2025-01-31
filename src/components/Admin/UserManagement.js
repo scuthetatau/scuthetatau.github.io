@@ -43,11 +43,11 @@ const UserManagement = () => {
     // Add a new user to Firestore
     const addUser = async (newUser, profilePicture) => {
         if (profilePicture) {
-            const profilePictureRef = ref(storage, `alumniProfilePictures/${new Date().getTime()}_${profilePicture.name}`);
+            const profilePictureRef = ref(storage, `profilePictures/${new Date().getTime()}_${profilePicture.name}`);
             await uploadBytes(profilePictureRef, profilePicture);
-            newUser.profilePictureUrl = await getDownloadURL(profilePictureRef);
+            newUser.profilePictureUrl = await getDownloadURL(profilePictureRef); // Store the full URL
         }
-        await addDoc(collection(firestore, 'users'), newUser);
+        await addDoc(collection(firestore, 'users'), newUser); // Firestore handles document ID
     };
 
     // Update an existing user in Firestore

@@ -23,40 +23,49 @@ const Dashboard = () => {
             setLoading(true);
             if (currentUser) {
                 try {
-                    const userQuery = query(collection(firestore, 'users'), where('email', '==', currentUser.email));
+                    const userQuery = query(
+                        collection(firestore, 'users'),
+                        where('email', '==', currentUser.email) // Match user by email
+                    );
                     const userSnapshot = await getDocs(userQuery);
 
                     if (!userSnapshot.empty) { // User exists in Firestore
                         const userData = userSnapshot.docs[0].data();
-                        let profilePicUrl = userData?.profilePictureUrl; // Profile picture is a Firebase Storage URL or a Google profile picture URL
+                        let profilePicUrl = userData?.profilePictureUrl;
 
-                        if (profilePicUrl && !profilePicUrl.startsWith('https://lh3.googleusercontent.com/')) { // Profile picture is a Firebase Storage URL
+                        // Resolve profile picture URL
+                        if (profilePicUrl && !profilePicUrl.startsWith('https://lh3.googleusercontent.com/')) {
                             try {
-                                profilePicUrl = await getDownloadURL(ref(storage, profilePicUrl));
+                                const fileRef = ref(storage, profilePicUrl);
+                                profilePicUrl = await getDownloadURL(fileRef);
                             } catch (error) {
-                                console.error(`Error getting image URL for user ${currentUser.email}:`, error);
+                                console.error(`Error getting profile picture URL for ${currentUser.email}:`, error);
                             }
                         }
+
+                        // Retrieve BroDate group associated with the user
+                        const broDatesSnapshot = await getDocs(collection(firestore, 'brodates'));
+                        const broDates = broDatesSnapshot.docs.map(doc => ({
+                            id: doc.id,
+                            ...doc.data(),
+                        }));
+
+                        // Find the group that contains the current user
+                        const userGroup = broDates.find(group =>
+                            group.members.some(member => member.email === currentUser.email)
+                        );
+
                         setUser({
                             ...userData,
-                            profilePictureUrl: profilePicUrl || currentUser.photoURL
+                            id: userSnapshot.docs[0].id, // Add Firestore document ID to the user object
+                            profilePictureUrl: profilePicUrl || currentUser.photoURL, // Default to Google photo if not available
                         });
                         setPoints(userData.points || 0);
 
-                        // Fetch target information
-                        const targetsQuery = query(collection(firestore, 'targets'), where('userId', '==', userData.id));
-                        const targetsSnapshot = await getDocs(targetsQuery);
-                        if (!targetsSnapshot.empty) {
-                            setTarget(targetsSnapshot.docs[0].data());
-                        }
-
-                        // Fetch BroDate group
-                        const broDatesQuery = query(collection(firestore, 'brodates'));
-                        const broDatesSnapshot = await getDocs(broDatesQuery);
-                        const broDates = broDatesSnapshot.docs.map(doc => doc.data());
-                        const userGroup = broDates.find(group => group.members.some(member => member.email === currentUser.email));
                         if (userGroup) {
-                            setBroDateGroup(userGroup.members);
+                            setBroDateGroup(userGroup.members); // Set the user's BroDate group
+                        } else {
+                            setBroDateGroup([]); // No group found
                         }
                     } else {
                         setError('User data not found');
@@ -70,6 +79,7 @@ const Dashboard = () => {
             }
             setLoading(false);
         });
+
         return () => unsubscribe();
     }, []);
 

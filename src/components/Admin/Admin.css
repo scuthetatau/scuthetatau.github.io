@@ -245,3 +245,13 @@
 .admin-dashboard li a:hover {
     /*color: #6b1212;*/
 }
+
+.admin-input-group select {
+    flex-basis: 65%; /* Match the layout of other inputs */
+    padding: 10px; /* Same padding as text inputs */
+    font-size: 1em; /* Match font size */
+    border: 1px solid #ccc; /* Same border as the inputs */
+    border-radius: 5px; /* Rounded corners same as inputs */
+    background-color: #ffffff; /* Background color similar to inputs */
+    color: #333; /* Text color */
+}

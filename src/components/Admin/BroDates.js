@@ -1,37 +1,66 @@
-import React, {useEffect, useState} from 'react';
-import {fetchGroups, shuffleGroups} from './groupService';
+import React, { useEffect, useState } from 'react';
+import { fetchGroups, shuffleGroups } from './groupService';
 
 const BroDates = () => {
     const [groups, setGroups] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     useEffect(() => {
         const fetchAllGroups = async () => {
-            const groupsList = await fetchGroups();
-            setGroups(groupsList);
+            try {
+                const groupsList = await fetchGroups();
+                setGroups(groupsList);
+            } catch (err) {
+                console.error('Failed to fetch brodate groups:', err);
+                setError('Failed to fetch brodate groups.');
+            } finally {
+                setLoading(false);
+            }
         };
         fetchAllGroups();
     }, []);
 
     const handleShuffleGroups = async () => {
-        const shuffledGroups = await shuffleGroups();
-        setGroups(shuffledGroups);
+        try {
+            setLoading(true); // Show loading indicator during reshuffle
+            const shuffledGroups = await shuffleGroups();
+            setGroups(shuffledGroups);
+        } catch (err) {
+            console.error('Failed to reshuffle brodate groups:', err);
+            setError('Failed to reshuffle brodate groups.');
+        } finally {
+            setLoading(false);
+        }
     };
+
+    if (loading) {
+        return <p>Loading brodate groups...</p>;
+    }
+
+    if (error) {
+        return <p>Error: {error}</p>;
+    }
 
     return (
         <div className="admin-page">
             <h1>Bro Dates</h1>
             <button className="rush-btn" onClick={handleShuffleGroups}>Create/Reshuffle Groups</button>
             <div className="groups-container">
-                {groups.map((group, index) => (
-                    <div key={index} className="group brodate-group">
-                        <h3>Group {index + 1}</h3>
-                        <ul>
-                            {group.members.map((member) => (
-                                <li key={member.id}>{`${member.firstName} ${member.lastName}`}</li>
-                            ))}
-                        </ul>
-                    </div>
-                ))}
+                {groups.length > 0 ? (
+                    groups.map((group, index) => (
+                        <div key={index} className="group brodate-group">
+                            <h3>Group {index + 1}</h3>
+                            <ul>
+                                {group.members.map((member) => (
+                                    <li key={member.id}>{`${member.firstName} ${member.lastName}`}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    ))
+                ) : (
+                    <p>No BroDate group found.</p>
+                )}
             </div>
         </div>
     );

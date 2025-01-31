@@ -78,11 +78,16 @@ const EditUserPopup = ({ user, onClose }) => {
                 </div>
                 <div className="admin-input-group">
                     <label>Family:</label>
-                    <input
+                    <select
                         name="family"
                         value={updatedUser.family}
                         onChange={handleChange}
-                    />
+                    >
+                        <option value="Filthy Fam">Filthy Fam</option>
+                        <option value="Presibobante Guys">Presibobante Guys</option>
+                        <option value="Engh Gang">Engh Gang</option>
+                        <option value="Clout Fam">Clout Fam</option>
+                    </select>
                 </div>
                 {/*<div className="admin-input-group">*/}
                 {/*    <label>Profile Picture:</label>*/}
