@@ -10,11 +10,12 @@ import Login from './components/Login/Login';
 import Header from './components/Header/Header';
 import Admin from './components/Admin/Admin';
 import UserManagement from './components/Admin/UserManagement';
-import BroDates from './components/Admin/BroDates';
+import ManageBroDates from './components/Admin/ManageBroDates';
 import SpoonAssassins from './components/Admin/SpoonAssassins';
 import './components/Footer.css';
 import Dashboard from "./components/Dashboard/Dashboard";
 import ScribeEditor from "./components/ScribeEditor/ScribeEditor";
+import BroDatesPage from './components/Brodates/BroDatesPage';
 
 function App() {
     return (
@@ -30,13 +31,15 @@ function App() {
                     <Route path="/login" element={<Login />} />
                     <Route path="/admin" element={<Admin />} />
                     <Route path="/admin/user-management" element={<UserManagement />} />
-                    <Route path="/admin/bro-dates" element={<BroDates />} />
+                    <Route path="/admin/bro-dates" element={<ManageBroDates />} />
                     <Route path="/admin/spoon-assassins" element={<SpoonAssassins />} />
                     <Route path="/alumni" element={<Alumni />} />
 
                     <Route path="/dashboard" element={<Dashboard/>}/>
 
                     <Route path="/scribe-editor" element={<ScribeEditor/>}/>
+
+                    {/*<Route path="/bro-dates" element={<BroDatesPage />} />*/}
                 </Routes>
             </div>
             <footer className="footer">
