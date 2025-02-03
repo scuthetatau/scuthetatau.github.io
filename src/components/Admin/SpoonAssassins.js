@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { firestore } from '../../firebase';
 import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { checkUserRole } from './auth'; // Import checkUserRole function
 import './Admin.css';
 
 const SpoonAssassins = () => {
     const [users, setUsers] = useState([]);
     const [targets, setTargets] = useState([]);
+    const navigate = useNavigate(); // Initialize navigate function
+
+    useEffect(() => {
+        // Verify authentication and role
+        const unsubscribe = checkUserRole(navigate); // Check user role and redirect if unauthorized
+        return () => unsubscribe && unsubscribe(); // Clean up on unmount
+    }, [navigate]);
 
     useEffect(() => {
         // Fetch users for assigning targets

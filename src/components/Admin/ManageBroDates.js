@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { fetchGroups, shuffleGroups } from './groupService';
 
-const BroDates = () => {
+const ManageBroDates = () => {
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -66,4 +66,4 @@ const BroDates = () => {
     );
 };
 
-export default BroDates;
+export default ManageBroDates;
