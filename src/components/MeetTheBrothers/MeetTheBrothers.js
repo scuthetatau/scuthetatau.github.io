@@ -104,7 +104,7 @@ const MeetTheBrothers = () => {
         <div className="meet-the-brothers-component">
             <div className="meet-the-brothers-hero" style={{backgroundImage: `url(${thetaClass})`}}>
                 <div className="join-overlay">
-                    <h2 className="rush-hero-title">Meet the Brothers</h2>
+                    <h2 className="hero-title">Meet the Brothers</h2>
                 </div>
             </div>
             {/*<img src={CoatArms} alt="CoatArms" className="meet-the-brothers-coat-arms"/>*/}

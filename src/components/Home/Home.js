@@ -21,7 +21,7 @@ const Home = () => {
             >
                 <div className="content">
                     <h3 className="subheading">Santa Clara University</h3>
-                    <h1 className="title">THETA TAU</h1>
+                    <h1 className="BIG-title">THETA TAU</h1>
                     <h2 className="chapter">Upsilon Epsilon Chapter</h2>
                     <p className="description">Co-Ed Professional Engineering Fraternity</p>
                     <button
@@ -57,7 +57,7 @@ const Home = () => {
             {/*</div>*/}
 
             <div className="regent-section">
-                <h1 className="regent-title">A Message from the Regent</h1>
+                <h1 className="heading">A Message from the Regent</h1>
                 <div className="regent-content">
                     <img src={regentImage} alt="Ryan Kiniris" className="regent-image"/>
                     <div className="regent-text">
@@ -94,7 +94,7 @@ const Home = () => {
             <div className="core-pillars-section">
                 <div className="pillars-header">
                     <hr className="divider-line"/>
-                    <h1 className="regent-title">Our Core Pillars</h1>
+                    <h1 className="heading">Our Core Pillars</h1>
                 </div>
 
                 <div className="pillars-content">

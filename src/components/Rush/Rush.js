@@ -37,7 +37,7 @@ const Rush = () => {
                 }}
             >
                 <div className="rush-hero-content">
-                    <h1 className="rush-hero-title">Winter Rush 2026</h1>
+                    <h1 className="hero-title">Winter Rush 2026</h1>
                     <h2 className="rush-hero-subtitle">Countdown to Rush</h2>
                     <div className="rush-countdown">
                         <span>{timeLeft.days} days</span> |

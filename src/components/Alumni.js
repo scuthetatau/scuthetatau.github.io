@@ -81,7 +81,7 @@ const Alumni = () => {
         <div className="meet-the-brothers-component">
             <div className="meet-the-brothers-hero" style={{ backgroundImage: `url(${UpsilonClass})` }}>
                 <div className="join-overlay">
-                    <h2 className="rush-hero-title">Our Alumni</h2>
+                    <h2 className="hero-title">Our Alumni</h2>
                 </div>
             </div>
 

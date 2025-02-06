@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["http://localhost:3000", "https://www.scuthetatau.com"],
+    "method": ["GET", "HEAD", "POST"],
+    "maxAgeSeconds": 3600,
+    "responseHeader": ["Content-Type", "Authorization"]
+  }
+]

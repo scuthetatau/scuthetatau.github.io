@@ -4,7 +4,6 @@ import Home from './components/Home/Home';
 import AboutUs from './components/AboutUs/AboutUs';
 import MeetTheBrothers from './components/MeetTheBrothers/MeetTheBrothers';
 import Alumni from './components/Alumni';
-import Events from './components/Events/Events';
 import Rush from './components/Rush/Rush';
 import Login from './components/Login/Login';
 import Header from './components/Header/Header';
@@ -26,7 +25,6 @@ function App() {
                     <Route path="/" element={<Home />} />
                     <Route path="/about-us" element={<AboutUs />} />
                     <Route path="/meet-the-brothers" element={<MeetTheBrothers />} />
-                    <Route path="/events" element={<Events />} />
                     <Route path="/rush" element={<Rush />} />
                     <Route path="/login" element={<Login />} />
                     <Route path="/admin" element={<Admin />} />
