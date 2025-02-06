@@ -12,18 +12,28 @@ const images = importAll(
 
 const AboutUs = () => {
     const [isHovered, setIsHovered] = useState(false);
+    const [isMobile, setIsMobile] = useState(false);
     const scrollRef = useRef(null);
+
+    // Detect if the device is mobile
+    useEffect(() => {
+        const checkIfMobile = () =>
+            "ontouchstart" in window || window.innerWidth <= 768;
+        setIsMobile(checkIfMobile());
+    }, []);
 
     // Auto-scroll effect when not hovered
     useEffect(() => {
         let interval;
+        // On mobile, isHovered will always be false because we won't update it.
         if (!isHovered) {
             interval = setInterval(() => {
                 if (scrollRef.current) {
-                    // When we reach half the scroll width (i.e. the end of the first set),
+                    // If we reach half the scroll width (i.e. the end of the first set),
                     // jump back by half the width so that the scrolling appears continuous.
                     if (scrollRef.current.scrollLeft >= scrollRef.current.scrollWidth / 2) {
-                        scrollRef.current.scrollLeft = scrollRef.current.scrollLeft - scrollRef.current.scrollWidth / 2;
+                        scrollRef.current.scrollLeft =
+                            scrollRef.current.scrollLeft - scrollRef.current.scrollWidth / 2;
                     } else {
                         scrollRef.current.scrollLeft += 2;
                     }
@@ -33,7 +43,7 @@ const AboutUs = () => {
         return () => clearInterval(interval);
     }, [isHovered]);
 
-    // This handler ensures that when the user scrolls manually, the infinite loop behavior is preserved.
+    // Preserve infinite loop behavior on manual scroll
     const handleScroll = () => {
         const container = scrollRef.current;
         if (container) {
@@ -42,8 +52,7 @@ const AboutUs = () => {
             if (container.scrollLeft >= halfWidth) {
                 container.scrollLeft = container.scrollLeft - halfWidth;
             }
-                // Optionally, if you want to allow scrolling backwards infinitely,
-            // you can also check if the scrollLeft is at or near 0 and jump to the second half.
+            // Optionally, if you want to allow infinite backward scrolling:
             else if (container.scrollLeft <= 0) {
                 container.scrollLeft = container.scrollLeft + halfWidth;
             }
@@ -71,9 +80,17 @@ const AboutUs = () => {
                             <div className="timeline-marker"></div>
                             <div className="timeline-content">
                                 <h3 className="timeline-year">1904</h3>
-                                <h4 className="timeline-heading">Inception of National Theta Tau</h4>
+                                <h4 className="timeline-heading">
+                                    Inception of National Theta Tau
+                                </h4>
                                 <p>
-                                    Theta Tau was founded as the "Society of Hammer and Tongs" on October 15, 1904, by four engineering students at the University of Minnesota. The organization was formed with the goal of fostering a bond of mutual help and support among its members. Since its inception, Theta Tau has grown into the nation's largest and most prestigious professional engineering fraternity, with over 50,000 members nationally.
+                                    Theta Tau was founded as the "Society of Hammer and Tongs" on
+                                    October 15, 1904, by four engineering students at the University
+                                    of Minnesota. The organization was formed with the goal of
+                                    fostering a bond of mutual help and support among its members.
+                                    Since its inception, Theta Tau has grown into the nation's
+                                    largest and most prestigious professional engineering fraternity,
+                                    with over 50,000 members nationally.
                                 </p>
                             </div>
                         </div>
@@ -81,9 +98,15 @@ const AboutUs = () => {
                             <div className="timeline-marker"></div>
                             <div className="timeline-content">
                                 <h3 className="timeline-year">2016</h3>
-                                <h4 className="timeline-heading">Upsilon Epsilon Chapter Formed as a Colony</h4>
+                                <h4 className="timeline-heading">
+                                    Upsilon Epsilon Chapter Formed as a Colony
+                                </h4>
                                 <p>
-                                    The Upsilon Epsilon Colony of Theta Tau was established at Santa Clara University, marking the fraternity's introduction to this community. As a colony, the members demonstrated the values of brotherhood, professionalism, and service while working to meet the requirements to become a fully recognized chapter.
+                                    The Upsilon Epsilon Colony of Theta Tau was established at Santa
+                                    Clara University, marking the fraternity's introduction to this
+                                    community. As a colony, the members demonstrated the values of
+                                    brotherhood, professionalism, and service while working to meet
+                                    the requirements to become a fully recognized chapter.
                                 </p>
                             </div>
                         </div>
@@ -91,9 +114,15 @@ const AboutUs = () => {
                             <div className="timeline-marker"></div>
                             <div className="timeline-content">
                                 <h3 className="timeline-year">2020</h3>
-                                <h4 className="timeline-heading">Upsilon Epsilon chapter Theta Tau Become a Chapter</h4>
+                                <h4 className="timeline-heading">
+                                    Upsilon Epsilon chapter Theta Tau Become a Chapter
+                                </h4>
                                 <p>
-                                    After years of commitment and growth, the Upsilon Epsilon Colony achieved official recognition as a chapter of Theta Tau. This milestone represents a significant achievement as the members successfully integrated into Theta Tau's national framework while fostering strong bonds among their peers and the community.
+                                    After years of commitment and growth, the Upsilon Epsilon Colony
+                                    achieved official recognition as a chapter of Theta Tau. This
+                                    milestone represents a significant achievement as the members
+                                    successfully integrated into Theta Tau's national framework while
+                                    fostering strong bonds among their peers and the community.
                                 </p>
                             </div>
                         </div>
@@ -105,9 +134,12 @@ const AboutUs = () => {
                 <div
                     className="image-scroller"
                     ref={scrollRef}
-                    onMouseEnter={() => setIsHovered(true)}
-                    onMouseLeave={() => setIsHovered(false)}
                     onScroll={handleScroll}
+                    // Attach mouse events only on non-mobile devices
+                    {...(!isMobile && {
+                        onMouseEnter: () => setIsHovered(true),
+                        onMouseLeave: () => setIsHovered(false),
+                    })}
                 >
                     <div className="scroller-content" style={{ display: "flex", width: "200%" }}>
                         {/* Duplicate the images array to allow for seamless looping */}
@@ -128,10 +160,12 @@ const AboutUs = () => {
                         <h2 className="heading">NATIONAL HISTORY</h2>
                         <h3 className="history-heading">Inception of National Theta Tau</h3>
                         <p>
-                            Theta Tau was originally founded as the Society of Hammer and Tongs on October 15, 1904 by
-                            four engineering students at the University of Minnesota in Minneapolis. Since its founding, Theta Tau has
-                            initiated over 50,000 members. Today, Theta Tau is the nation’s oldest, largest, and foremost fraternity for
-                            engineers. The support and guidance of Theta Tau’s vast resources and network helps to foster lifelong relationships
+                            Theta Tau was originally founded as the Society of Hammer and Tongs on
+                            October 15, 1904 by four engineering students at the University of
+                            Minnesota in Minneapolis. Since its founding, Theta Tau has initiated
+                            over 50,000 members. Today, Theta Tau is the nation’s oldest, largest,
+                            and foremost fraternity for engineers. The support and guidance of Theta
+                            Tau’s vast resources and network helps to foster lifelong relationships
                             between brothers that extend into many professional disciplines.
                         </p>
                         <button
@@ -142,9 +176,9 @@ const AboutUs = () => {
                         </button>
                         <h3 className="history-heading">Theta Tau Northwestern Region</h3>
                         <p>
-                            The Epsilon Chapter belongs to the Northwestern Region of Theta Tau, with 7 active chapters:
+                            The Epsilon Chapter belongs to the Northwestern Region of Theta Tau,
+                            with 7 active chapters:
                         </p>
-                        {/*<h4 className="sub-heading">NORTHWESTERN REGION CHAPTERS</h4>*/}
                         <ul className="chapters-list">
                             <li>Epsilon Chapter (University of California, Berkeley)</li>
                             <li>Theta Beta Chapter (University of Washington)</li>
