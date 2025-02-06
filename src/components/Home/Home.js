@@ -3,7 +3,8 @@ import { Link } from 'react-router-dom';
 import './Home.css';
 import backgroundImage from '../assets/HomePage_Hero.png'; // Replace with the correct image path
 import regentImage from '../assets/regent.jpg'; // Replace with the correct image path
-import thetaClass from '../assets/ThetaClassInitiation.png'; // Import the image here
+// import thetaClass from '../assets/ThetaClassInitiation.png'; // Import the image here
+import EtaClass from '../assets/EtaClassPic.jpeg'; // Import the image here
 
 const Home = () => {
     return (
@@ -126,7 +127,7 @@ const Home = () => {
                 </div>
             </div>
 
-            <div className="join-section" style={{backgroundImage: `url(${thetaClass})`}}>
+            <div className="join-section" style={{backgroundImage: `url(${EtaClass})`}}>
                 <div className="join-overlay">
                     <h2 className="join-title">Interested in Joining?</h2>
                     <button
