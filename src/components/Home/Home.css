@@ -222,9 +222,10 @@
 .join-section {
     position: relative;
     width: 100%;
-    height: 400px;
+    height: 500px;
     background-size: cover;
     background-position: center;
+    text-transform: uppercase;
 }
 
 .join-overlay {
