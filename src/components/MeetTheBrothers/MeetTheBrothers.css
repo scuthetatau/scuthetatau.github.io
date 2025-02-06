@@ -255,14 +255,17 @@
 /* Popup Content */
 .popup-content {
     background: #fff;
-    border-radius: 15px;
-    padding: 20px;
-    width: 400px;
+    border-radius: 10px;
+    padding: 40px;
+    width: 600px;
     max-width: 90%;
-    text-align: center;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Spacing between elements inside the popup */
 }
+
 
 /* User Profile Image */
 .popup-user-image {
@@ -296,8 +299,115 @@
     position: absolute;
     bottom: 15px;
     right: 20px;
+    font-family: Mohave, serif;
+    text-transform: uppercase;
 }
 
 .popup-close-button:hover {
     background: #670808;
+    transition: background-color 0.3s ease-in-out;
+}
+
+/* Popup Main Container */
+.popup-main {
+    display: flex;
+    flex-direction: row; /* Keep the horizontal layout */
+    align-items: center; /* Vertically center the profile picture and details */
+    justify-content: flex-start; /* Align content to the start (left) */
+    gap: 30px; /* Add spacing between the profile picture and details */
+    height: 100%; /* Ensure this container fills the vertical space */
+}
+
+/* Popup User Image Container */
+.popup-user-image-container {
+    flex-shrink: 0; /* Prevent the image size from shrinking */
+    display: flex; /* Use flexbox for internal alignment */
+    align-items: center; /* Center the image vertically within its parent */
+    justify-content: center; /* Center the image horizontally within its parent */
+}
+
+/* Popup User Image */
+.popup-user-image {
+    width: 120px; /* Set a fixed size for the image */
+    height: 120px;
+    border-radius: 50%; /* Circular image */
+    object-fit: cover; /* Maintain aspect ratio */
+    padding: 0; /* Remove any additional spacing */
+}
+
+/* Popup Content */
+.popup-content {
+    background: #fff;
+    border-radius: 15px;
+    padding: 40px; /* Increased padding for better overall spacing */
+    min-height: 33%;
+    width: 500px; /* Slightly wider to accommodate content */
+    max-width: 90%; /* Responsive sizing */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Spacing between elements inside the popup */
+}
+
+/* Popup User Details */
+.popup-user-info {
+    flex: 1; /* Ensure this section takes up extra space */
+    text-align: left; /* Align details to the left side */
+    padding: 10px; /* Add padding for spacing */
+}
+
+.popup-user-info h2 {
+    font-size: 1.7em;
+    margin: 0 0 10px;
+    color: #252525;
+}
+
+.popup-user-info p {
+    margin: 8px 0; /* More spacing between paragraphs */
+    font-size: 1.1em; /* Slightly larger text */
+    color: #666;
+}
+
+/* Popup Close Button */
+.popup-close-button {
+    background: #881616;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    position: absolute;
+    bottom: 20px; /* Position close button at the bottom-right */
+    right: 20px;
+    font-size: 1em;
+    font-weight: bold;
+}
+
+.popup-close-button:hover {
+    background: #670808; /* Darker shade of red on hover */
+}
+
+/* Responsive Adjustments for Mobile Screens */
+@media (max-width: 768px) {
+    .popup-main {
+        flex-direction: column; /* Stack profile picture and details */
+        align-items: center; /* Center-align for mobile */
+        gap: 20px;
+    }
+
+    .popup-user-info {
+        text-align: center; /* Center-align on smaller screens */
+        padding: 0; /* Remove extra padding for compact view */
+    }
+
+    .popup-content {
+        padding: 20px; /* Slightly smaller padding for mobile */
+        width: 90%;
+    }
+
+    .popup-close-button {
+        bottom: 16px;
+        right: 16px;
+    }
 }

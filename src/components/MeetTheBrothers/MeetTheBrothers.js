@@ -118,11 +118,6 @@ const MeetTheBrothers = () => {
                         {executiveBoardUsers.map(user => (
                             <div
                                 key={user.email}
-                                className="meet-the-brothers-brother-card"
-                                onClick={() => {
-                                    console.log("Card clicked for user:", user);
-                                    openPopup(user);
-                                }}
                             >
                                 {user.profilePicUrl && (
                                     <img
@@ -168,11 +163,18 @@ const MeetTheBrothers = () => {
                     <h2>{classGroup} Class</h2>
                     <div className="meet-the-brothers-user-grid">
                         {sortByLastName(groupedUsers[classGroup]).map(user => (
-                            <div key={user.email} className="meet-the-brothers-brother-card">
+                            <div
+                                key={user.email}
+                                className="meet-the-brothers-brother-card"
+                                // onClick={() => {
+                                //     // console.log("Card clicked for user:", user);
+                                //     openPopup(user);
+                                // }}
+                            >
                                 {user.profilePicUrl && (
                                     <img
                                         src={user.profilePicUrl}
-                                        alt={`${user.firstName} {user.lastName}`}
+                                        alt={`${user.firstName} ${user.lastName}`}
                                         className="meet-the-brothers-profile-pic"
                                         onError={handleImageError}
                                     />
@@ -182,7 +184,6 @@ const MeetTheBrothers = () => {
                                 {user.major && <p className="meet-the-brothers-user-major">{user.major}</p>}
                                 {user.graduationYear && <p className="meet-the-brothers-user-graduation-year">Class
                                     of {user.graduationYear}</p>}
-                                {/*{user.family && <p className="meet-the-brothers-user-family">Family: {user.family}</p>}*/}
                             </div>
                         ))}
                     </div>
@@ -192,16 +193,20 @@ const MeetTheBrothers = () => {
             {isPopupVisible && selectedUser && (
                 <div className="popup-overlay" onClick={closePopup}>
                     <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-                        <img
-                            src={selectedUser.profilePicUrl || CoatArms}
-                            alt={`${selectedUser.firstName} ${selectedUser.lastName}`}
-                            className="popup-user-image"
-                        />
-                        <div className="popup-user-info">
-                            <h2>{selectedUser.firstName} {selectedUser.lastName}</h2>
-                            <p>Graduation Year: {selectedUser.graduationYear}</p>
-                            <p>Class: {selectedUser.class}</p>
-                            <p>Leadership Position: {selectedUser.role || "N/A"}</p>
+                        <div className="popup-main">
+                            <div className="popup-user-image-container">
+                                <img
+                                    src={selectedUser.profilePicUrl || CoatArms}
+                                    alt={`${selectedUser.firstName} ${selectedUser.lastName}`}
+                                    className="popup-user-image"
+                                />
+                            </div>
+                            <div className="popup-user-info">
+                                <h2>{selectedUser.firstName} {selectedUser.lastName}</h2>
+                                <p>Graduation Year: {selectedUser.graduationYear}</p>
+                                <p>Class: {selectedUser.class}</p>
+                                <p>Leadership Position: {selectedUser.role || "N/A"}</p>
+                            </div>
                         </div>
                         <button className="popup-close-button" onClick={closePopup}>Close</button>
                     </div>
