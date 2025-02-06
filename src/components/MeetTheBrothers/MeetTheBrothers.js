@@ -4,11 +4,13 @@ import { ref, getDownloadURL } from 'firebase/storage';
 import CoatArms from '../assets/CoatArms.png';
 import './MeetTheBrothers.css';
 import { firestore, storage } from '../../firebase';
-import thetaClass from "../assets/ThetaClassInitiation.png"; // Adjust the path as necessary
+import thetaClass from "../assets/IMG_9401.jpeg"; // Adjust the path as necessary
 
 const MeetTheBrothers = () => {
     const [users, setUsers] = useState([]);
     const [error, setError] = useState(null);
+    const [selectedUser, setSelectedUser] = useState(null); // State for selected user
+    const [isPopupVisible, setIsPopupVisible] = useState(false); // State for popup visibility
     const currentYear = new Date().getFullYear();
 
     useEffect(() => {
@@ -53,6 +55,20 @@ const MeetTheBrothers = () => {
             const bLastName = b.lastName ?? "";
             return aLastName.localeCompare(bLastName);
         });
+    };
+
+    const openPopup = (user) => {
+        console.log("Opening popup for user:", user);
+        setSelectedUser(user);
+        console.log("State after setting selectedUser:", selectedUser); // May not reflect immediately
+        setIsPopupVisible(true);
+        console.log("Popup visibility:", isPopupVisible); // May delay as well
+    };
+
+    // Close the popup
+    const closePopup = () => {
+        setSelectedUser(null);
+        setIsPopupVisible(false);
     };
 
     const executiveBoardRoles = ['Scribe', 'Corresponding Secretary', 'Regent', 'Treasurer', 'Vice Regent'];
@@ -100,7 +116,14 @@ const MeetTheBrothers = () => {
                     <h2>{currentYear} Executive Board</h2>
                     <div className="meet-the-brothers-executive-board-grid">
                         {executiveBoardUsers.map(user => (
-                            <div key={user.email} className="meet-the-brothers-executive-board-profile">
+                            <div
+                                key={user.email}
+                                className="meet-the-brothers-brother-card"
+                                onClick={() => {
+                                    console.log("Card clicked for user:", user);
+                                    openPopup(user);
+                                }}
+                            >
                                 {user.profilePicUrl && (
                                     <img
                                         src={user.profilePicUrl}
@@ -109,7 +132,8 @@ const MeetTheBrothers = () => {
                                         onError={handleImageError}
                                     />
                                 )}
-                                <div className="meet-the-brothers-executive-board-name">{user.firstName} {user.lastName}</div>
+                                <div
+                                    className="meet-the-brothers-executive-board-name">{user.firstName} {user.lastName}</div>
                                 <div className="meet-the-brothers-executive-board-role">{user.role}</div>
                             </div>
                         ))}
@@ -164,6 +188,25 @@ const MeetTheBrothers = () => {
                     </div>
                 </div>
             ))}
+
+            {isPopupVisible && selectedUser && (
+                <div className="popup-overlay" onClick={closePopup}>
+                    <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+                        <img
+                            src={selectedUser.profilePicUrl || CoatArms}
+                            alt={`${selectedUser.firstName} ${selectedUser.lastName}`}
+                            className="popup-user-image"
+                        />
+                        <div className="popup-user-info">
+                            <h2>{selectedUser.firstName} {selectedUser.lastName}</h2>
+                            <p>Graduation Year: {selectedUser.graduationYear}</p>
+                            <p>Class: {selectedUser.class}</p>
+                            <p>Leadership Position: {selectedUser.role || "N/A"}</p>
+                        </div>
+                        <button className="popup-close-button" onClick={closePopup}>Close</button>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };
