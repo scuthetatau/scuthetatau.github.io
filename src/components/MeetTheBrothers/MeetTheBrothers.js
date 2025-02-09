@@ -166,10 +166,10 @@ const MeetTheBrothers = () => {
                             <div
                                 key={user.email}
                                 className="meet-the-brothers-brother-card"
-                                // onClick={() => {
-                                //     // console.log("Card clicked for user:", user);
-                                //     openPopup(user);
-                                // }}
+                                onClick={() => {
+                                    // console.log("Card clicked for user:", user);
+                                    openPopup(user);
+                                }}
                             >
                                 {user.profilePicUrl && (
                                     <img
