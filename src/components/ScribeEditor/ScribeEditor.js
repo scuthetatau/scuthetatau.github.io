@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { onAuthStateChanged } from 'firebase/auth';
+// import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, collection, getDocs, updateDoc } from 'firebase/firestore';
 import { auth, firestore } from '../../firebase';
 import { checkUserRoles } from './auth';
@@ -105,7 +105,7 @@ const ScribeEditor = () => {
     };
 
     const getPointsIndicator = (points) => {
-        return points > 2000 ? '✅' : '❌';
+        return points > 2500 ? '✅' : '❌';
     };
 
     return (
@@ -127,7 +127,7 @@ const ScribeEditor = () => {
                     <th onClick={() => handleSort('points')}>
                         Points {sortConfig.key === 'points' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : null}
                     </th>
-                    <th>Reached 2000</th>
+                    <th>Reached 2500</th>
                     <th>Actions</th>
                 </tr>
                 </thead>
