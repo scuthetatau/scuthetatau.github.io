@@ -74,7 +74,7 @@ const AboutUs = () => {
 
                 {/* Timeline Section */}
                 <div className="timeline-container">
-                    <h2 className="heading">EPSILON CHAPTER HISTORY</h2>
+                    <h2 className="heading">UPSILON EPSILON CHAPTER HISTORY</h2>
                     <div className="timeline">
                         <div className="timeline-item">
                             <div className="timeline-marker"></div>

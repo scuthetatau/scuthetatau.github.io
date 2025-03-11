@@ -1,2 +1,4 @@
 node_modules
 .env!/SCU Theta Tau Firebase Admin SDK.json
+src/UploadAlumniData.js
+src/script.py
