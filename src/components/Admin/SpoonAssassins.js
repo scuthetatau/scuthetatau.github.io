@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { firestore } from '../../firebase';
-import { collection, doc, getDocs, setDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, setDoc, deleteDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { checkUserRole } from './auth';
 import { FaArrowRight } from 'react-icons/fa'; // Import arrow icon
@@ -8,6 +8,36 @@ import './Admin.css';
 
 // Add a new CSS for SpoonAssassins specifically
 const styles = {
+    container: {
+        display: 'flex',
+        gap: '20px',
+    },
+    sidebar: {
+        width: '250px',
+        padding: '15px',
+        backgroundColor: '#f4f4f8',
+        borderRadius: '8px',
+        boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
+        height: 'fit-content',
+    },
+    sidebarTitle: {
+        textAlign: 'center',
+        marginBottom: '15px',
+        color: '#800000',
+        fontWeight: 'bold',
+    },
+    userItem: {
+        display: 'flex',
+        alignItems: 'center',
+        padding: '8px 0',
+        borderBottom: '1px solid #e0e0e0',
+    },
+    checkbox: {
+        marginRight: '10px',
+    },
+    main: {
+        flex: 1,
+    },
     assassinChain: {
         display: 'flex',
         flexDirection: 'column',
@@ -68,6 +98,7 @@ const SpoonAssassins = () => {
     const [users, setUsers] = useState([]);
     const [targets, setTargets] = useState([]);
     const [loading, setLoading] = useState(true);
+    const [excludedUsers, setExcludedUsers] = useState({});
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -99,6 +130,14 @@ const SpoonAssassins = () => {
         fetchData();
     }, []);
 
+    // Function to toggle exclusion of a user
+    const toggleExcludeUser = (userId) => {
+        setExcludedUsers(prev => ({
+            ...prev,
+            [userId]: !prev[userId]
+        }));
+    };
+
     // Function to assign new targets (reshuffle)
     const assignTargets = async () => {
         if (!users.length) {
@@ -108,12 +147,25 @@ const SpoonAssassins = () => {
 
         setLoading(true);
         try {
-            const shuffledUsers = [...users];
+            // Filter out excluded users
+            const includedUsers = users.filter(user => !excludedUsers[user.id]);
+            const excludedUserIds = users
+                .filter(user => excludedUsers[user.id])
+                .map(user => user.id);
+
+            if (includedUsers.length < 2) {
+                alert('Need at least 2 users to assign targets!');
+                setLoading(false);
+                return;
+            }
+
+            const shuffledUsers = [...includedUsers];
             for (let i = shuffledUsers.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [shuffledUsers[i], shuffledUsers[j]] = [shuffledUsers[j], shuffledUsers[i]];
             }
 
+            // Create new targets for included users
             const newTargets = shuffledUsers.map((user, index) => ({
                 userId: user.id,
                 firstName: user.firstName,
@@ -122,12 +174,21 @@ const SpoonAssassins = () => {
                 targetName: `${shuffledUsers[(index + 1) % shuffledUsers.length].firstName} ${shuffledUsers[(index + 1) % shuffledUsers.length].lastName}`,
             }));
 
+            // Delete targets for excluded users
+            await Promise.all(
+                excludedUserIds.map(userId =>
+                    deleteDoc(doc(firestore, 'targets', userId))
+                )
+            );
+
+            // Set new targets for included users
             await Promise.all(
                 newTargets.map((target) =>
                     setDoc(doc(firestore, 'targets', target.userId), target)
                 )
             );
 
+            // Update the local state with only the new targets
             setTargets(newTargets);
             alert('Targets have been assigned successfully!');
         } catch (error) {
@@ -186,35 +247,62 @@ const SpoonAssassins = () => {
 
             {loading && <div style={styles.spinner}></div>}
 
-            {!loading && targets.length === 0 ? (
-                <div style={styles.noTargets}>
-                    <p>No assassination targets have been assigned yet.</p>
-                    <p>Click the button above to assign targets.</p>
-                </div>
-            ) : (
-                <div style={styles.chainContainer}>
-                    <div style={styles.assassinChain}>
-                        {chainedTargets.map((target, index) => (
-                            <div style={styles.chainItem} key={target.userId}>
-                                <div style={styles.personBox}>
-                                    <strong>{target.firstName} {target.lastName}</strong>
-                                </div>
-                                <div style={styles.arrow}>
-                                    <FaArrowRight />
-                                </div>
-                                <div style={styles.personBox}>
-                                    <strong>{target.targetName}</strong>
-                                </div>
+            {!loading && (
+                <div style={styles.container}>
+                    {/* Sidebar with exclusion checkboxes */}
+                    <div style={styles.sidebar}>
+                        <h3 style={styles.sidebarTitle}>Exclude Users</h3>
+                        <p style={{fontSize: '0.9rem', marginBottom: '10px'}}>Check users to exclude from targets</p>
+                        {users.map(user => (
+                            <div key={user.id} style={styles.userItem}>
+                                <input
+                                    type="checkbox"
+                                    id={`exclude-${user.id}`}
+                                    checked={!!excludedUsers[user.id]}
+                                    onChange={() => toggleExcludeUser(user.id)}
+                                    style={styles.checkbox}
+                                />
+                                <label htmlFor={`exclude-${user.id}`}>
+                                    {user.firstName} {user.lastName}
+                                </label>
                             </div>
                         ))}
                     </div>
-                </div>
-            )}
 
-            {!loading && targets.length > 0 && (
-                <p style={{ textAlign: 'center', marginTop: '20px' }}>
-                    {targets.length} brothers are participating in Spoon Assassins
-                </p>
+                    {/* Main content */}
+                    <div style={styles.main}>
+                        {targets.length === 0 ? (
+                            <div style={styles.noTargets}>
+                                <p>No assassination targets have been assigned yet.</p>
+                                <p>Click the button above to assign targets.</p>
+                            </div>
+                        ) : (
+                            <div style={styles.chainContainer}>
+                                <div style={styles.assassinChain}>
+                                    {chainedTargets.map((target, index) => (
+                                        <div style={styles.chainItem} key={target.userId}>
+                                            <div style={styles.personBox}>
+                                                <strong>{target.firstName} {target.lastName}</strong>
+                                            </div>
+                                            <div style={styles.arrow}>
+                                                <FaArrowRight />
+                                            </div>
+                                            <div style={styles.personBox}>
+                                                <strong>{target.targetName}</strong>
+                                            </div>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {targets.length > 0 && (
+                            <p style={{ textAlign: 'center', marginTop: '20px' }}>
+                                {targets.length} brothers are participating in Spoon Assassins
+                            </p>
+                        )}
+                    </div>
+                </div>
             )}
         </div>
     );
