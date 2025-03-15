@@ -1,10 +1,19 @@
 import React, { useEffect, useState } from 'react';
 import { fetchGroups, shuffleGroups } from './groupService';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
+import { checkUserRole } from './auth'; // Import checkUserRole function
 
 const ManageBroDates = () => {
     const [groups, setGroups] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const navigate = useNavigate(); // Initialize navigate function
+
+    useEffect(() => {
+        // Verify authentication and role
+        const unsubscribe = checkUserRole(navigate); // Check user role and redirect if unauthorized
+        return () => unsubscribe && unsubscribe(); // Clean up on unmount
+    }, [navigate]);
 
     useEffect(() => {
         const fetchAllGroups = async () => {
