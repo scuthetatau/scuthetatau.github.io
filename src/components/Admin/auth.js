@@ -13,11 +13,11 @@ export const checkUserRole = (navigate) => {
                     const userDoc = userSnapshot.docs[0];
                     const userData = userDoc.data();
                     // console.log("User data:", userData);
-                    if (userData.role !== 'Webmaster') {
+                    if (userData.role !== 'Webmaster' && userData.role !== 'Brotherhood Chair') {
                         // console.log(`User role is ${userData.role}, redirecting to home page`);
                         navigate('/');
                     } else {
-                        // console.log("User role is Webmaster, access granted");
+                        // console.log("User has appropriate role, access granted");
                     }
                 } else {
                     // console.log("User data does not exist in Firestore, redirecting to home page");

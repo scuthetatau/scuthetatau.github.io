@@ -289,7 +289,7 @@ const Dashboard = () => {
                             Manage Brodates
                         </button>
                     )}
-                    {user && user.role === 'Webmaster' && (
+                    {user && (user.role === 'Webmaster' || user.role === 'Brotherhood Chair') && (
                         <button
                             className="rush-btn"
                             onClick={() =>
