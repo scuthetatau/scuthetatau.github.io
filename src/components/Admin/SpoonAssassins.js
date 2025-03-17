@@ -3,8 +3,9 @@ import { firestore } from '../../firebase';
 import { collection, doc, getDocs, setDoc, deleteDoc } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { checkUserRole } from './auth';
-import { FaArrowRight } from 'react-icons/fa'; // Import arrow icon
+import { FaArrowRight } from 'react-icons/fa';
 import './Admin.css';
+import Cookies from 'js-cookie'; // Import js-cookie for cookie management
 
 // Add a new CSS for SpoonAssassins specifically
 const styles = {
@@ -107,6 +108,18 @@ const SpoonAssassins = () => {
         return () => unsubscribe && unsubscribe();
     }, [navigate]);
 
+    // Load excluded users from cookies when component mounts
+    useEffect(() => {
+        const savedExcludedUsers = Cookies.get('excludedUsers');
+        if (savedExcludedUsers) {
+            try {
+                setExcludedUsers(JSON.parse(savedExcludedUsers));
+            } catch (error) {
+                console.error('Error parsing saved excludedUsers:', error);
+            }
+        }
+    }, []);
+
     useEffect(() => {
         const fetchData = async () => {
             setLoading(true);
@@ -132,11 +145,32 @@ const SpoonAssassins = () => {
 
     // Function to toggle exclusion of a user
     const toggleExcludeUser = (userId) => {
-        setExcludedUsers(prev => ({
-            ...prev,
-            [userId]: !prev[userId]
-        }));
+        const newExcludedUsers = {
+            ...excludedUsers,
+            [userId]: !excludedUsers[userId]
+        };
+
+        setExcludedUsers(newExcludedUsers);
+
+        // Save to cookies with expiration of 30 days
+        Cookies.set('excludedUsers', JSON.stringify(newExcludedUsers), { expires: 30 });
     };
+
+    const formatUserName = (user) => {
+        if (user.firstName && user.lastName) {
+            return `${user.firstName} ${user.lastName}`;
+        } else if (user.displayName) {
+            return user.displayName;
+        } else {
+            return 'Unknown';
+        }
+    };
+
+    const sortedUsers = [...users].sort((a, b) => {
+        const nameA = a.firstName || '';
+        const nameB = b.firstName || '';
+        return nameA.localeCompare(nameB);
+    });
 
     // Function to assign new targets (reshuffle)
     const assignTargets = async () => {
@@ -249,27 +283,25 @@ const SpoonAssassins = () => {
 
             {!loading && (
                 <div style={styles.container}>
-                    {/* Sidebar with exclusion checkboxes */}
                     <div style={styles.sidebar}>
                         <h3 style={styles.sidebarTitle}>Exclude Users</h3>
-                        <p style={{fontSize: '0.9rem', marginBottom: '10px'}}>Check users to exclude from targets</p>
-                        {users.map(user => (
+                        {sortedUsers.map((user) => (
                             <div key={user.id} style={styles.userItem}>
                                 <input
                                     type="checkbox"
-                                    id={`exclude-${user.id}`}
+                                    style={styles.checkbox}
                                     checked={!!excludedUsers[user.id]}
                                     onChange={() => toggleExcludeUser(user.id)}
-                                    style={styles.checkbox}
                                 />
-                                <label htmlFor={`exclude-${user.id}`}>
-                                    {user.firstName} {user.lastName}
-                                </label>
+                                <span>{formatUserName(user)}</span>
                             </div>
                         ))}
                     </div>
 
-                    {/* Main content */}
+
+                    {/* Rest of the JSX... */}
+
+            {/* Main content */}
                     <div style={styles.main}>
                         {targets.length === 0 ? (
                             <div style={styles.noTargets}>
