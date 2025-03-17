@@ -55,7 +55,7 @@ const styles = {
         gap: '15px',
     },
     personBox: {
-        padding: '15px',
+        padding: '7px',
         backgroundColor: '#f4f4f8',
         borderRadius: '8px',
         boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
