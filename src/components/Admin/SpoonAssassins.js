@@ -270,14 +270,14 @@ const SpoonAssassins = () => {
             <h2>Spoon Assassins</h2>
             <p>Assign targets for brothers to "assassinate" with spoons</p>
 
-            <button
-                className="rush-btn"
-                onClick={assignTargets}
-                disabled={loading}
-                style={{ marginBottom: '20px' }}
-            >
-                {loading ? 'ASSIGNING...' : 'ASSIGN NEW TARGETS'}
-            </button>
+            {/*<button*/}
+            {/*    className="rush-btn"*/}
+            {/*    onClick={assignTargets}*/}
+            {/*    disabled={loading}*/}
+            {/*    style={{ marginBottom: '20px' }}*/}
+            {/*>*/}
+            {/*    {loading ? 'ASSIGNING...' : 'ASSIGN NEW TARGETS'}*/}
+            {/*</button>*/}
 
             {loading && <div style={styles.spinner}></div>}
 
