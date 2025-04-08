@@ -4,7 +4,7 @@ import { ref, getDownloadURL } from 'firebase/storage';
 import CoatArms from '../assets/CoatArms.png';
 import './MeetTheBrothers.css';
 import { firestore, storage } from '../../firebase';
-import thetaClass from "../assets/IMG_9401.jpeg"; // Adjust the path as necessary
+import thetaClass from "../assets/ChapterPhoto.jpeg"; // Adjust the path as necessary
 
 const MeetTheBrothers = () => {
     const [users, setUsers] = useState([]);
