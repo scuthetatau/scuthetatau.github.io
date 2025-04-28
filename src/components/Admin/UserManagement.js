@@ -5,6 +5,30 @@ import { firestore, storage } from '../../firebase';
 import './Admin.css';
 
 const UserManagement = () => {
+    // Available roles for the dropdown
+    const availableRoles = [
+        "Regent",
+        "Vice Regent",
+        "Treasurer",
+        "Scribe",
+        "Corresponding Secretary",
+        "Brotherhood Chair",
+        "Service Chair",
+        "Professional Development Chair",
+        "Recruitment Chair",
+        "Special Events Chair",
+        "Engineering Outreach Chair",
+        "Academic Chair",
+        "Fundraising Chair",
+        "Marshall",
+        "Social Media Chair",
+        "Webmaster",
+        "PNME Chairs",
+        "Historian",
+        "Mediation Chair",
+        "DEI Chair"
+    ];
+    
     const [users, setUsers] = useState([]);
     const [newUser, setNewUser] = useState({
         email: '',
@@ -262,12 +286,17 @@ const UserManagement = () => {
                 </div>
                 <div className="admin-input-group">
                     <label>Role</label>
-                    <input
-                        type="text"
+                    <select
                         value={newUser.role}
                         onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-                        placeholder="Role"
-                    />
+                    >
+                        <option value="">No Role</option>
+                        {availableRoles.map((role, index) => (
+                            <option key={index} value={role}>
+                                {role}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <div className="admin-input-group">
                     <label>Points</label>
@@ -386,12 +415,17 @@ const UserManagement = () => {
                         </div>
                         <div className="admin-input-group">
                             <label>Role</label>
-                            <input
-                                type="text"
+                            <select
                                 value={editingUser.role}
                                 onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
-                                placeholder="Role"
-                            />
+                            >
+                                <option value="">No Role</option>
+                                {availableRoles.map((role, index) => (
+                                    <option key={index} value={role}>
+                                        {role}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                         <div className="admin-input-group">
                             <label>Points</label>

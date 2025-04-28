@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { ref, getDownloadURL } from 'firebase/storage';
 import CoatArms from '../assets/CoatArms.png';
+import GenericProfile from '../assets/generic.png';
 import './MeetTheBrothers.css';
 import { firestore, storage } from '../../firebase';
 import thetaClass from "../assets/ChapterPhoto.jpeg"; // Adjust the path as necessary
@@ -84,7 +85,12 @@ const MeetTheBrothers = () => {
             return 0;
         });
 
-    const leadershipUsers = sortByLastName(users.filter(user => user.role && !executiveBoardRoles.includes(user.role)));
+    const hiddenRoles = ['Mediation Chair']; // Roles to be hidden from leadership section
+    const leadershipUsers = sortByLastName(users.filter(user => 
+        user.role && 
+        !executiveBoardRoles.includes(user.role) && 
+        !hiddenRoles.includes(user.role)
+    ));
 
     const groupedUsers = users.reduce((groups, user) => {
         const classGroup = user.class || 'Unknown Class';
@@ -119,14 +125,12 @@ const MeetTheBrothers = () => {
                             <div
                                 key={user.email}
                             >
-                                {user.profilePicUrl && (
-                                    <img
-                                        src={user.profilePicUrl}
-                                        alt={`${user.firstName} ${user.lastName}`}
-                                        className="meet-the-brothers-executive-board-profile-pic"
-                                        onError={handleImageError}
-                                    />
-                                )}
+                                <img
+                                    src={user.profilePicUrl || GenericProfile}
+                                    alt={`${user.firstName} ${user.lastName}`}
+                                    className="meet-the-brothers-executive-board-profile-pic"
+                                    onError={handleImageError}
+                                />
                                 <div
                                     className="meet-the-brothers-executive-board-name">{user.firstName} {user.lastName}</div>
                                 <div className="meet-the-brothers-executive-board-role">{user.role}</div>
@@ -142,14 +146,12 @@ const MeetTheBrothers = () => {
                     <div className="meet-the-brothers-leadership-grid">
                         {leadershipUsers.map(user => (
                             <div key={user.email} className="meet-the-brothers-leadership-profile">
-                                {user.profilePicUrl && (
-                                    <img
-                                        src={user.profilePicUrl}
-                                        alt={`${user.firstName} ${user.lastName}`}
-                                        className="meet-the-brothers-leadership-profile-pic"
-                                        onError={handleImageError}
-                                    />
-                                )}
+                                <img
+                                    src={user.profilePicUrl || GenericProfile}
+                                    alt={`${user.firstName} ${user.lastName}`}
+                                    className="meet-the-brothers-leadership-profile-pic"
+                                    onError={handleImageError}
+                                />
                                 <div className="meet-the-brothers-leadership-name">{user.firstName} {user.lastName}</div>
                                 <div className="meet-the-brothers-leadership-role">{user.role}</div>
                             </div>
@@ -171,16 +173,14 @@ const MeetTheBrothers = () => {
                                     openPopup(user);
                                 }}
                             >
-                                {user.profilePicUrl && (
-                                    <img
-                                        src={user.profilePicUrl}
-                                        alt={`${user.firstName} ${user.lastName}`}
-                                        className="meet-the-brothers-profile-pic"
-                                        onError={handleImageError}
-                                    />
-                                )}
+                                <img
+                                    src={user.profilePicUrl || GenericProfile}
+                                    alt={`${user.firstName} ${user.lastName}`}
+                                    className="meet-the-brothers-profile-pic"
+                                    onError={handleImageError}
+                                />
                                 <p className="meet-the-brothers-user-name">{user.firstName} {user.lastName}</p>
-                                {user.role && <p className="meet-the-brothers-user-role">{user.role}</p>}
+                                {user.role && user.role !== 'Mediation Chair' && <p className="meet-the-brothers-user-role">{user.role}</p>}
                                 {user.major && <p className="meet-the-brothers-user-major">{user.major}</p>}
                                 {user.graduationYear && <p className="meet-the-brothers-user-graduation-year">Class
                                     of {user.graduationYear}</p>}
@@ -196,9 +196,10 @@ const MeetTheBrothers = () => {
                         <div className="popup-main">
                             <div className="popup-user-image-container">
                                 <img
-                                    src={selectedUser.profilePicUrl || CoatArms}
+                                    src={selectedUser.profilePicUrl || GenericProfile}
                                     alt={`${selectedUser.firstName} ${selectedUser.lastName}`}
                                     className="popup-user-image"
+                                    onError={handleImageError}
                                 />
                             </div>
                             <div className="popup-user-info">
