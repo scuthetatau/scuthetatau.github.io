@@ -25,15 +25,14 @@ const Dashboard = () => {
                 try {
                     const userQuery = query(
                         collection(firestore, 'users'),
-                        where('email', '==', currentUser.email) // Match user by email
+                        where('email', '==', currentUser.email)
                     );
                     const userSnapshot = await getDocs(userQuery);
 
-                    if (!userSnapshot.empty) { // User exists in Firestore
+                    if (!userSnapshot.empty) {
                         const userData = userSnapshot.docs[0].data();
                         let profilePicUrl = userData?.profilePictureUrl;
 
-                        // Resolve profile picture URL
                         if (profilePicUrl && !profilePicUrl.startsWith('https://lh3.googleusercontent.com/')) {
                             try {
                                 const fileRef = ref(storage, profilePicUrl);
@@ -46,7 +45,6 @@ const Dashboard = () => {
                             }
                         }
 
-                        // Retrieve BroDate group associated with the user
                         const broDatesSnapshot = await getDocs(
                             collection(firestore, 'brodates')
                         );
@@ -55,7 +53,6 @@ const Dashboard = () => {
                             ...doc.data(),
                         }));
 
-                        // Find the group that contains the current user
                         const userGroup = broDates.find((group) =>
                             group.members.some(
                                 (member) => member.email === currentUser.email
@@ -64,23 +61,50 @@ const Dashboard = () => {
 
                         setUser({
                             ...userData,
-                            id: userSnapshot.docs[0].id, // Add Firestore document ID to the user object
+                            id: userSnapshot.docs[0].id,
                             profilePictureUrl:
-                                profilePicUrl || currentUser.photoURL, // Default to Google photo if not available
+                                profilePicUrl || currentUser.photoURL,
                         });
                         setPoints(userData.points || 0);
 
                         if (userGroup) {
-                            setBroDateGroup(userGroup.members); // Set the user's BroDate group
+                            setBroDateGroup(userGroup.members);
                         } else {
-                            setBroDateGroup([]); // No group found
+                            setBroDateGroup([]);
                         }
 
-                        // Fetch the current user's target for Spoon Assassins
-                        const targetDocRef = doc(firestore, 'targets', userSnapshot.docs[0].id);
+                        // Fetch the current user's target and traverse the chain
+                        const userId = userSnapshot.docs[0].id;
+                        const targetDocRef = doc(firestore, 'targets', userId);
                         const targetDoc = await getDoc(targetDocRef);
+                        
                         if (targetDoc.exists()) {
-                            setTarget(targetDoc.data());
+                            let currentTarget = targetDoc.data();
+                            let visited = new Set();
+                            
+                            // First, get the user's target
+                            const userTargetDoc = await getDoc(doc(firestore, 'targets', currentTarget.targetId));
+                            if (userTargetDoc.exists()) {
+                                let nextTarget = userTargetDoc.data();
+                                
+                                // Traverse the chain until we find an active target
+                                while (nextTarget && nextTarget.isEliminated && !visited.has(nextTarget.targetId)) {
+                                    visited.add(nextTarget.targetId);
+                                    const nextTargetDoc = await getDoc(doc(firestore, 'targets', nextTarget.targetId));
+                                    if (nextTargetDoc.exists()) {
+                                        nextTarget = nextTargetDoc.data();
+                                    } else {
+                                        nextTarget = null;
+                                        break;
+                                    }
+                                }
+                                
+                                // Update the current target with the found active target
+                                currentTarget.targetName = nextTarget ? `${nextTarget.firstName} ${nextTarget.lastName}` : 'No target assigned';
+                                currentTarget.targetId = nextTarget ? nextTarget.userId : null;
+                            }
+                            
+                            setTarget(currentTarget);
                         } else {
                             console.warn('User target not found in targets collection.');
                             setTarget(null);
@@ -271,10 +295,7 @@ const Dashboard = () => {
                     {user && user.role === 'Webmaster' && (
                         <button
                             className="rush-btn"
-                            onClick={() =>
-                                (window.location.href =
-                                    '/admin/user-management')
-                            }
+                            onClick={() => (window.location.href = '/admin/user-management')}
                         >
                             User Management
                         </button>

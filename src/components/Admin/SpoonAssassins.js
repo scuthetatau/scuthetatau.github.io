@@ -156,20 +156,11 @@ const SpoonAssassins = () => {
                 const targetsList = targetsSnapshot.docs.map((doc) => doc.data());
                 setAssignments(targetsList);
 
-                // Try to fetch the list of eliminated users
-                try {
-                    const eliminatedDoc = await getDocs(collection(firestore, 'eliminatedUsers'));
-                    if (!eliminatedDoc.empty) {
-                        const eliminatedData = eliminatedDoc.docs[0].data();
-                        if (eliminatedData.userIds) {
-                            setEliminatedUsers(eliminatedData.userIds);
-                        }
-                    }
-                } catch (error) {
-                    console.log('No eliminated users found:', error);
-                }
-
-                // Remove separate chain logic; using assignments for chain now
+                // Get eliminated users from targets collection
+                const eliminatedUsersList = targetsList
+                    .filter(target => target.isEliminated)
+                    .map(target => target.userId);
+                setEliminatedUsers(eliminatedUsersList);
 
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -252,21 +243,21 @@ const SpoonAssassins = () => {
         try {
             const newEliminatedUsers = [...eliminatedUsers];
             const index = newEliminatedUsers.indexOf(userId);
-            if (index === -1) {
-                // User is not eliminated, add them
+            const isEliminated = index === -1;
+            
+            // Update the target document in Firestore
+            const targetRef = doc(firestore, 'targets', userId);
+            await setDoc(targetRef, { isEliminated }, { merge: true });
+
+            // Update local state
+            if (isEliminated) {
                 newEliminatedUsers.push(userId);
             } else {
-                // User is already eliminated, remove them
                 newEliminatedUsers.splice(index, 1);
             }
-            // Update the state
             setEliminatedUsers(newEliminatedUsers);
-            // Update in Firestore
-            const eliminatedRef = doc(firestore, 'eliminatedUsers', 'current');
-            await setDoc(eliminatedRef, { userIds: newEliminatedUsers });
 
             setSuccess(`User elimination status updated successfully!`);
-
             setTimeout(() => setSuccess(''), 3000);
         } catch (error) {
             console.error('Error updating elimination status:', error);
