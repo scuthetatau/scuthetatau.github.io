@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { firestore } from '../../firebase';
-import { collection, doc, getDocs, setDoc, deleteDoc } from 'firebase/firestore';
+import { collection, doc, getDocs, setDoc, deleteDoc, getDoc, addDoc, query, where } from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 import { checkUserRole } from './auth';
 import { FaArrowRight, FaPlus, FaMinus, FaSave } from 'react-icons/fa';
@@ -156,20 +156,10 @@ const SpoonAssassins = () => {
                 const targetsList = targetsSnapshot.docs.map((doc) => doc.data());
                 setAssignments(targetsList);
 
-                // Try to fetch the list of eliminated users
-                try {
-                    const eliminatedDoc = await getDocs(collection(firestore, 'eliminatedUsers'));
-                    if (!eliminatedDoc.empty) {
-                        const eliminatedData = eliminatedDoc.docs[0].data();
-                        if (eliminatedData.userIds) {
-                            setEliminatedUsers(eliminatedData.userIds);
-                        }
-                    }
-                } catch (error) {
-                    console.log('No eliminated users found:', error);
-                }
-
-                // Remove separate chain logic; using assignments for chain now
+                // Fetch eliminated users
+                const eliminationsSnapshot = await getDocs(collection(firestore, 'eliminated'));
+                const eliminatedUserIds = eliminationsSnapshot.docs.map(doc => doc.data().userId);
+                setEliminatedUsers(eliminatedUserIds);
 
             } catch (error) {
                 console.error('Error fetching data:', error);
@@ -250,23 +240,48 @@ const SpoonAssassins = () => {
     // Toggle the elimination status of a user
     const toggleEliminationStatus = async (userId) => {
         try {
-            const newEliminatedUsers = [...eliminatedUsers];
-            const index = newEliminatedUsers.indexOf(userId);
-            if (index === -1) {
-                // User is not eliminated, add them
-                newEliminatedUsers.push(userId);
+            const isCurrentlyEliminated = eliminatedUsers.includes(userId);
+            
+            if (!isCurrentlyEliminated) {
+                // Mark as eliminated
+                // Find who eliminated this user
+                const eliminatedBy = assignments.find(a => a.targetId === userId);
+                if (!eliminatedBy) {
+                    setError('Could not determine who eliminated this user');
+                    return;
+                }
+
+                // Create elimination record
+                const eliminationData = {
+                    userId: userId,
+                    eliminatedBy: eliminatedBy.userId,
+                    timestamp: new Date().toISOString()
+                };
+
+                // Add to eliminated collection
+                await addDoc(collection(firestore, 'eliminated'), eliminationData);
+                
+                // Update local state
+                setEliminatedUsers([...eliminatedUsers, userId]);
             } else {
-                // User is already eliminated, remove them
-                newEliminatedUsers.splice(index, 1);
+                // Remove elimination
+                // Find the elimination document
+                const eliminationsSnapshot = await getDocs(
+                    query(collection(firestore, 'eliminated'), 
+                    where('userId', '==', userId))
+                );
+                
+                // Delete the elimination document
+                if (!eliminationsSnapshot.empty) {
+                    const eliminationDoc = eliminationsSnapshot.docs[0];
+                    await deleteDoc(doc(firestore, 'eliminated', eliminationDoc.id));
+                }
+                
+                // Update local state
+                setEliminatedUsers(eliminatedUsers.filter(id => id !== userId));
             }
-            // Update the state
-            setEliminatedUsers(newEliminatedUsers);
-            // Update in Firestore
-            const eliminatedRef = doc(firestore, 'eliminatedUsers', 'current');
-            await setDoc(eliminatedRef, { userIds: newEliminatedUsers });
 
             setSuccess(`User elimination status updated successfully!`);
-
             setTimeout(() => setSuccess(''), 3000);
         } catch (error) {
             console.error('Error updating elimination status:', error);
@@ -506,17 +521,8 @@ const SpoonAssassins = () => {
                                         </strong>
                                     </div>
                                     {index < orderedChain.length - 1 && (
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                width: '100%',
-                                                margin: '10px 0',
-                                            }}
-                                        >
-                                            <FaArrowRight style={{ fontSize: 32, color: '#800000', transform: 'rotate(90deg)' }} />
+                                        <div style={styles.arrow}>
+                                            <FaArrowRight />
                                         </div>
                                     )}
                                 </React.Fragment>
