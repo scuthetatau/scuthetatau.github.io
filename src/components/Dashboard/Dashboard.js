@@ -77,34 +77,40 @@ const Dashboard = () => {
                         const userId = userSnapshot.docs[0].id;
                         const targetDocRef = doc(firestore, 'targets', userId);
                         const targetDoc = await getDoc(targetDocRef);
-
+                        
                         if (targetDoc.exists()) {
                             let currentTarget = targetDoc.data();
-                            let visited = new Set();
-
-                            // First, get the user's target
-                            const userTargetDoc = await getDoc(doc(firestore, 'targets', currentTarget.targetId));
-                            if (userTargetDoc.exists()) {
-                                let nextTarget = userTargetDoc.data();
-
-                                // Traverse the chain until we find an active target
-                                while (nextTarget && nextTarget.isEliminated && !visited.has(nextTarget.targetId)) {
-                                    visited.add(nextTarget.targetId);
-                                    const nextTargetDoc = await getDoc(doc(firestore, 'targets', nextTarget.targetId));
-                                    if (nextTargetDoc.exists()) {
-                                        nextTarget = nextTargetDoc.data();
-                                    } else {
-                                        nextTarget = null;
-                                        break;
+                            
+                            // Check if the user themselves is eliminated
+                            if (currentTarget.isEliminated) {
+                                setTarget({ isEliminated: true });
+                            } else {
+                                let visited = new Set();
+                                
+                                // First, get the user's target
+                                const userTargetDoc = await getDoc(doc(firestore, 'targets', currentTarget.targetId));
+                                if (userTargetDoc.exists()) {
+                                    let nextTarget = userTargetDoc.data();
+                                    
+                                    // Traverse the chain until we find an active target
+                                    while (nextTarget && nextTarget.isEliminated && !visited.has(nextTarget.targetId)) {
+                                        visited.add(nextTarget.targetId);
+                                        const nextTargetDoc = await getDoc(doc(firestore, 'targets', nextTarget.targetId));
+                                        if (nextTargetDoc.exists()) {
+                                            nextTarget = nextTargetDoc.data();
+                                        } else {
+                                            nextTarget = null;
+                                            break;
+                                        }
                                     }
+                                    
+                                    // Update the current target with the found active target
+                                    currentTarget.targetName = nextTarget ? `${nextTarget.firstName} ${nextTarget.lastName}` : 'No target assigned';
+                                    currentTarget.targetId = nextTarget ? nextTarget.userId : null;
                                 }
-
-                                // Update the current target with the found active target
-                                currentTarget.targetName = nextTarget ? `${nextTarget.firstName} ${nextTarget.lastName}` : 'No target assigned';
-                                currentTarget.targetId = nextTarget ? nextTarget.userId : null;
+                                
+                                setTarget(currentTarget);
                             }
-
-                            setTarget(currentTarget);
                         } else {
                             console.warn('User target not found in targets collection.');
                             setTarget(null);
@@ -195,11 +201,18 @@ const Dashboard = () => {
 
             {/* Spoon Assassins widget */}
             <div className="widgets">
-                <div className="card spoon-card">
+                <div 
+                    className={`card spoon-card ${target?.isEliminated ? 'eliminated' : ''}`}
+                    style={target?.isEliminated ? { backgroundColor: '#2c2c2c', color: 'white' } : {}}
+                >
                     <h2>Spoon Assassin</h2>
-                    <p>
-                        Your target: {target ? target.targetName : 'No target assigned'}
-                    </p>
+                    {target?.isEliminated ? (
+                        <p>You have been eliminated</p>
+                    ) : (
+                        <p>
+                            Your target: {target ? target.targetName : 'No target assigned'}
+                        </p>
+                    )}
                 </div>
             </div>
 
