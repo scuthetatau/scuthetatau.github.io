@@ -17,7 +17,6 @@ const Dashboard = () => {
     const [events, setEvents] = useState([]);
     const [broDateGroup, setBroDateGroup] = useState([]);
     const [target, setTarget] = useState(null);
-    const [eliminations, setEliminations] = useState([]);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -26,15 +25,14 @@ const Dashboard = () => {
                 try {
                     const userQuery = query(
                         collection(firestore, 'users'),
-                        where('email', '==', currentUser.email) // Match user by email
+                        where('email', '==', currentUser.email)
                     );
                     const userSnapshot = await getDocs(userQuery);
 
-                    if (!userSnapshot.empty) { // User exists in Firestore
+                    if (!userSnapshot.empty) {
                         const userData = userSnapshot.docs[0].data();
                         let profilePicUrl = userData?.profilePictureUrl;
 
-                        // Resolve profile picture URL
                         if (profilePicUrl && !profilePicUrl.startsWith('https://lh3.googleusercontent.com/')) {
                             try {
                                 const fileRef = ref(storage, profilePicUrl);
@@ -47,7 +45,6 @@ const Dashboard = () => {
                             }
                         }
 
-                        // Retrieve BroDate group associated with the user
                         const broDatesSnapshot = await getDocs(
                             collection(firestore, 'brodates')
                         );
@@ -56,7 +53,6 @@ const Dashboard = () => {
                             ...doc.data(),
                         }));
 
-                        // Find the group that contains the current user
                         const userGroup = broDates.find((group) =>
                             group.members.some(
                                 (member) => member.email === currentUser.email
@@ -65,132 +61,52 @@ const Dashboard = () => {
 
                         setUser({
                             ...userData,
-                            id: userSnapshot.docs[0].id, // Add Firestore document ID to the user object
+                            id: userSnapshot.docs[0].id,
                             profilePictureUrl:
-                                profilePicUrl || currentUser.photoURL, // Default to Google photo if not available
+                                profilePicUrl || currentUser.photoURL,
                         });
                         setPoints(userData.points || 0);
 
                         if (userGroup) {
-                            setBroDateGroup(userGroup.members); // Set the user's BroDate group
+                            setBroDateGroup(userGroup.members);
                         } else {
-                            setBroDateGroup([]); // No group found
+                            setBroDateGroup([]);
                         }
 
-                        // Fetch the current user's target for Spoon Assassins
-                        try {
-                            const targetDocRef = doc(firestore, 'targets', userSnapshot.docs[0].id);
-                            const targetDoc = await getDoc(targetDocRef);
-                            
-                            if (targetDoc.exists()) {
-                                const targetData = targetDoc.data();
-                                
-                                // Check if the target is eliminated
-                                try {
-                                    // First check if the current user has eliminated someone
-                                    const eliminationsSnapshot = await getDocs(
-                                        query(collection(firestore, 'eliminated'),
-                                        where('eliminatedBy', '==', userSnapshot.docs[0].id))
-                                    );
-                                    
-                                    if (!eliminationsSnapshot.empty) {
-                                        // User has eliminated someone, get their most recent elimination
-                                        const latestElimination = eliminationsSnapshot.docs[0].data();
-                                        
-                                        // Get the eliminated user's target
-                                        const eliminatedUserTargetDoc = await getDoc(doc(firestore, 'targets', latestElimination.userId));
-                                        if (eliminatedUserTargetDoc.exists()) {
-                                            const eliminatedTargetData = eliminatedUserTargetDoc.data();
-                                            
-                                            // Check if this target is also eliminated
-                                            const targetEliminatedSnapshot = await getDocs(
-                                                query(collection(firestore, 'eliminated'),
-                                                where('userId', '==', eliminatedTargetData.targetId))
-                                            );
-                                            
-                                            if (targetEliminatedSnapshot.empty) {
-                                                // Target is active, use it
-                                                setTarget({
-                                                    ...eliminatedTargetData,
-                                                    isNewTarget: true,
-                                                    eliminatedPreviousTarget: true
-                                                });
-                                            } else {
-                                                // Target is eliminated, get their target
-                                                const nextTargetDoc = await getDoc(doc(firestore, 'targets', eliminatedTargetData.targetId));
-                                                if (nextTargetDoc.exists()) {
-                                                    const nextTargetData = nextTargetDoc.data();
-                                                    setTarget({
-                                                        ...nextTargetData,
-                                                        isNewTarget: true,
-                                                        eliminatedPreviousTarget: true,
-                                                        eliminationChainLength: 1
-                                                    });
-                                                } else {
-                                                    setTarget(targetData);
-                                                }
-                                            }
-                                        } else {
-                                            setTarget(targetData);
-                                        }
+                        // Fetch the current user's target and traverse the chain
+                        const userId = userSnapshot.docs[0].id;
+                        const targetDocRef = doc(firestore, 'targets', userId);
+                        const targetDoc = await getDoc(targetDocRef);
+
+                        if (targetDoc.exists()) {
+                            let currentTarget = targetDoc.data();
+                            let visited = new Set();
+
+                            // First, get the user's target
+                            const userTargetDoc = await getDoc(doc(firestore, 'targets', currentTarget.targetId));
+                            if (userTargetDoc.exists()) {
+                                let nextTarget = userTargetDoc.data();
+
+                                // Traverse the chain until we find an active target
+                                while (nextTarget && nextTarget.isEliminated && !visited.has(nextTarget.targetId)) {
+                                    visited.add(nextTarget.targetId);
+                                    const nextTargetDoc = await getDoc(doc(firestore, 'targets', nextTarget.targetId));
+                                    if (nextTargetDoc.exists()) {
+                                        nextTarget = nextTargetDoc.data();
                                     } else {
-                                        // Check if current target is eliminated
-                                        const targetEliminatedSnapshot = await getDocs(
-                                            query(collection(firestore, 'eliminated'),
-                                            where('userId', '==', targetData.targetId))
-                                        );
-                                        
-                                        if (!targetEliminatedSnapshot.empty) {
-                                            // Target is eliminated, get their target
-                                            const eliminatedTargetDoc = await getDoc(doc(firestore, 'targets', targetData.targetId));
-                                            if (eliminatedTargetDoc.exists()) {
-                                                const eliminatedTargetData = eliminatedTargetDoc.data();
-                                                
-                                                // Check if this target is also eliminated
-                                                const nextTargetEliminatedSnapshot = await getDocs(
-                                                    query(collection(firestore, 'eliminated'),
-                                                    where('userId', '==', eliminatedTargetData.targetId))
-                                                );
-                                                
-                                                if (nextTargetEliminatedSnapshot.empty) {
-                                                    // Target is active, use it
-                                                    setTarget({
-                                                        ...eliminatedTargetData,
-                                                        isNewTarget: true,
-                                                        targetWasEliminated: true
-                                                    });
-                                                } else {
-                                                    // Target is eliminated, get their target
-                                                    const nextTargetDoc = await getDoc(doc(firestore, 'targets', eliminatedTargetData.targetId));
-                                                    if (nextTargetDoc.exists()) {
-                                                        const nextTargetData = nextTargetDoc.data();
-                                                        setTarget({
-                                                            ...nextTargetData,
-                                                            isNewTarget: true,
-                                                            targetWasEliminated: true,
-                                                            eliminationChainLength: 1
-                                                        });
-                                                    } else {
-                                                        setTarget(targetData);
-                                                    }
-                                                }
-                                            } else {
-                                                setTarget(targetData);
-                                            }
-                                        } else {
-                                            setTarget(targetData);
-                                        }
+                                        nextTarget = null;
+                                        break;
                                     }
-                                } catch (eliminatedError) {
-                                    console.warn('Error checking eliminations:', eliminatedError);
-                                    setTarget(targetData);
                                 }
-                            } else {
-                                console.warn('User target not found in targets collection.');
-                                setTarget(null);
+
+                                // Update the current target with the found active target
+                                currentTarget.targetName = nextTarget ? `${nextTarget.firstName} ${nextTarget.lastName}` : 'No target assigned';
+                                currentTarget.targetId = nextTarget ? nextTarget.userId : null;
                             }
-                        } catch (targetError) {
-                            console.warn('Error fetching target:', targetError);
+
+                            setTarget(currentTarget);
+                        } else {
+                            console.warn('User target not found in targets collection.');
                             setTarget(null);
                         }
                     } else {
@@ -281,22 +197,9 @@ const Dashboard = () => {
             <div className="widgets">
                 <div className="card spoon-card">
                     <h2>Spoon Assassin</h2>
-                    {target ? (
-                        <>
-                            <p>Your target: {target.targetName}</p>
-                            {target.isNewTarget && (
-                                <p className="new-target-notice">
-                                    {target.eliminatedPreviousTarget 
-                                        ? `New target assigned after your elimination!${target.eliminationChainLength > 1 ? ` (Chain of ${target.eliminationChainLength} eliminations)` : ''}`
-                                        : target.targetWasEliminated
-                                            ? `New target assigned because your previous target was eliminated!${target.eliminationChainLength > 1 ? ` (Chain of ${target.eliminationChainLength} eliminations)` : ''}`
-                                            : "New target assigned!"}
-                                </p>
-                            )}
-                        </>
-                    ) : (
-                        <p>No target assigned</p>
-                    )}
+                    <p>
+                        Your target: {target ? target.targetName : 'No target assigned'}
+                    </p>
                 </div>
             </div>
 
