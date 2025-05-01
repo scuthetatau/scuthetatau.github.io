@@ -53,6 +53,10 @@ const Alumni = () => {
 
     // Helper function to group alumni by graduation year
     const groupedAlumni = alumni.reduce((groups, alum) => {
+        // Skip alumni who have dropped
+        if (alum.dropped) {
+            return groups;
+        }
         const year = alum.graduationYear || 'Unknown Year';
         if (!groups[year]) {
             groups[year] = [];
