@@ -40,11 +40,13 @@ const UserManagement = () => {
         major: '',
         role: '',
         points: 0,
-        profilePictureUrl: ''
+        profilePictureUrl: '',
+        bigId: ''
     });
     const [editingUser, setEditingUser] = useState(null);
     const [profilePicture, setProfilePicture] = useState(null);
     const [profilePictureEdit, setProfilePictureEdit] = useState(null);
+    const [availableBigs, setAvailableBigs] = useState([]);
 
     const [alumni, setAlumni] = useState([]);
     const [editingAlumni, setEditingAlumni] = useState(null);
@@ -54,6 +56,8 @@ const UserManagement = () => {
         graduationYear: '',
         major: '',
         profilePictureUrl: '',
+        bigId: '',
+        dropped: false
     });
     const [alumniProfilePicture, setAlumniProfilePicture] = useState(null);
     const [alumniProfilePictureEdit, setAlumniProfilePictureEdit] = useState(null);
@@ -118,6 +122,28 @@ const UserManagement = () => {
         await updateDoc(alumniRef, editingAlumni);
     };
 
+    // Add this function to fetch available bigs
+    const fetchAvailableBigs = async () => {
+        const [usersSnapshot, alumniSnapshot] = await Promise.all([
+            getDocs(collection(firestore, 'users')),
+            getDocs(collection(firestore, 'alumni'))
+        ]);
+        
+        const usersData = usersSnapshot.docs.map(doc => ({ 
+            id: doc.id, 
+            ...doc.data(),
+            isAlumni: false 
+        }));
+        
+        const alumniData = alumniSnapshot.docs.map(doc => ({ 
+            id: doc.id, 
+            ...doc.data(),
+            isAlumni: true 
+        }));
+
+        setAvailableBigs([...usersData, ...alumniData]);
+    };
+
     useEffect(() => {
         const fetchAllData = async () => {
             const usersList = await fetchUsers();
@@ -126,6 +152,7 @@ const UserManagement = () => {
             setAlumni(alumniList);
         };
         fetchAllData();
+        fetchAvailableBigs();
     }, []);
 
     const handleAddAlumni = async () => {
@@ -137,10 +164,12 @@ const UserManagement = () => {
                 graduationYear: '',
                 major: '',
                 profilePictureUrl: '',
+                bigId: '',
+                dropped: false
             });
             setAlumniProfilePicture(null);
             alert('Alumni added successfully');
-            const alumniList = await fetchAlumni(); // Refresh alumni list
+            const alumniList = await fetchAlumni();
             setAlumni(alumniList);
         } catch (error) {
             console.error('Error adding alumni:', error);
@@ -154,7 +183,7 @@ const UserManagement = () => {
             setEditingAlumni(null);
             setAlumniProfilePictureEdit(null);
             alert('Alumni updated successfully');
-            const alumniList = await fetchAlumni(); // Refresh alumni list
+            const alumniList = await fetchAlumni();
             setAlumni(alumniList);
         } catch (error) {
             console.error('Error updating alumni:', error);
@@ -180,11 +209,12 @@ const UserManagement = () => {
                 major: '',
                 role: '',
                 points: 0,
-                profilePictureUrl: ''
+                profilePictureUrl: '',
+                bigId: ''
             });
             setProfilePicture(null);
             alert('User added successfully');
-            const usersList = await fetchUsers(); // Refresh user list
+            const usersList = await fetchUsers();
             setUsers(usersList);
         } catch (error) {
             console.error('Error adding user:', error);
@@ -198,7 +228,7 @@ const UserManagement = () => {
             setEditingUser(null);
             setProfilePictureEdit(null);
             alert('User updated successfully');
-            const usersList = await fetchUsers(); // Refresh user list
+            const usersList = await fetchUsers();
             setUsers(usersList);
         } catch (error) {
             console.error('Error updating user:', error);
@@ -414,6 +444,24 @@ const UserManagement = () => {
                             />
                         </div>
                         <div className="admin-input-group">
+                            <label>Big Brother:</label>
+                            <select
+                                value={editingUser.bigId || ''}
+                                onChange={(e) => setEditingUser({ ...editingUser, bigId: e.target.value })}
+                                className="admin-select"
+                            >
+                                <option value="">Select a Big Brother</option>
+                                {availableBigs
+                                    .filter(member => member.id !== editingUser.id) // Don't allow self-selection
+                                    .map(member => (
+                                        <option key={member.id} value={member.id}>
+                                            {member.firstName} {member.lastName}
+                                            {member.isAlumni ? ' (Alumni)' : ''}
+                                        </option>
+                                    ))}
+                            </select>
+                        </div>
+                        <div className="admin-input-group">
                             <label>Role</label>
                             <select
                                 value={editingUser.role}
@@ -491,6 +539,30 @@ const UserManagement = () => {
                         onChange={(e) => setNewAlumni({ ...newAlumni, major: e.target.value })}
                         placeholder="Major"
                     />
+                </div>
+                <div className="admin-input-group">
+                    <label>Dropped:</label>
+                    <input
+                        type="checkbox"
+                        checked={newAlumni.dropped || false}
+                        onChange={(e) => setNewAlumni({ ...newAlumni, dropped: e.target.checked })}
+                    />
+                </div>
+                <div className="admin-input-group">
+                    <label>Big Brother:</label>
+                    <select
+                        value={newAlumni.bigId || ''}
+                        onChange={(e) => setNewAlumni({ ...newAlumni, bigId: e.target.value })}
+                        className="admin-select"
+                    >
+                        <option value="">Select a Big Brother</option>
+                        {availableBigs.map(member => (
+                            <option key={member.id} value={member.id}>
+                                {member.firstName} {member.lastName}
+                                {member.isAlumni ? ' (Alumni)' : ''}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <div className="admin-buttons">
                     <button className="add" onClick={handleAddAlumni}>
@@ -576,6 +648,32 @@ const UserManagement = () => {
                                 onChange={(e) => setEditingAlumni({ ...editingAlumni, major: e.target.value })}
                                 placeholder="Major"
                             />
+                        </div>
+                        <div className="admin-input-group">
+                            <label>Dropped:</label>
+                            <input
+                                type="checkbox"
+                                checked={editingAlumni.dropped || false}
+                                onChange={(e) => setEditingAlumni({ ...editingAlumni, dropped: e.target.checked })}
+                            />
+                        </div>
+                        <div className="admin-input-group">
+                            <label>Big Brother:</label>
+                            <select
+                                value={editingAlumni.bigId || ''}
+                                onChange={(e) => setEditingAlumni({ ...editingAlumni, bigId: e.target.value })}
+                                className="admin-select"
+                            >
+                                <option value="">Select a Big Brother</option>
+                                {availableBigs
+                                    .filter(member => member.id !== editingAlumni.id) // Don't allow self-selection
+                                    .map(member => (
+                                        <option key={member.id} value={member.id}>
+                                            {member.firstName} {member.lastName}
+                                            {member.isAlumni ? ' (Alumni)' : ''}
+                                        </option>
+                                    ))}
+                            </select>
                         </div>
                         <div className="admin-buttons">
                             <button className="close" onClick={handleCloseEditAlumni}>
