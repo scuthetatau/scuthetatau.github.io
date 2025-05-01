@@ -411,3 +411,21 @@
         right: 16px;
     }
 }
+
+.founder-alumni-badge {
+    background-color: #f6a640;
+    color: #ffffff;
+    padding: 4px 8px;
+    border-radius: 20px;
+    font-weight: bold;
+    margin-top: -10px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+/*.gold-glow {*/
+/*    border: 2px solid #ffb700;*/
+/*    box-shadow: 0 0 12px 4px #ffc400;*/
+/*    !*transition: box-shadow 0.3s ease, border 0.3s ease;*!*/
+/*    z-index: 1;*/
+/*}*/

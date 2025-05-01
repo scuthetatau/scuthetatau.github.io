@@ -10,12 +10,25 @@ const Alumni = () => {
     const [alumni, setAlumni] = useState([]);
     const [error, setError] = useState(null);
 
+    const foundersIDs = new Set([
+        'K26DTygVlTGCbSOtYqnh',
+        'KB6BbO0Tt7b7S0CPHoZr',
+        '8UQWflUNYPJMUM6U9WDQ',
+        'haV85nz8xqC8eXCnkYNr',
+        'YvJ286qtey5i2QdA3lRo'
+    ]);
+
     useEffect(() => {
         const fetchAlumni = async () => {
             try {
                 const alumniCollection = collection(firestore, 'alumni'); // Collection for alumni
                 const alumniSnapshot = await getDocs(alumniCollection);
-                const alumniList = alumniSnapshot.docs.map((doc) => doc.data());
+                const alumniList = alumniSnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+
+
 
                 const alumniWithImages = await Promise.all(
                     alumniList.map(async (alum) => {
@@ -96,7 +109,10 @@ const Alumni = () => {
                     <h2>Class of {year} </h2>
                     <div className="meet-the-brothers-user-grid">
                         {sortByLastName(groupedAlumni[year]).map((alum, index) => (
-                            <div key={index} className="meet-the-brothers-brother-card">
+                            <div
+                                key={index}
+                                className={`meet-the-brothers-brother-card ${foundersIDs.has(alum.id) ? 'gold-glow' : ''}`}
+                            >
                                 {alum.profilePicUrl && (
                                     <img
                                         src={alum.profilePicUrl || CoatArms}
@@ -106,11 +122,15 @@ const Alumni = () => {
                                     />
                                 )}
                                 <p className="meet-the-brothers-user-name">{alum.firstName} {alum.lastName}</p>
+                                {foundersIDs.has(alum.id) && (
+                                    <div className="founder-alumni-badge">Founding Member</div>
+                                )}
                                 {alum.major && <p className="meet-the-brothers-user-major">{alum.major}</p>}
                                 {alum.graduationYear && <p className="meet-the-brothers-user-graduation-year">Class of {alum.graduationYear}</p>}
-                                {/*{alum.profession && <p className="meet-the-brothers-user-role">{alum.profession}</p>}*/}
                             </div>
                         ))}
+
+
                     </div>
                 </div>
             ))}

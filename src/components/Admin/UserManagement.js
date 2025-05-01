@@ -23,7 +23,7 @@ const UserManagement = () => {
         "Marshall",
         "Social Media Chair",
         "Webmaster",
-        "PNME Chairs",
+        "PNME Chair",
         "Historian",
         "Mediation Chair",
         "DEI Chair"
