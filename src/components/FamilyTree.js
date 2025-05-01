@@ -1,18 +1,29 @@
 import React, { useState, useEffect } from 'react';
 import Tree from 'react-d3-tree';
 import { collection, getDocs } from 'firebase/firestore';
-import { firestore } from '../firebase';
+import { firestore, auth } from '../firebase';
 import genericProfile from './assets/WhiteTT.png';
 import './FamilyTree.css';
+import { useNavigate } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const FamilyTree = () => {
     const [users, setUsers] = useState([]);
     const [alumni, setAlumni] = useState([]);
     const [treeData, setTreeData] = useState(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
-        fetchAllMembers();
-    }, []);
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                navigate('/login');
+                return;
+            }
+            fetchAllMembers();
+        });
+
+        return () => unsubscribe();
+    }, [navigate]);
 
     const fetchAllMembers = async () => {
         // Fetch current users

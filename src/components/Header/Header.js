@@ -123,6 +123,11 @@ const Header = () => {
                     </li>
                     <li className={location.pathname === '/alumni' ? 'active' : ''}><Link to="/alumni" onClick={toggleMobileMenu}>Alumni</Link>
                     </li>
+                    {user && (
+                        <li className={location.pathname === '/family-tree' ? 'active' : ''}>
+                            <Link to="/family-tree" onClick={toggleMobileMenu}>Family Tree</Link>
+                        </li>
+                    )}
                 </ul>
             </div>
 

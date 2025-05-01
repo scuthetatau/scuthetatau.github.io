@@ -541,10 +541,10 @@ const UserManagement = () => {
                     />
                 </div>
                 <div className="admin-input-group">
-                    <label>Dropped:</label>
+                    <label>Dropped</label>
                     <input
                         type="checkbox"
-                        checked={newAlumni.dropped || false}
+                        checked={newAlumni.dropped}
                         onChange={(e) => setNewAlumni({ ...newAlumni, dropped: e.target.checked })}
                     />
                 </div>
@@ -650,10 +650,10 @@ const UserManagement = () => {
                             />
                         </div>
                         <div className="admin-input-group">
-                            <label>Dropped:</label>
+                            <label>Dropped</label>
                             <input
                                 type="checkbox"
-                                checked={editingAlumni.dropped || false}
+                                checked={editingAlumni.dropped}
                                 onChange={(e) => setEditingAlumni({ ...editingAlumni, dropped: e.target.checked })}
                             />
                         </div>
