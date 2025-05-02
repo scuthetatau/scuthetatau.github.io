@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, getDocs, addDoc, updateDoc, doc } from 'firebase/firestore';
+import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { firestore, storage } from '../../firebase';
 import './Admin.css';
@@ -27,6 +27,13 @@ const UserManagement = () => {
         "Historian",
         "Mediation Chair",
         "DEI Chair"
+    ];
+    
+    const availableFamilies = [
+        "Filthy Fam",
+        "Presibobante Guys",
+        "Engh Gang",
+        "Clout Fam"
     ];
     
     const [users, setUsers] = useState([]);
@@ -57,7 +64,8 @@ const UserManagement = () => {
         major: '',
         profilePictureUrl: '',
         bigId: '',
-        dropped: false
+        dropped: false,
+        family: ''
     });
     const [alumniProfilePicture, setAlumniProfilePicture] = useState(null);
     const [alumniProfilePictureEdit, setAlumniProfilePictureEdit] = useState(null);
@@ -165,7 +173,8 @@ const UserManagement = () => {
                 major: '',
                 profilePictureUrl: '',
                 bigId: '',
-                dropped: false
+                dropped: false,
+                family: ''
             });
             setAlumniProfilePicture(null);
             alert('Alumni added successfully');
@@ -235,6 +244,53 @@ const UserManagement = () => {
         }
     };
 
+    const convertToAlumni = async () => {
+        if (!editingUser) return;
+        
+        // Add confirmation prompt
+        const confirmed = window.confirm(
+            `Are you sure you want to convert ${editingUser.firstName} ${editingUser.lastName} to alumni? This action cannot be undone.`
+        );
+        
+        if (!confirmed) return;
+        
+        try {
+            // Create alumni object from user data
+            const alumniData = {
+                firstName: editingUser.firstName,
+                lastName: editingUser.lastName,
+                graduationYear: editingUser.graduationYear,
+                major: editingUser.major,
+                profilePictureUrl: editingUser.profilePictureUrl,
+                bigId: editingUser.bigId,
+                dropped: false
+            };
+
+            // Add to alumni collection
+            await addAlumni(alumniData, null); // null for profile picture since we're reusing the URL
+
+            // Delete from users collection
+            const userRef = doc(firestore, 'users', editingUser.id);
+            await deleteDoc(userRef);
+
+            // Update state
+            setEditingUser(null);
+            setProfilePictureEdit(null);
+            alert('User converted to alumni successfully');
+            
+            // Refresh both lists
+            const [usersList, alumniList] = await Promise.all([
+                fetchUsers(),
+                fetchAlumni()
+            ]);
+            setUsers(usersList);
+            setAlumni(alumniList);
+        } catch (error) {
+            console.error('Error converting user to alumni:', error);
+            alert('Error converting user to alumni');
+        }
+    };
+
     const handleCloseEditUser = () => {
         setEditingUser(null);
         setProfilePictureEdit(null);
@@ -298,12 +354,17 @@ const UserManagement = () => {
                 </div>
                 <div className="admin-input-group">
                     <label>Family</label>
-                    <input
-                        type="text"
+                    <select
                         value={newUser.family}
                         onChange={(e) => setNewUser({ ...newUser, family: e.target.value })}
-                        placeholder="Family"
-                    />
+                    >
+                        <option value="">Select a Family</option>
+                        {availableFamilies.map((family, index) => (
+                            <option key={index} value={family}>
+                                {family}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <div className="admin-input-group">
                     <label>Major</label>
@@ -427,21 +488,17 @@ const UserManagement = () => {
                         </div>
                         <div className="admin-input-group">
                             <label>Family</label>
-                            <input
-                                type="text"
+                            <select
                                 value={editingUser.family}
                                 onChange={(e) => setEditingUser({ ...editingUser, family: e.target.value })}
-                                placeholder="Family"
-                            />
-                        </div>
-                        <div className="admin-input-group">
-                            <label>Major</label>
-                            <input
-                                type="text"
-                                value={editingUser.major}
-                                onChange={(e) => setEditingUser({ ...editingUser, major: e.target.value })}
-                                placeholder="Major"
-                            />
+                            >
+                                <option value="">Select a Family</option>
+                                {availableFamilies.map((family, index) => (
+                                    <option key={index} value={family}>
+                                        {family}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                         <div className="admin-input-group">
                             <label>Big Brother:</label>
@@ -489,6 +546,9 @@ const UserManagement = () => {
                         <div className="admin-buttons">
                             <button className="close" onClick={handleCloseEditUser}>
                                 Close
+                            </button>
+                            <button className="convert" onClick={convertToAlumni}>
+                                Convert to Alumni
                             </button>
                             <button className="update" onClick={handleUpdateUser}>
                                 Update User
@@ -539,6 +599,20 @@ const UserManagement = () => {
                         onChange={(e) => setNewAlumni({ ...newAlumni, major: e.target.value })}
                         placeholder="Major"
                     />
+                </div>
+                <div className="admin-input-group">
+                    <label>Family</label>
+                    <select
+                        value={newAlumni.family}
+                        onChange={(e) => setNewAlumni({ ...newAlumni, family: e.target.value })}
+                    >
+                        <option value="">Select a Family</option>
+                        {availableFamilies.map((family, index) => (
+                            <option key={index} value={family}>
+                                {family}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <div className="admin-input-group">
                     <label>Dropped</label>
@@ -648,6 +722,20 @@ const UserManagement = () => {
                                 onChange={(e) => setEditingAlumni({ ...editingAlumni, major: e.target.value })}
                                 placeholder="Major"
                             />
+                        </div>
+                        <div className="admin-input-group">
+                            <label>Family</label>
+                            <select
+                                value={editingAlumni.family}
+                                onChange={(e) => setEditingAlumni({ ...editingAlumni, family: e.target.value })}
+                            >
+                                <option value="">Select a Family</option>
+                                {availableFamilies.map((family, index) => (
+                                    <option key={index} value={family}>
+                                        {family}
+                                    </option>
+                                ))}
+                            </select>
                         </div>
                         <div className="admin-input-group">
                             <label>Dropped</label>

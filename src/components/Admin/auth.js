@@ -13,7 +13,7 @@ export const checkUserRole = (navigate) => {
                     const userDoc = userSnapshot.docs[0];
                     const userData = userDoc.data();
                     // console.log("User data:", userData);
-                    if (userData.role !== 'Webmaster' && userData.role !== 'Brotherhood Chair') {
+                    if (userData.role !== 'Webmaster' && userData.role !== 'Brotherhood Chair' && userData.role !== 'Mediation Chair') {
                         // console.log(`User role is ${userData.role}, redirecting to home page`);
                         navigate('/');
                     } else {

@@ -50,8 +50,23 @@ const FamilyTree = () => {
 
     const buildTree = (allMembers) => {
         const memberMap = new Map(allMembers.map(member => [member.id, member]));
-        const roots = allMembers.filter(member => !member.bigId);
         
+        // Define the four families
+        const families = [
+            { name: "Filthy Fam", members: [] },
+            { name: "Presibobante Guys", members: [] },
+            { name: "Engh Gang", members: [] },
+            { name: "Clout Fam", members: [] }
+        ];
+
+        // Group members by family
+        allMembers.forEach(member => {
+            const family = families.find(f => f.name === member.family);
+            if (family) {
+                family.members.push(member);
+            }
+        });
+
         const buildNode = (memberId) => {
             const member = memberMap.get(memberId);
             if (!member) return null;
@@ -74,9 +89,23 @@ const FamilyTree = () => {
             return node;
         };
 
+        // Build family nodes
+        const familyNodes = families.map(family => {
+            const familyNode = {
+                name: family.name,
+                attributes: {
+                    isFamily: true
+                },
+                children: family.members
+                    .filter(member => !member.bigId) // Only include root members of each family
+                    .map(member => buildNode(member.id))
+            };
+            return familyNode;
+        });
+
         const tree = {
             name: 'Theta Tau Family Tree',
-            children: roots.map(root => buildNode(root.id))
+            children: familyNodes
         };
 
         setTreeData(tree);
@@ -87,6 +116,7 @@ const FamilyTree = () => {
         const profilePicture = nodeDatum?.profilePicture || genericProfile;
         const name = nodeDatum?.name || 'Unknown';
         const isAlumni = nodeDatum?.attributes?.isAlumni;
+        const isFamily = nodeDatum?.attributes?.isFamily;
 
         return (
             <g onClick={toggleNode} className={`node ${isAlumni ? 'alumni' : ''}`}>
@@ -100,8 +130,17 @@ const FamilyTree = () => {
                     height="50"
                     className="profile-image"
                 />
+                <rect
+                    x="-50"
+                    y="35"
+                    width="100"
+                    height={isFamily ? "20" : "30"}
+                    fill="#f5f5f5"
+                    stroke="none"
+                    rx="5"
+                />
                 <text
-                    dy="45"
+                    dy={isFamily ? "45" : "45"}
                     textAnchor="middle"
                     className="name"
                     style={{ 
@@ -112,25 +151,27 @@ const FamilyTree = () => {
                 >
                     {name}
                 </text>
-                <text
-                    dy="60"
-                    textAnchor="middle"
-                    className="class"
-                    style={{ 
-                        fontSize: '12px',
-                        fill: '#666',
-                        fontFamily: 'Mohave, sans-serif'
-                    }}
-                >
-                    {className}
-                </text>
+                {!isFamily && (
+                    <text
+                        dy="60"
+                        textAnchor="middle"
+                        className="class"
+                        style={{ 
+                            fontSize: '12px',
+                            fill: '#666',
+                            fontFamily: 'Mohave, sans-serif'
+                        }}
+                    >
+                        {className}
+                    </text>
+                )}
             </g>
         );
     };
 
     return (
         <div className="family-tree-container">
-            <h2>Family Tree</h2>
+            <h2>FAMILY TREE</h2>
             {treeData && (
                 <div style={{ width: '100%', height: '800px' }}>
                     <Tree 
@@ -140,6 +181,7 @@ const FamilyTree = () => {
                         translate={{ x: 500, y: 50 }}
                         nodeSize={{ x: 200, y: 150 }}
                         renderCustomNodeElement={CustomNode}
+                        separation={{ siblings: 2, nonSiblings: 2.5 }}
                     />
                 </div>
             )}
