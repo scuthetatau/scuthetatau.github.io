@@ -131,28 +131,28 @@ const AboutUs = () => {
                 </div>
 
                  {/*Image Scroller Section */}
-                <div
-                    className="image-scroller"
-                    ref={scrollRef}
-                    onScroll={handleScroll}
-                    // Attach mouse events only on non-mobile devices
-                    {...(!isMobile && {
-                        onMouseEnter: () => setIsHovered(true),
-                        onMouseLeave: () => setIsHovered(false),
-                    })}
-                >
-                    <div className="scroller-content" style={{ display: "flex", width: "200%" }}>
-                        {/* Duplicate the images array to allow for seamless looping */}
-                        {[...images, ...images].map((image, index) => (
-                            <img
-                                key={index}
-                                src={image}
-                                alt={`About us ${index}`}
-                                className="scroller-image rounded"
-                            />
-                        ))}
-                    </div>
-                </div>
+                {/*<div*/}
+                {/*    className="image-scroller"*/}
+                {/*    ref={scrollRef}*/}
+                {/*    onScroll={handleScroll}*/}
+                {/*    // Attach mouse events only on non-mobile devices*/}
+                {/*    {...(!isMobile && {*/}
+                {/*        onMouseEnter: () => setIsHovered(true),*/}
+                {/*        onMouseLeave: () => setIsHovered(false),*/}
+                {/*    })}*/}
+                {/*>*/}
+                {/*    <div className="scroller-content" style={{ display: "flex", width: "200%" }}>*/}
+                {/*        /!* Duplicate the images array to allow for seamless looping *!/*/}
+                {/*        {[...images, ...images].map((image, index) => (*/}
+                {/*            <img*/}
+                {/*                key={index}*/}
+                {/*                src={image}*/}
+                {/*                alt={`About us ${index}`}*/}
+                {/*                className="scroller-image rounded"*/}
+                {/*            />*/}
+                {/*        ))}*/}
+                {/*    </div>*/}
+                {/*</div>*/}
 
                 {/* National History Section */}
                 <div className="timeline-container">
