@@ -127,10 +127,10 @@ const AboutUs = () => {
                             </div>
                         </div>
                     </div>
-                    <h2 className="heading">WHO WE ARE</h2>
+                    {/*<h2 className="heading">WHO WE ARE</h2>*/}
                 </div>
 
-                {/* Image Scroller Section */}
+                 {/*Image Scroller Section */}
                 <div
                     className="image-scroller"
                     ref={scrollRef}
