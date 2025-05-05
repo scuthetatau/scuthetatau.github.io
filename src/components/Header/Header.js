@@ -98,8 +98,6 @@ const Header = () => {
         setMobileMenuVisible(!mobileMenuVisible);
     };
 
-    const isAdminUser = user && (user.role === 'Admin' || user.role === 'Webmaster' || user.role === 'Scribe');
-
     return (
         <nav className="header">
             <img src={WhiteTT} alt="Logo" className="logo" onClick={handleIconClick}/>
@@ -123,11 +121,6 @@ const Header = () => {
                     </li>
                     <li className={location.pathname === '/alumni' ? 'active' : ''}><Link to="/alumni" onClick={toggleMobileMenu}>Alumni</Link>
                     </li>
-                    {user && (
-                        <li className={location.pathname === '/family-tree' ? 'active' : ''}>
-                            <Link to="/family-tree" onClick={toggleMobileMenu}>Family Tree</Link>
-                        </li>
-                    )}
                 </ul>
             </div>
 
@@ -141,13 +134,12 @@ const Header = () => {
                                 </span>
                                 <img src={user.profilePictureUrl} alt="Profile" className="header-profile-picture"/>
                             </span>
-                            {dropdownVisible && (
-                                <div className="dropdown-menu">
-                                    <Link to="/dashboard" className="dropdown-item">Dashboard</Link>
-                                    {isAdminUser && <Link to="/admin" className="dropdown-item">Admin</Link>}
-                                    <span onClick={handleLogout} className="dropdown-item">Logout</span>
-                                </div>
-                            )}
+
+                            <div className={`dropdown-menu ${dropdownVisible ? 'open' : ''}`}>
+                                <Link to="/dashboard" className="dropdown-item">Dashboard</Link>
+                                <Link to="/family-tree" className="dropdown-item">Family Tree</Link>
+                                <span onClick={handleLogout} className="dropdown-item">Logout</span>
+                            </div>
                         </li>
                     ) : (
                         <li className={location.pathname === '/login' ? 'active' : ''}><Link to="/login">Login</Link>
