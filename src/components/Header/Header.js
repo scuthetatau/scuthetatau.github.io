@@ -4,7 +4,7 @@ import './Header.css';
 import WhiteTT from '../assets/WhiteTT.png';
 import {auth, firestore, storage} from '../../firebase';
 import {onAuthStateChanged, signOut} from 'firebase/auth';
-import {doc, getDoc} from 'firebase/firestore';
+import {doc, getDoc, query, collection, getDocs} from 'firebase/firestore';
 import {getDownloadURL, ref} from 'firebase/storage';
 
 const Header = () => {
@@ -15,45 +15,41 @@ const Header = () => {
     const location = useLocation();
 
     useEffect(() => {
-        const checkAuthorization = async (email) => {
-            const authorizedEmailsRef = doc(firestore, 'authorizedEmails', 'emails_array');
-            const authorizedEmailsDoc = await getDoc(authorizedEmailsRef);
-
-            if (!authorizedEmailsDoc.exists()) {
-                console.error("Authorization list not found.");
-                return false;
-            }
-
-            const authorizedEmails = authorizedEmailsDoc.data().email;
-            if (!authorizedEmails || !Array.isArray(authorizedEmails) || !authorizedEmails.includes(email)) {
-                console.error("Your email is not listed as an authorized email.");
-                return false;
-            }
-            return true;
-        };
-
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             if (currentUser) {
                 const {displayName, email} = currentUser;
 
-                const isAuthorized = await checkAuthorization(email);
-                if (!isAuthorized) {
-                    setUser(null);
-                    return;
-                }
-
                 try {
-                    const userQuery = doc(firestore, 'users', currentUser.uid);
-                    const userSnapshot = await getDoc(userQuery);
-                    const userData = userSnapshot.data();
+                    // Query users collection to find matching user
+                    const userQuery = query(collection(firestore, 'users'));
+                    const userSnapshot = await getDocs(userQuery);
+                    
+                    // Find user with matching email (case-insensitive)
+                    const matchingUser = userSnapshot.docs.find(doc =>
+                        doc.data().email && doc.data().email.toLowerCase() === email.toLowerCase()
+                    );
+
+                    if (!matchingUser) {
+                        console.error("User not found in the system.");
+                        setUser(null);
+                        return;
+                    }
+
+                    const userData = matchingUser.data();
                     let profilePicUrl = userData?.profilePictureUrl;
 
-                    if (profilePicUrl && !profilePicUrl.startsWith('https://lh3.googleusercontent.com/')) { // Profile picture is a Firebase Storage URL
+                    // Try to get Firebase Storage image first
+                    if (profilePicUrl && !profilePicUrl.startsWith('https://lh3.googleusercontent.com/')) {
                         try {
                             profilePicUrl = await getDownloadURL(ref(storage, profilePicUrl));
                         } catch (error) {
-                            console.error(`Error getting image URL for user ${currentUser.email}:`, error);
+                            console.error(`Error getting image URL for user ${email}:`, error);
+                            // Fallback to Google photo if Firebase Storage image fails
+                            profilePicUrl = currentUser.photoURL;
                         }
+                    } else {
+                        // If no Firebase Storage image is set, use Google photo
+                        profilePicUrl = currentUser.photoURL;
                     }
 
                     const [firstName, lastName] = displayName ? displayName.split(' ') : [null, null];
@@ -61,7 +57,7 @@ const Header = () => {
                         firstName,
                         lastName,
                         email,
-                        profilePictureUrl: profilePicUrl || currentUser.photoURL
+                        profilePictureUrl: profilePicUrl
                     });
                 } catch (error) {
                     console.error('Error fetching user data:', error);
