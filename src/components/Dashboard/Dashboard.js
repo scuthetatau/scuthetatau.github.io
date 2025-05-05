@@ -33,6 +33,7 @@ const Dashboard = () => {
                         const userData = userSnapshot.docs[0].data();
                         let profilePicUrl = userData?.profilePictureUrl;
 
+                        // Try to get Firebase Storage image first
                         if (profilePicUrl && !profilePicUrl.startsWith('https://lh3.googleusercontent.com/')) {
                             try {
                                 const fileRef = ref(storage, profilePicUrl);
@@ -42,7 +43,12 @@ const Dashboard = () => {
                                     `Error getting profile picture URL for ${currentUser.email}:`,
                                     error
                                 );
+                                // Fallback to Google photo if Firebase Storage image fails
+                                profilePicUrl = currentUser.photoURL;
                             }
+                        } else {
+                            // If no Firebase Storage image is set, use Google photo
+                            profilePicUrl = currentUser.photoURL;
                         }
 
                         const broDatesSnapshot = await getDocs(
@@ -62,8 +68,7 @@ const Dashboard = () => {
                         setUser({
                             ...userData,
                             id: userSnapshot.docs[0].id,
-                            profilePictureUrl:
-                                profilePicUrl || currentUser.photoURL,
+                            profilePictureUrl: profilePicUrl
                         });
                         setPoints(userData.points || 0);
 
