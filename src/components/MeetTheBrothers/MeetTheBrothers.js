@@ -10,8 +10,6 @@ import thetaClass from "../assets/ChapterPhoto.jpeg"; // Adjust the path as nece
 const MeetTheBrothers = () => {
     const [users, setUsers] = useState([]);
     const [error, setError] = useState(null);
-    const [selectedUser, setSelectedUser] = useState(null); // State for selected user
-    const [isPopupVisible, setIsPopupVisible] = useState(false); // State for popup visibility
     const currentYear = new Date().getFullYear();
 
     useEffect(() => {
@@ -58,20 +56,6 @@ const MeetTheBrothers = () => {
         });
     };
 
-    const openPopup = (user) => {
-        console.log("Opening popup for user:", user);
-        setSelectedUser(user);
-        console.log("State after setting selectedUser:", selectedUser); // May not reflect immediately
-        setIsPopupVisible(true);
-        console.log("Popup visibility:", isPopupVisible); // May delay as well
-    };
-
-    // Close the popup
-    const closePopup = () => {
-        setSelectedUser(null);
-        setIsPopupVisible(false);
-    };
-
     const executiveBoardRoles = ['Scribe', 'Corresponding Secretary', 'Regent', 'Treasurer', 'Vice Regent'];
 
     const executiveBoardUsers = sortByLastName(users.filter(user => executiveBoardRoles.includes(user.role)))
@@ -104,6 +88,12 @@ const MeetTheBrothers = () => {
     const handleImageError = (event) => {
         event.target.onerror = null; // Prevents infinite loop if fallback image fails
         event.target.src = CoatArms; // Fallback image
+    };
+
+    const handleCardClick = (user) => {
+        if (user.linkedinUrl) {
+            window.open(user.linkedinUrl, '_blank');
+        }
     };
 
     return (
@@ -167,11 +157,9 @@ const MeetTheBrothers = () => {
                         {sortByLastName(groupedUsers[classGroup]).map(user => (
                             <div
                                 key={user.email}
-                                className="meet-the-brothers-brother-card"
-                                onClick={() => {
-                                    // console.log("Card clicked for user:", user);
-                                    openPopup(user);
-                                }}
+                                className={`meet-the-brothers-brother-card ${user.linkedinUrl ? 'linkedin-available' : ''}`}
+                                onClick={() => handleCardClick(user)}
+                                style={{ cursor: user.linkedinUrl ? 'pointer' : 'default' }}
                             >
                                 <img
                                     src={user.profilePicUrl || GenericProfile}
@@ -182,37 +170,12 @@ const MeetTheBrothers = () => {
                                 <p className="meet-the-brothers-user-name">{user.firstName} {user.lastName}</p>
                                 {user.role && user.role !== 'Mediation Chair' && <p className="meet-the-brothers-user-role">{user.role}</p>}
                                 {user.major && <p className="meet-the-brothers-user-major">{user.major}</p>}
-                                {user.graduationYear && <p className="meet-the-brothers-user-graduation-year">Class
-                                    of {user.graduationYear}</p>}
+                                {user.graduationYear && <p className="meet-the-brothers-user-graduation-year">Class of {user.graduationYear}</p>}
                             </div>
                         ))}
                     </div>
                 </div>
             ))}
-
-            {isPopupVisible && selectedUser && (
-                <div className="popup-overlay" onClick={closePopup}>
-                    <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-                        <div className="popup-main">
-                            <div className="popup-user-image-container">
-                                <img
-                                    src={selectedUser.profilePicUrl || GenericProfile}
-                                    alt={`${selectedUser.firstName} ${selectedUser.lastName}`}
-                                    className="popup-user-image"
-                                    onError={handleImageError}
-                                />
-                            </div>
-                            <div className="popup-user-info">
-                                <h2>{selectedUser.firstName} {selectedUser.lastName}</h2>
-                                <p>Graduation Year: {selectedUser.graduationYear}</p>
-                                <p>Class: {selectedUser.class}</p>
-                                <p>Leadership Position: {selectedUser.role || "N/A"}</p>
-                            </div>
-                        </div>
-                        <button className="popup-close-button" onClick={closePopup}>Close</button>
-                    </div>
-                </div>
-            )}
         </div>
     );
 };

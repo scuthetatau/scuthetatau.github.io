@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { ref, getDownloadURL } from 'firebase/storage';
+import { auth } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import CoatArms from './assets/CoatArms.png'; // Fallback image
 import UpsilonClass from './assets/UpsilonEpsilonThetaTau.png'
 import './MeetTheBrothers/MeetTheBrothers.css'; // Use styling similar to `MeetTheBrothers`
@@ -9,6 +11,7 @@ import { firestore, storage } from '../firebase';
 const Alumni = () => {
     const [alumni, setAlumni] = useState([]);
     const [error, setError] = useState(null);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     const foundersIDs = new Set([
         'K26DTygVlTGCbSOtYqnh',
@@ -17,6 +20,15 @@ const Alumni = () => {
         'haV85nz8xqC8eXCnkYNr',
         'YvJ286qtey5i2QdA3lRo'
     ]);
+
+    useEffect(() => {
+        // Set up auth state listener
+        const unsubscribe = onAuthStateChanged(auth, (user) => {
+            setIsAuthenticated(!!user);
+        });
+
+        return () => unsubscribe();
+    }, []);
 
     useEffect(() => {
         const fetchAlumni = async () => {
@@ -94,6 +106,13 @@ const Alumni = () => {
         });
     };
 
+    const handleCardClick = (alum) => {
+        if (!isAuthenticated || !alum.linkedinUrl) {
+            return;
+        }
+        window.open(alum.linkedinUrl, '_blank');
+    };
+
     return (
         <div className="meet-the-brothers-component">
             <div className="meet-the-brothers-hero" style={{ backgroundImage: `url(${UpsilonClass})` }}>
@@ -111,7 +130,9 @@ const Alumni = () => {
                         {sortByLastName(groupedAlumni[year]).map((alum, index) => (
                             <div
                                 key={index}
-                                className={`meet-the-brothers-brother-card ${foundersIDs.has(alum.id) ? 'gold-glow' : ''}`}
+                                className={`meet-the-brothers-brother-card ${foundersIDs.has(alum.id) ? 'gold-glow' : ''} ${alum.linkedinUrl ? 'linkedin-available' : ''}`}
+                                onClick={() => handleCardClick(alum)}
+                                style={{ cursor: alum.linkedinUrl ? 'pointer' : 'default' }}
                             >
                                 {alum.profilePicUrl && (
                                     <img
@@ -129,8 +150,6 @@ const Alumni = () => {
                                 {alum.graduationYear && <p className="meet-the-brothers-user-graduation-year">Class of {alum.graduationYear}</p>}
                             </div>
                         ))}
-
-
                     </div>
                 </div>
             ))}

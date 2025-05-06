@@ -112,6 +112,16 @@
     transform: scale(1.07);
 }
 
+.meet-the-brothers-brother-card.linkedin-available {
+    position: relative;
+    transition: transform 0.2s ease-in-out;
+}
+
+.meet-the-brothers-brother-card.linkedin-available:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
 .meet-the-brothers-user-name {
     padding-top: 30px;
     font-size: 1.2em;
@@ -137,6 +147,13 @@
     color: #666;
     margin-top: 5px;
     text-transform: none;
+}
+
+.meet-the-brothers-user-linkedin {
+    color: #0077b5;
+    font-size: 0.8em;
+    margin-top: 5px;
+    font-style: italic;
 }
 
 .meet-the-brothers-profile-pic {

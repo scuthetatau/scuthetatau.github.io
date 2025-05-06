@@ -16,11 +16,13 @@ const EditUserPopup = ({ user, onClose }) => {
         }));
     };
 
-    const handleFileChange = (e) => {
-        setProfilePictureEdit(e.target.files[0]);
-    };
-
     const handleSave = async () => {
+        // Validate LinkedIn URL before saving
+        if (updatedUser.linkedinUrl && !updatedUser.linkedinUrl.startsWith('https://www.linkedin.com/in/')) {
+            alert('LinkedIn URL must start with https://www.linkedin.com/in/');
+            return;
+        }
+
         if (profilePictureEdit) {
             const profilePictureRef = ref(storage, `profilePictures/${new Date().getTime()}_${profilePictureEdit.name}`);
             await uploadBytes(profilePictureRef, profilePictureEdit);
@@ -36,6 +38,13 @@ const EditUserPopup = ({ user, onClose }) => {
         <div className="admin-edit-user-overlay">
             <div className="admin-edit-user">
                 <h2>Edit User Profile</h2>
+                <div className="admin-input-group">
+                    <label>Profile Picture:</label>
+                    <input
+                        type="file"
+                        onChange={(e) => setProfilePictureEdit(e.target.files[0])}
+                    />
+                </div>
                 <div className="admin-input-group">
                     <label>First Name:</label>
                     <input
@@ -89,13 +98,15 @@ const EditUserPopup = ({ user, onClose }) => {
                         <option value="Clout Fam">Clout Fam</option>
                     </select>
                 </div>
-                {/*<div className="admin-input-group">*/}
-                {/*    <label>Profile Picture:</label>*/}
-                {/*    <input*/}
-                {/*        type="file"*/}
-                {/*        onChange={handleFileChange}*/}
-                {/*    />*/}
-                {/*</div>*/}
+                <div className="admin-input-group">
+                    <label>LinkedIn URL:</label>
+                    <input
+                        name="linkedinUrl"
+                        value={updatedUser.linkedinUrl || ''}
+                        onChange={handleChange}
+                        placeholder="https://www.linkedin.com/in/username"
+                    />
+                </div>
                 <div className="admin-buttons">
                     <button className="close" onClick={onClose}>Cancel</button>
                     <button className="update" onClick={handleSave}>Save</button>

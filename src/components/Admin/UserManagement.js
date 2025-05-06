@@ -48,7 +48,8 @@ const UserManagement = () => {
         role: '',
         points: 0,
         profilePictureUrl: '',
-        bigId: ''
+        bigId: '',
+        linkedinUrl: ''
     });
     const [editingUser, setEditingUser] = useState(null);
     const [profilePicture, setProfilePicture] = useState(null);
@@ -65,7 +66,8 @@ const UserManagement = () => {
         profilePictureUrl: '',
         bigId: '',
         dropped: false,
-        family: ''
+        family: '',
+        linkedinUrl: ''
     });
     const [alumniProfilePicture, setAlumniProfilePicture] = useState(null);
     const [alumniProfilePictureEdit, setAlumniProfilePictureEdit] = useState(null);
@@ -165,6 +167,11 @@ const UserManagement = () => {
 
     const handleAddAlumni = async () => {
         try {
+            // Validate LinkedIn URL if provided
+            if (newAlumni.linkedinUrl && !newAlumni.linkedinUrl.startsWith('https://www.linkedin.com/in/')) {
+                alert('LinkedIn URL must start with https://www.linkedin.com/in/');
+                return;
+            }
             await addAlumni(newAlumni, alumniProfilePicture);
             setNewAlumni({
                 firstName: '',
@@ -174,7 +181,8 @@ const UserManagement = () => {
                 profilePictureUrl: '',
                 bigId: '',
                 dropped: false,
-                family: ''
+                family: '',
+                linkedinUrl: ''
             });
             setAlumniProfilePicture(null);
             alert('Alumni added successfully');
@@ -188,6 +196,11 @@ const UserManagement = () => {
     const handleUpdateAlumni = async () => {
         if (!editingAlumni) return;
         try {
+            // Validate LinkedIn URL if provided
+            if (editingAlumni.linkedinUrl && !editingAlumni.linkedinUrl.startsWith('https://www.linkedin.com/in/')) {
+                alert('LinkedIn URL must start with https://www.linkedin.com/in/');
+                return;
+            }
             await updateAlumni(editingAlumni, alumniProfilePictureEdit);
             setEditingAlumni(null);
             setAlumniProfilePictureEdit(null);
@@ -207,6 +220,11 @@ const UserManagement = () => {
 
     const handleAddUser = async () => {
         try {
+            // Validate LinkedIn URL if provided
+            if (newUser.linkedinUrl && !newUser.linkedinUrl.startsWith('https://www.linkedin.com/in/')) {
+                alert('LinkedIn URL must start with https://www.linkedin.com/in/');
+                return;
+            }
             await addUser(newUser, profilePicture);
             setNewUser({
                 email: '',
@@ -219,7 +237,8 @@ const UserManagement = () => {
                 role: '',
                 points: 0,
                 profilePictureUrl: '',
-                bigId: ''
+                bigId: '',
+                linkedinUrl: ''
             });
             setProfilePicture(null);
             alert('User added successfully');
@@ -233,6 +252,11 @@ const UserManagement = () => {
     const handleUpdateUser = async () => {
         if (!editingUser) return;
         try {
+            // Validate LinkedIn URL if provided
+            if (editingUser.linkedinUrl && !editingUser.linkedinUrl.startsWith('https://www.linkedin.com/in/')) {
+                alert('LinkedIn URL must start with https://www.linkedin.com/in/');
+                return;
+            }
             await updateUser(editingUser, profilePictureEdit);
             setEditingUser(null);
             setProfilePictureEdit(null);
@@ -398,6 +422,15 @@ const UserManagement = () => {
                         placeholder="Points"
                     />
                 </div>
+                <div className="admin-input-group">
+                    <label>LinkedIn URL</label>
+                    <input
+                        type="text"
+                        value={newUser.linkedinUrl}
+                        onChange={(e) => setNewUser({ ...newUser, linkedinUrl: e.target.value })}
+                        placeholder="https://www.linkedin.com/in/username"
+                    />
+                </div>
                 <div className="admin-buttons">
                     <button className="add" onClick={handleAddUser}>
                         Add User
@@ -543,6 +576,15 @@ const UserManagement = () => {
                                 placeholder="Points"
                             />
                         </div>
+                        <div className="admin-input-group">
+                            <label>LinkedIn URL</label>
+                            <input
+                                type="text"
+                                value={editingUser.linkedinUrl || ''}
+                                onChange={(e) => setEditingUser({ ...editingUser, linkedinUrl: e.target.value })}
+                                placeholder="https://www.linkedin.com/in/username"
+                            />
+                        </div>
                         <div className="admin-buttons">
                             <button className="close" onClick={handleCloseEditUser}>
                                 Close
@@ -637,6 +679,15 @@ const UserManagement = () => {
                             </option>
                         ))}
                     </select>
+                </div>
+                <div className="admin-input-group">
+                    <label>LinkedIn URL:</label>
+                    <input
+                        type="text"
+                        value={newAlumni.linkedinUrl || ''}
+                        onChange={(e) => setNewAlumni({ ...newAlumni, linkedinUrl: e.target.value })}
+                        placeholder="https://www.linkedin.com/in/username"
+                    />
                 </div>
                 <div className="admin-buttons">
                     <button className="add" onClick={handleAddAlumni}>
@@ -762,6 +813,15 @@ const UserManagement = () => {
                                         </option>
                                     ))}
                             </select>
+                        </div>
+                        <div className="admin-input-group">
+                            <label>LinkedIn URL:</label>
+                            <input
+                                type="text"
+                                value={editingAlumni.linkedinUrl || ''}
+                                onChange={(e) => setEditingAlumni({ ...editingAlumni, linkedinUrl: e.target.value })}
+                                placeholder="https://www.linkedin.com/in/username"
+                            />
                         </div>
                         <div className="admin-buttons">
                             <button className="close" onClick={handleCloseEditAlumni}>
