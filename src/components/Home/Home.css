@@ -196,6 +196,26 @@
 }
 
 @media (max-width: 768px) {
+    .regent-content {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .regent-image {
+        width: 200px;
+        margin: 0 auto 20px auto;
+        margin-top: 0;
+    }
+
+    .regent-text {
+        width: 100%;
+        /*text-align: center;*/
+    }
+
+    .regent-signature {
+        /*text-align: center;*/
+    }
+
     .pillars-content {
         flex-direction: column;
     }

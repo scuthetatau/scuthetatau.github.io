@@ -31,9 +31,9 @@ const Header = () => {
 
                     if (!matchingUser) {
                         console.error("User not found in the system.");
-                        setUser(null);
-                        return;
-                    }
+                    setUser(null);
+                    return;
+                }
 
                     const userData = matchingUser.data();
                     let profilePicUrl = userData?.profilePictureUrl;
@@ -87,6 +87,7 @@ const Header = () => {
     };
 
     const handleIconClick = () => {
+        setMobileMenuVisible(false);
         navigate('/');
     };
 
@@ -98,7 +99,7 @@ const Header = () => {
         <nav className="header">
             <img src={WhiteTT} alt="Logo" className="logo" onClick={handleIconClick}/>
 
-            <button className="hamburger-icon" onClick={toggleMobileMenu}>
+            <button className={`hamburger-icon ${mobileMenuVisible ? 'active' : ''}`} onClick={toggleMobileMenu}>
                 ☰
             </button>
 
