@@ -61,6 +61,7 @@
 .widgets {
     display: flex;
     padding: 10px;
+    flex-wrap: wrap;
 }
 
 .card {
@@ -70,6 +71,7 @@
     padding: 20px;
     flex: 1;
     margin: -5px 10px 10px;
+    min-width: 300px;
 }
 
 h2 {
@@ -93,6 +95,8 @@ h2 {
     display: flex;
     justify-content: center;
     padding-bottom: 10px;
+    flex-wrap: wrap;
+    gap: 10px;
 }
 
 .spoon-card {
@@ -103,6 +107,7 @@ h2 {
     padding: 20px;
     flex: 1;
     margin: -5px 10px 10px;
+    min-width: 300px;
 }
 
 .calendar-card {
@@ -141,5 +146,82 @@ h2 {
     }
     to {
         opacity: 1;
+    }
+}
+
+/* Mobile Responsive Styles */
+@media screen and (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        align-items: flex-start;
+        margin-left: 5%;
+        margin-right: 5%;
+    }
+
+    .user-info {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        width: 100%;
+    }
+
+    .profile-picture {
+        width: 120px;
+        margin-right: 0;
+        margin-bottom: 15px;
+    }
+
+    .welcome-message {
+        font-size: 28px;
+        margin: 0;
+        text-align: center;
+    }
+
+    .user-details {
+        margin-left: 0;
+        text-align: center;
+    }
+
+    .edit-icon {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+    }
+
+    .widgets {
+        flex-direction: column;
+        padding: 5px;
+    }
+
+    .card {
+        margin: 5px 0;
+        min-width: unset;
+        width: 100%;
+    }
+
+    .spoon-card {
+        margin: 5px 0;
+        min-width: unset;
+        width: 100%;
+    }
+
+    .buttons-container {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .buttons-container button {
+        width: 100%;
+        margin: 5px 0;
+    }
+
+    .calendar-card .event {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .calendar-card .event-date {
+        text-align: center;
+        margin-top: 5px;
     }
 }

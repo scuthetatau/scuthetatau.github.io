@@ -4,7 +4,7 @@ import './Header.css';
 import WhiteTT from '../assets/WhiteTT.png';
 import {auth, firestore, storage} from '../../firebase';
 import {onAuthStateChanged, signOut} from 'firebase/auth';
-import {doc, getDoc, query, collection, getDocs} from 'firebase/firestore';
+import {query, collection, getDocs} from 'firebase/firestore';
 import {getDownloadURL, ref} from 'firebase/storage';
 
 const Header = () => {

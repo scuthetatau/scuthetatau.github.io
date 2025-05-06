@@ -214,6 +214,85 @@
         margin-top: -15px;
         font-size: 4rem; /* Further reduction for smaller devices */
     }
+
+    .BIG-title {
+        font-size: 3.5em;
+    }
+
+    .chapter {
+        font-size: 1.5rem;
+    }
+
+    .subheading {
+        font-size: 1.2rem;
+    }
+
+    .description {
+        font-size: 1rem;
+    }
+
+    .heading {
+        font-size: 2em;
+    }
+
+    .join-title {
+        font-size: 2rem;
+    }
+
+    .pillar-title {
+        font-size: 1.3rem;
+    }
+
+    .pillar-description {
+        font-size: 0.9rem;
+    }
+
+    .regent-text p {
+        font-size: 0.9rem;
+    }
+
+    .regent-signature {
+        font-size: 0.9rem;
+    }
+
+    .rush-highlight-title {
+        font-size: 2rem;
+    }
+
+    .rush-highlight-text {
+        font-size: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .BIG-title {
+        font-size: 2.5em;
+    }
+
+    .chapter {
+        font-size: 1.2rem;
+    }
+
+    .subheading {
+        font-size: 1rem;
+    }
+
+    .description {
+        font-size: 0.9rem;
+    }
+
+    .heading {
+        font-size: 1.8em;
+    }
+
+    .join-title {
+        font-size: 1.8rem;
+    }
+
+    .rush-btn {
+        font-size: 1rem;
+        padding: 0.8rem 1.5rem;
+    }
 }
 
 /* Join Section */
