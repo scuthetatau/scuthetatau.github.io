@@ -11,8 +11,18 @@ const Header = () => {
     const [user, setUser] = useState(null);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
+    const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
     const navigate = useNavigate();
     const location = useLocation();
+
+    useEffect(() => {
+        const handleResize = () => {
+            setIsMobile(window.innerWidth <= 768);
+        };
+
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
@@ -99,6 +109,13 @@ const Header = () => {
         <nav className="header">
             <img src={WhiteTT} alt="Logo" className="logo" onClick={handleIconClick}/>
 
+            {/*Show users profile picture in the Header when on movile*/}
+            {/*{user && isMobile && (*/}
+            {/*    <div className="mobile-profile">*/}
+            {/*        <img src={user.profilePictureUrl} alt="Profile" className="mobile-profile-picture"/>*/}
+            {/*    </div>*/}
+            {/*)}*/}
+
             <button className={`hamburger-icon ${mobileMenuVisible ? 'active' : ''}`} onClick={toggleMobileMenu}>
                 ☰
             </button>
@@ -118,6 +135,27 @@ const Header = () => {
                     </li>
                     <li className={location.pathname === '/alumni' ? 'active' : ''}><Link to="/alumni" onClick={toggleMobileMenu}>Alumni</Link>
                     </li>
+                    {user && isMobile && (
+                        <>
+                            <li className={location.pathname === '/dashboard' ? 'active' : ''}>
+                                <Link to="/dashboard" onClick={toggleMobileMenu}>Dashboard</Link>
+                            </li>
+                            <li className={location.pathname === '/family-tree' ? 'active' : ''}>
+                                <Link to="/family-tree" onClick={toggleMobileMenu}>Family Tree</Link>
+                            </li>
+                            <li>
+                                <Link to="/" onClick={() => {
+                                    handleLogout();
+                                    toggleMobileMenu();
+                                }}>Logout</Link>
+                            </li>
+                        </>
+                    )}
+                    {!user && isMobile && (
+                        <li className={location.pathname === '/login' ? 'active' : ''}>
+                            <Link to="/login" onClick={toggleMobileMenu}>Login</Link>
+                        </li>
+                    )}
                 </ul>
             </div>
 
@@ -139,8 +177,7 @@ const Header = () => {
                             </div>
                         </li>
                     ) : (
-                        <li className={location.pathname === '/login' ? 'active' : ''}><Link to="/login">Login</Link>
-                        </li>
+                        !isMobile && <li className={location.pathname === '/login' ? 'active' : ''}><Link to="/login">Login</Link></li>
                     )}
                 </ul>
             </div>
