@@ -1,17 +1,21 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 // import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, collection, getDocs, updateDoc } from 'firebase/firestore';
+import { doc, getDoc, collection, getDocs, updateDoc, setDoc, query, where, deleteDoc } from 'firebase/firestore';
 import { auth, firestore } from '../../firebase';
 import { checkUserRoles } from './auth';
 import './ScribeEditor.css'; // Import new CSS file
 
 const ScribeEditor = () => {
     const [users, setUsers] = useState([]);
+    const [events, setEvents] = useState([]);
+    const [eventPoints, setEventPoints] = useState({});
     const [searchTerm, setSearchTerm] = useState("");
-    const [editingUserId, setEditingUserId] = useState(null);
-    const [newPoints, setNewPoints] = useState({});
-    const [sortConfig, setSortConfig] = useState({ key: 'lastName', direction: 'ascending' });
+    const [editingCell, setEditingCell] = useState(null);
+    const [newEventName, setNewEventName] = useState("");
+    const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+    const [eventToDelete, setEventToDelete] = useState(null);
+    const [showResetConfirm, setShowResetConfirm] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -22,144 +26,265 @@ const ScribeEditor = () => {
     }, [navigate]);
 
     useEffect(() => {
-        const fetchUsers = async () => {
+        const fetchData = async () => {
+            // Fetch users
             const usersSnapshot = await getDocs(collection(firestore, 'users'));
             const usersList = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
             setUsers(usersList);
+
+            // Fetch events
+            const eventsSnapshot = await getDocs(collection(firestore, 'events'));
+            const eventsList = eventsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            setEvents(eventsList);
+
+            // Fetch event points
+            const pointsSnapshot = await getDocs(collection(firestore, 'eventPoints'));
+            const pointsData = {};
+            pointsSnapshot.docs.forEach(doc => {
+                pointsData[doc.id] = doc.data();
+            });
+            setEventPoints(pointsData);
         };
-        fetchUsers();
+        fetchData();
     }, []);
 
     const handleSearchChange = (event) => {
         setSearchTerm(event.target.value);
     };
 
-    const handleSort = (key) => {
-        let direction = 'ascending';
-        if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-            direction = 'descending';
-        }
-        setSortConfig({ key, direction });
-    };
-
-    const sortedUsers = [...users].sort((a, b) => {
-        if (sortConfig.key === 'points') {
-            return sortConfig.direction === 'ascending'
-                ? a.points - b.points
-                : b.points - a.points;
-        } else {
-            return sortConfig.direction === 'ascending'
-                ? a.lastName.localeCompare(b.lastName)
-                : b.lastName.localeCompare(a.lastName);
-        }
-    });
-
-    const filteredUsers = sortedUsers.filter(user =>
+    const filteredUsers = users.filter(user =>
         `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const handlePointsUpdate = async (userId, updateType) => {
-        const userRef = doc(firestore, 'users', userId);
-        const userDoc = await getDoc(userRef);
-        if (userDoc.exists()) {
-            const userData = userDoc.data();
-            let updatedPoints = userData.points;
+    const handleCellEdit = (userId, eventId, value) => {
+        setEventPoints(prev => ({
+            ...prev,
+            [userId]: {
+                ...prev[userId],
+                [eventId]: value === '' ? 0 : parseInt(value) || 0
+            }
+        }));
+    };
 
-            if (updateType === 'add') {
-                updatedPoints += 50;
-            } else if (updateType === 'remove') {
-                updatedPoints -= 50;
+    const calculateTotalPoints = (userId) => {
+        const userPoints = eventPoints[userId] || {};
+        return Object.values(userPoints).reduce((sum, points) => sum + (points || 0), 0);
+    };
+
+    const handleSave = async () => {
+        try {
+            // Update event points
+            for (const [userId, points] of Object.entries(eventPoints)) {
+                await setDoc(doc(firestore, 'eventPoints', userId), points);
             }
 
-            try {
-                await updateDoc(userRef, { points: updatedPoints });
-                setUsers(users.map(user => user.id === userId ? { ...user, points: updatedPoints } : user));
-            } catch (error) {
-                console.error("Error updating points: ", error);
+            // Update user total points
+            for (const user of users) {
+                const totalPoints = calculateTotalPoints(user.id);
+                await updateDoc(doc(firestore, 'users', user.id), { points: totalPoints });
             }
+
+            alert('Changes saved successfully!');
+        } catch (error) {
+            console.error("Error saving changes: ", error);
+            alert('Error saving changes. Please try again.');
         }
     };
 
-    const handleSetPoints = async (userId) => {
-        const userRef = doc(firestore, 'users', userId);
-        const newPointsValue = newPoints[userId];
-        if (newPointsValue !== undefined && !isNaN(newPointsValue)) {
-            try {
-                await updateDoc(userRef, { points: parseInt(newPointsValue) });
-                setUsers(users.map(user => user.id === userId ? { ...user, points: parseInt(newPointsValue) } : user));
-                setEditingUserId(null);
-            } catch (error) {
-                console.error("Error setting points: ", error);
+    const handleAddEvent = async () => {
+        if (!newEventName.trim()) return;
+
+        try {
+            const newEventRef = doc(collection(firestore, 'events'));
+            const newEvent = {
+                id: newEventRef.id,
+                name: newEventName.trim(),
+                date: new Date().toISOString()
+            };
+
+            await setDoc(newEventRef, newEvent);
+            setEvents([...events, newEvent]);
+            setNewEventName("");
+        } catch (error) {
+            console.error("Error adding event: ", error);
+            alert('Error adding event. Please try again.');
+        }
+    };
+
+    const handleDeleteEvent = async (eventId) => {
+        try {
+            // Delete the event
+            await deleteDoc(doc(firestore, 'events', eventId));
+            
+            // Remove the event from the events state
+            setEvents(events.filter(event => event.id !== eventId));
+            
+            // Remove the event points from all users
+            const updatedEventPoints = {};
+            for (const [userId, points] of Object.entries(eventPoints)) {
+                const { [eventId]: removed, ...remainingPoints } = points;
+                updatedEventPoints[userId] = remainingPoints;
             }
+            setEventPoints(updatedEventPoints);
+            
+            // Update Firebase with the new points
+            for (const [userId, points] of Object.entries(updatedEventPoints)) {
+                await setDoc(doc(firestore, 'eventPoints', userId), points);
+            }
+            
+            setShowDeleteConfirm(false);
+            setEventToDelete(null);
+        } catch (error) {
+            console.error("Error deleting event: ", error);
+            alert('Error deleting event. Please try again.');
         }
     };
 
-    const handlePointsInputChange = (userId, value) => {
-        setNewPoints({ ...newPoints, [userId]: value });
+    const confirmDelete = (event) => {
+        setEventToDelete(event);
+        setShowDeleteConfirm(true);
     };
 
-    const handleKeyPress = (event, userId) => {
-        if (event.key === 'Enter') {
-            handleSetPoints(userId);
+    const handleReset = async () => {
+        try {
+            // Delete all events
+            for (const event of events) {
+                await deleteDoc(doc(firestore, 'events', event.id));
+            }
+            
+            // Delete all event points
+            for (const userId of Object.keys(eventPoints)) {
+                await deleteDoc(doc(firestore, 'eventPoints', userId));
+            }
+            
+            // Reset user points to 0
+            for (const user of users) {
+                await updateDoc(doc(firestore, 'users', user.id), { points: 0 });
+            }
+            
+            // Reset local state
+            setEvents([]);
+            setEventPoints({});
+            
+            setShowResetConfirm(false);
+            alert('All data has been reset successfully!');
+        } catch (error) {
+            console.error("Error resetting data: ", error);
+            alert('Error resetting data. Please try again.');
         }
-    };
-
-    const getPointsIndicator = (points) => {
-        return points > 2500 ? '✅' : '❌';
     };
 
     return (
         <div className="admin-page">
             <h1>Scribe Editor</h1>
-            <input
-                type="text"
-                placeholder="Search users..."
-                value={searchTerm}
-                onChange={handleSearchChange}
-                className="search-bar"
-            />
-            <table className="users-table">
-                <thead>
-                <tr>
-                    <th onClick={() => handleSort('lastName')}>
-                        Name {sortConfig.key === 'lastName' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : null}
-                    </th>
-                    <th onClick={() => handleSort('points')}>
-                        Points {sortConfig.key === 'points' ? (sortConfig.direction === 'ascending' ? '▲' : '▼') : null}
-                    </th>
-                    <th>Reached 2500</th>
-                    <th>Actions</th>
-                </tr>
-                </thead>
-                <tbody>
-                {filteredUsers.map(user => (
-                    <tr key={user.id}>
-                        <td>{user.firstName} {user.lastName}</td>
-                        <td className="points-value">
-                            {editingUserId === user.id ? (
-                                <input
-                                    type="number"
-                                    value={newPoints[user.id] || user.points}
-                                    onChange={(e) => handlePointsInputChange(user.id, e.target.value)}
-                                    onBlur={() => handleSetPoints(user.id)}
-                                    onKeyPress={(e) => handleKeyPress(e, user.id)}
-                                    autoFocus
-                                />
-                            ) : (
-                                <span onClick={() => setEditingUserId(user.id)}>
-                                        {user.points}
-                                    </span>
-                            )}
-                        </td>
-                        <td>{getPointsIndicator(user.points)}</td>
-                        <td className="points-actions">
-                            <button className="adjust-button" onClick={() => handlePointsUpdate(user.id, 'remove')}>-</button>
-                            <button className="adjust-button" onClick={() => handlePointsUpdate(user.id, 'add')}>+</button>
-                        </td>
-                    </tr>
-                ))}
-                </tbody>
-            </table>
+            <div className="controls">
+                <div className="admin-input-group">
+                    <input
+                        type="text"
+                        placeholder="Search users..."
+                        value={searchTerm}
+                        onChange={handleSearchChange}
+                        className="search-bar"
+                    />
+                </div>
+                <div className="admin-input-group add-event-group">
+                    <input
+                        type="text"
+                        placeholder="New event name"
+                        value={newEventName}
+                        onChange={(e) => setNewEventName(e.target.value)}
+                    />
+                    <button className="rush-btn" onClick={handleAddEvent}>Add Event</button>
+                </div>
+                <button className="rush-btn" onClick={handleSave}>Save All Changes</button>
+            </div>
+            <div className="spreadsheet-container">
+                <table className="spreadsheet">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            {events.map(event => (
+                                <th key={event.id}>
+                                    {event.name}
+                                    <button 
+                                        className="close"
+                                        onClick={() => confirmDelete(event)}
+                                        style={{ marginLeft: '8px', padding: '2px 6px' }}
+                                    >
+                                        ×
+                                    </button>
+                                </th>
+                            ))}
+                            <th>Total Points</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {filteredUsers.map(user => (
+                            <tr key={user.id}>
+                                <td>{user.firstName} {user.lastName}</td>
+                                {events.map(event => (
+                                    <td key={event.id}>
+                                        <input
+                                            type="number"
+                                            value={eventPoints[user.id]?.[event.id] || ''}
+                                            onChange={(e) => handleCellEdit(user.id, event.id, e.target.value)}
+                                            min="0"
+                                        />
+                                    </td>
+                                ))}
+                                <td className="total-points">
+                                    {calculateTotalPoints(user.id)}
+                                </td>
+                            </tr>
+                        ))}
+                    </tbody>
+                </table>
+            </div>
+
+            {showDeleteConfirm && (
+                <>
+                    <div className="admin-edit-user-overlay" onClick={() => setShowDeleteConfirm(false)} />
+                    <div className="admin-edit-user">
+                        <h2>Confirm Delete</h2>
+                        <p>Are you sure you want to delete the event "{eventToDelete?.name}"? This will remove all points associated with this event.</p>
+                        <div className="admin-buttons">
+                            <button className="close" onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
+                            <button className="add" onClick={() => handleDeleteEvent(eventToDelete.id)}>Delete</button>
+                        </div>
+                    </div>
+                </>
+            )}
+
+            {showResetConfirm && (
+                <>
+                    <div className="admin-edit-user-overlay" onClick={() => setShowResetConfirm(false)} />
+                    <div className="admin-edit-user">
+                        <h2>Confirm Reset</h2>
+                        <p>Are you sure you want to reset everything? This will:</p>
+                        <ul>
+                            <li>Delete all events</li>
+                            <li>Clear all event points</li>
+                            <li>Reset all user points to zero</li>
+                        </ul>
+                        <p>This action cannot be undone!</p>
+                        <p>This also may take up to a minute for this request to complete.</p>
+                        <div className="admin-buttons">
+                            <button className="close" onClick={() => setShowResetConfirm(false)}>CANCEL</button>
+                            <button className="add" onClick={handleReset}>RESET EVERYTHING</button>
+                        </div>
+                    </div>
+                </>
+            )}
+
+            <div className="reset-section">
+                <button 
+                    className="rush-btn reset-btn" 
+                    onClick={() => setShowResetConfirm(true)}
+                    style={{ marginTop: '20px', backgroundColor: '#dc3545' }}
+                >
+                    Reset Everything
+                </button>
+            </div>
         </div>
     );
 };
