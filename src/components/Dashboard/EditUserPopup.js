@@ -37,14 +37,14 @@ const EditUserPopup = ({ user, onClose }) => {
     return (
         <div className="admin-edit-user-overlay">
             <div className="admin-edit-user">
-                <h2>Edit User Profile</h2>
-                <div className="admin-input-group">
-                    <label>Profile Picture:</label>
-                    <input
-                        type="file"
-                        onChange={(e) => setProfilePictureEdit(e.target.files[0])}
-                    />
-                </div>
+                {/*<h2>Edit User Profile</h2>*/}
+                {/*<div className="admin-input-group">*/}
+                {/*    <label>Profile Picture:</label>*/}
+                {/*    <input*/}
+                {/*        type="file"*/}
+                {/*        onChange={(e) => setProfilePictureEdit(e.target.files[0])}*/}
+                {/*    />*/}
+                {/*</div>*/}
                 <div className="admin-input-group">
                     <label>First Name:</label>
                     <input
@@ -69,14 +69,14 @@ const EditUserPopup = ({ user, onClose }) => {
                         onChange={handleChange}
                     />
                 </div>
-                <div className="admin-input-group">
-                    <label>Class:</label>
-                    <input
-                        name="class"
-                        value={updatedUser.class}
-                        onChange={handleChange}
-                    />
-                </div>
+                {/*<div className="admin-input-group">*/}
+                {/*    <label>Class:</label>*/}
+                {/*    <input*/}
+                {/*        name="class"*/}
+                {/*        value={updatedUser.class}*/}
+                {/*        onChange={handleChange}*/}
+                {/*    />*/}
+                {/*</div>*/}
                 <div className="admin-input-group">
                     <label>Graduation Year:</label>
                     <input
@@ -85,19 +85,19 @@ const EditUserPopup = ({ user, onClose }) => {
                         onChange={handleChange}
                     />
                 </div>
-                <div className="admin-input-group">
-                    <label>Family:</label>
-                    <select
-                        name="family"
-                        value={updatedUser.family}
-                        onChange={handleChange}
-                    >
-                        <option value="Filthy Fam">Filthy Fam</option>
-                        <option value="Presibobante Guys">Presibobante Guys</option>
-                        <option value="Engh Gang">Engh Gang</option>
-                        <option value="Clout Fam">Clout Fam</option>
-                    </select>
-                </div>
+                {/*<div className="admin-input-group">*/}
+                {/*    <label>Family:</label>*/}
+                {/*    <select*/}
+                {/*        name="family"*/}
+                {/*        value={updatedUser.family}*/}
+                {/*        onChange={handleChange}*/}
+                {/*    >*/}
+                {/*        <option value="Filthy Fam">Filthy Fam</option>*/}
+                {/*        <option value="Presibobante Guys">Presibobante Guys</option>*/}
+                {/*        <option value="Engh Gang">Engh Gang</option>*/}
+                {/*        <option value="Clout Fam">Clout Fam</option>*/}
+                {/*    </select>*/}
+                {/*</div>*/}
                 <div className="admin-input-group">
                     <label>LinkedIn URL:</label>
                     <input
