@@ -11,7 +11,7 @@ const ManageBroDates = () => {
 
     useEffect(() => {
         // Verify authentication and role
-        const unsubscribe = checkUserRole(navigate); // Check user role and redirect if unauthorized
+        const unsubscribe = checkUserRole(navigate, 'bro-dates'); // Check user role and redirect if unauthorized
         return () => unsubscribe && unsubscribe(); // Clean up on unmount
     }, [navigate]);
 

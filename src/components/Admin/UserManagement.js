@@ -3,6 +3,8 @@ import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc } from 'firebase
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { firestore, storage } from '../../firebase';
 import './Admin.css';
+import { checkUserRole } from './auth';
+import { useNavigate } from 'react-router-dom';
 
 // Constants
 const AVAILABLE_ROLES = [
@@ -286,6 +288,16 @@ const UserManagement = () => {
         fetchAllData();
         fetchAvailableBigs();
     }, []);
+
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        // Check user permissions on component mount
+        const unsubscribe = checkUserRole(navigate, 'user-management');
+
+        // Cleanup subscription to onAuthStateChanged when component unmounts
+        return () => unsubscribe && unsubscribe();
+    }, [navigate]);
 
     return (
         <div className="admin-page">

@@ -208,7 +208,7 @@ const AdminButtons = ({ user }) => {
     const buttons = [
         {
             roles: ['Webmaster', 'Scribe'],
-            label: 'Go to Scribe Editor',
+            label: 'Scribe Editor',
             path: '/scribe-editor'
         },
         {
@@ -222,7 +222,7 @@ const AdminButtons = ({ user }) => {
             path: '/admin/user-management'
         },
         {
-            roles: ['Webmaster', 'Brotherhood Chair'],
+            roles: ['Webmaster', 'Brotherhood Chair', 'Mediation Chair'],
             label: 'Manage Brodates',
             path: '/admin/bro-dates'
         },

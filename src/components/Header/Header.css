@@ -216,6 +216,10 @@
     .nav-links ul li:nth-child(6) { transition-delay: 0.35s; }
     .nav-links ul li:nth-child(7) { transition-delay: 0.4s; }
     .nav-links ul li:nth-child(8) { transition-delay: 0.45s; }
+    .nav-links ul li:nth-child(9) { transition-delay: 0.5s; }
+    .nav-links ul li:nth-child(10) { transition-delay: 0.55s; }
+    .nav-links ul li:nth-child(11) { transition-delay: 0.6s; }
+    .nav-links ul li:nth-child(12) { transition-delay: 0.65s; }
 
     .nav-links.visible ul li:nth-child(1) { transition-delay: 0.1s; }
     .nav-links.visible ul li:nth-child(2) { transition-delay: 0.15s; }
@@ -225,6 +229,10 @@
     .nav-links.visible ul li:nth-child(6) { transition-delay: 0.35s; }
     .nav-links.visible ul li:nth-child(7) { transition-delay: 0.4s; }
     .nav-links.visible ul li:nth-child(8) { transition-delay: 0.45s; }
+    .nav-links.visible ul li:nth-child(9) { transition-delay: 0.5s; }
+    .nav-links.visible ul li:nth-child(10) { transition-delay: 0.55s; }
+    .nav-links.visible ul li:nth-child(11) { transition-delay: 0.6s; }
+    .nav-links.visible ul li:nth-child(12) { transition-delay: 0.65s; }
 
     .hamburger-icon {
         display: block;

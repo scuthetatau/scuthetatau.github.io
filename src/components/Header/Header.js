@@ -6,9 +6,11 @@ import {auth, firestore, storage} from '../../firebase';
 import {onAuthStateChanged, signOut} from 'firebase/auth';
 import {query, collection, getDocs} from 'firebase/firestore';
 import {getDownloadURL, ref} from 'firebase/storage';
+import { getUserPermissions } from '../Admin/auth';
 
 const Header = () => {
     const [user, setUser] = useState(null);
+    const [userPermissions, setUserPermissions] = useState([]);
     const [dropdownVisible, setDropdownVisible] = useState(false);
     const [mobileMenuVisible, setMobileMenuVisible] = useState(false);
     const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
@@ -41,9 +43,9 @@ const Header = () => {
 
                     if (!matchingUser) {
                         console.error("User not found in the system.");
-                    setUser(null);
-                    return;
-                }
+                        setUser(null);
+                        return;
+                    }
 
                     const userData = matchingUser.data();
                     let profilePicUrl = userData?.profilePictureUrl;
@@ -69,12 +71,17 @@ const Header = () => {
                         email,
                         profilePictureUrl: profilePicUrl
                     });
+
+                    // Get user permissions
+                    const permissions = await getUserPermissions(currentUser);
+                    setUserPermissions(permissions);
                 } catch (error) {
                     console.error('Error fetching user data:', error);
                     setUser(null);
                 }
             } else {
                 setUser(null);
+                setUserPermissions([]);
             }
         });
 
@@ -85,6 +92,7 @@ const Header = () => {
         signOut(auth)
             .then(() => {
                 setUser(null);
+                setUserPermissions([]);
                 navigate('/login');
             })
             .catch((error) => {
@@ -103,6 +111,74 @@ const Header = () => {
 
     const toggleMobileMenu = () => {
         setMobileMenuVisible(!mobileMenuVisible);
+    };
+
+    const renderAdminLinks = () => {
+        const adminLinks = [];
+        
+        if (userPermissions.includes('user-management')) {
+            adminLinks.push(
+                <Link key="user-management" to="/admin/user-management" className="dropdown-item">User Management</Link>
+            );
+        }
+        if (userPermissions.includes('bro-dates')) {
+            adminLinks.push(
+                <Link key="bro-dates" to="/admin/bro-dates" className="dropdown-item">Bro Dates</Link>
+            );
+        }
+        if (userPermissions.includes('scribe-editor')) {
+            adminLinks.push(
+                <Link key="scribe-editor" to="/scribe-editor" className="dropdown-item">Scribe Editor</Link>
+            );
+        }
+        if (userPermissions.includes('spoon-assassins')) {
+            adminLinks.push(
+                <Link key="spoon-assassins" to="/admin/spoon-assassins" className="dropdown-item">Spoon Assassins</Link>
+            );
+        }
+
+        if (adminLinks.length > 0) {
+            return adminLinks;
+        }
+        return null;
+    };
+
+    const renderMobileAdminLinks = () => {
+        const adminLinks = [];
+        
+        if (userPermissions.includes('user-management')) {
+            adminLinks.push(
+                <li key="user-management">
+                    <Link to="/admin/user-management" onClick={toggleMobileMenu}>User Management</Link>
+                </li>
+            );
+        }
+        if (userPermissions.includes('bro-dates')) {
+            adminLinks.push(
+                <li key="bro-dates">
+                    <Link to="/admin/bro-dates" onClick={toggleMobileMenu}>Bro Dates</Link>
+                </li>
+            );
+        }
+        if (userPermissions.includes('scribe-editor')) {
+            adminLinks.push(
+                <li key="scribe-editor">
+                    <Link to="/scribe-editor" onClick={toggleMobileMenu}>Scribe Editor</Link>
+                </li>
+            );
+        }
+        if (userPermissions.includes('spoon-assassins')) {
+            adminLinks.push(
+                <li key="spoon-assassins">
+                    <Link to="/admin/spoon-assassins" onClick={toggleMobileMenu}>Spoon Assassins</Link>
+                </li>
+            );
+        }
+
+        if (adminLinks.length > 0) {
+            return adminLinks;
+        }
+        return null;
     };
 
     return (
@@ -143,6 +219,7 @@ const Header = () => {
                             <li className={location.pathname === '/family-tree' ? 'active' : ''}>
                                 <Link to="/family-tree" onClick={toggleMobileMenu}>Family Tree</Link>
                             </li>
+                            {renderMobileAdminLinks()}
                             <li>
                                 <Link to="/" onClick={() => {
                                     handleLogout();
@@ -173,6 +250,7 @@ const Header = () => {
                             <div className={`dropdown-menu ${dropdownVisible ? 'open' : ''}`}>
                                 <Link to="/dashboard" className="dropdown-item">Dashboard</Link>
                                 <Link to="/family-tree" className="dropdown-item">Family Tree</Link>
+                                {renderAdminLinks()}
                                 <span onClick={handleLogout} className="dropdown-item">Logout</span>
                             </div>
                         </li>

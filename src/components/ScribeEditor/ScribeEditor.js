@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 // import { onAuthStateChanged } from 'firebase/auth';
 import { doc, getDoc, collection, getDocs, updateDoc, setDoc, query, where, deleteDoc } from 'firebase/firestore';
 import { auth, firestore } from '../../firebase';
-import { checkUserRoles } from './auth';
+import { checkUserRole } from '../Admin/auth';
 import './ScribeEditor.css'; // Import new CSS file
 
 const ScribeEditor = () => {
@@ -19,7 +19,7 @@ const ScribeEditor = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        const unsub = checkUserRoles(['Webmaster', 'Scribe'], navigate);
+        const unsub = checkUserRole(navigate, 'scribe-editor');
         return () => {
             unsub();
         };

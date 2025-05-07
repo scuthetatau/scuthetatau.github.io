@@ -95,7 +95,7 @@ const SpoonAssassins = () => {
     const [chain, setChain] = useState([{ userId: '', targetId: '' }]);
 
     useEffect(() => {
-        const unsubscribe = checkUserRole(navigate);
+        const unsubscribe = checkUserRole(navigate, 'spoon-assassins');
         return () => unsubscribe && unsubscribe();
     }, [navigate]);
 
