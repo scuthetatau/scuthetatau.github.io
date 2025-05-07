@@ -29,12 +29,16 @@
 
 .admin-input-group {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
     margin-bottom: 15px;
+    gap: 10px;
 }
 
 .admin-input-group label {
-    margin-bottom: 5px;
+    min-width: 150px;
+    text-align: right;
+    margin-bottom: 0;
     font-size: 1em;
     color: #252525;
     font-weight: 500;
@@ -42,6 +46,7 @@
 
 .admin-input-group input,
 .admin-input-group select {
+    flex: 1;
     padding: 10px;
     font-size: 1em;
     border: 1px solid #ccc;
@@ -49,6 +54,17 @@
     background-color: #ffffff;
     color: #252525;
     transition: border-color 0.3s ease;
+    max-width: 400px;
+}
+
+.admin-input-group input[type="file"] {
+    padding: 5px;
+}
+
+.admin-input-group input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    max-width: 20px;
 }
 
 .admin-input-group input:focus,
@@ -198,20 +214,19 @@
     flex-direction: row;
     align-items: center;
     margin-bottom: 15px;
+    gap: 10px;
 }
 
 .admin-edit-user .admin-input-group label {
-    flex-basis: 30%;
+    min-width: 150px;
+    text-align: right;
     margin-bottom: 0;
-    font-size: 1em;
 }
 
-.admin-edit-user .admin-input-group input {
-    flex-basis: 65%;
-    padding: 10px;
-    font-size: 1em;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+.admin-edit-user .admin-input-group input,
+.admin-edit-user .admin-input-group select {
+    flex: 1;
+    max-width: 400px;
 }
 
 .admin-edit-user .admin-buttons {
