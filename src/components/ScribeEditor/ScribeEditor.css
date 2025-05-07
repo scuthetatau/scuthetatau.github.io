@@ -62,29 +62,6 @@
     box-shadow: 0 0 0 2px rgba(136, 22, 22, 0.1);
 }
 
-.rush-btn {
-    padding: 9px 20px;
-    font-size: 1em;
-    font-family: 'Mohave', sans-serif;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-    background-color: #881616;
-    color: #ffffff;
-    text-transform: uppercase;
-    white-space: nowrap;
-    height: 38px;
-    box-sizing: border-box;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.rush-btn:hover {
-    background-color: #6b1212;
-}
-
 .spreadsheet-container {
     overflow-x: auto;
     margin-top: 20px;
