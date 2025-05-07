@@ -4,135 +4,99 @@ import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { firestore, storage } from '../../firebase';
 import './Admin.css';
 
-const UserManagement = () => {
-    // Available roles for the dropdown
-    const availableRoles = [
-        "Regent",
-        "Vice Regent",
-        "Treasurer",
-        "Scribe",
-        "Corresponding Secretary",
-        "Brotherhood Chair",
-        "Service Chair",
-        "Professional Development Chair",
-        "Recruitment Chair",
-        "Special Events Chair",
-        "Engineering Outreach Chair",
-        "Academic Chair",
-        "Fundraising Chair",
-        "Marshall",
-        "Social Media Chair",
-        "Webmaster",
-        "PNME Chair",
-        "Historian",
-        "Mediation Chair",
-        "DEI Chair"
-    ];
-    
-    const availableFamilies = [
-        "Filthy Fam",
-        "Presibobante Guys",
-        "Engh Gang",
-        "Clout Fam"
-    ];
-    
-    const [users, setUsers] = useState([]);
-    const [newUser, setNewUser] = useState({
-        email: '',
-        firstName: '',
-        lastName: '',
-        class: '',
-        graduationYear: '',
-        family: '',
-        major: '',
-        role: '',
-        points: 0,
-        profilePictureUrl: '',
-        bigId: '',
-        linkedinUrl: ''
-    });
-    const [editingUser, setEditingUser] = useState(null);
-    const [profilePicture, setProfilePicture] = useState(null);
-    const [profilePictureEdit, setProfilePictureEdit] = useState(null);
-    const [availableBigs, setAvailableBigs] = useState([]);
+// Constants
+const AVAILABLE_ROLES = [
+    "Regent", "Vice Regent", "Treasurer", "Scribe", "Corresponding Secretary",
+    "Brotherhood Chair", "Service Chair", "Professional Development Chair",
+    "Recruitment Chair", "Special Events Chair", "Engineering Outreach Chair",
+    "Academic Chair", "Fundraising Chair", "Marshall", "Social Media Chair",
+    "Webmaster", "PNME Chair", "Historian", "Mediation Chair", "DEI Chair"
+];
 
+const AVAILABLE_FAMILIES = [
+    "Filthy Fam", "Presibobante Guys", "Engh Gang", "Clout Fam"
+];
+
+// Utility functions
+const validateLinkedInUrl = (url) => {
+    if (!url) return true;
+    return url.startsWith('https://www.linkedin.com/in/');
+};
+
+const uploadProfilePicture = async (file, collectionName) => {
+    if (!file) return null;
+    const path = `${collectionName}ProfilePictures/${new Date().getTime()}_${file.name}`;
+    const fileRef = ref(storage, path);
+    await uploadBytes(fileRef, file);
+    return await getDownloadURL(fileRef);
+};
+
+// Reusable form components
+const ProfilePictureInput = ({ onChange, label }) => (
+    <div className="admin-input-group">
+        <label>{label}</label>
+        <input type="file" onChange={(e) => onChange(e.target.files[0])} />
+    </div>
+);
+
+const TextInput = ({ label, value, onChange, placeholder }) => (
+    <div className="admin-input-group">
+        <label>{label}</label>
+        <input
+            type="text"
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            placeholder={placeholder}
+        />
+    </div>
+);
+
+const SelectInput = ({ label, value, onChange, options, placeholder }) => (
+    <div className="admin-input-group">
+        <label>{label}</label>
+        <select value={value} onChange={(e) => onChange(e.target.value)}>
+            <option value="">{placeholder}</option>
+            {options.map((option, index) => (
+                <option key={index} value={option}>{option}</option>
+            ))}
+        </select>
+    </div>
+);
+
+const UserManagement = () => {
+    // State management
+    const [users, setUsers] = useState([]);
     const [alumni, setAlumni] = useState([]);
+    const [availableBigs, setAvailableBigs] = useState([]);
+    const [editingUser, setEditingUser] = useState(null);
     const [editingAlumni, setEditingAlumni] = useState(null);
-    const [newAlumni, setNewAlumni] = useState({
-        firstName: '',
-        lastName: '',
-        graduationYear: '',
-        major: '',
-        profilePictureUrl: '',
-        bigId: '',
-        dropped: false,
-        family: '',
-        linkedinUrl: ''
-    });
-    const [alumniProfilePicture, setAlumniProfilePicture] = useState(null);
+    const [profilePictureEdit, setProfilePictureEdit] = useState(null);
     const [alumniProfilePictureEdit, setAlumniProfilePictureEdit] = useState(null);
 
-    // Fetch users from Firestore
+    // Form state
+    const [newUser, setNewUser] = useState({
+        email: '', firstName: '', lastName: '', class: '',
+        graduationYear: '', family: '', major: '', role: '',
+        points: 0, profilePictureUrl: '', bigId: '', linkedinUrl: ''
+    });
+
+    const [newAlumni, setNewAlumni] = useState({
+        firstName: '', lastName: '', graduationYear: '', major: '',
+        profilePictureUrl: '', bigId: '', dropped: false,
+        family: '', linkedinUrl: ''
+    });
+
+    // Data fetching
     const fetchUsers = async () => {
         const usersSnapshot = await getDocs(collection(firestore, 'users'));
         return usersSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     };
 
-    // Add a new user to Firestore
-    const addUser = async (newUser, profilePicture) => {
-        if (profilePicture) {
-            const profilePictureRef = ref(storage, `profilePictures/${new Date().getTime()}_${profilePicture.name}`);
-            await uploadBytes(profilePictureRef, profilePicture);
-            newUser.profilePictureUrl = await getDownloadURL(profilePictureRef); // Store the full URL
-        }
-        await addDoc(collection(firestore, 'users'), newUser); // Firestore handles document ID
-    };
-
-    // Update an existing user in Firestore
-    const updateUser = async (editingUser, profilePictureEdit) => {
-        if (profilePictureEdit) {
-            const profilePictureRef = ref(storage, `profilePictures/${new Date().getTime()}_${profilePictureEdit.name}`);
-            await uploadBytes(profilePictureRef, profilePictureEdit);
-            editingUser.profilePictureUrl = await getDownloadURL(profilePictureRef);
-        }
-        const userRef = doc(firestore, 'users', editingUser.id);
-        await updateDoc(userRef, editingUser);
-    };
-
-    // Fetch alumni from Firestore
     const fetchAlumni = async () => {
         const alumniSnapshot = await getDocs(collection(firestore, 'alumni'));
         return alumniSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
     };
 
-    // Add a new alumni to Firestore
-    const addAlumni = async (newAlumni, alumniProfilePicture) => {
-        if (alumniProfilePicture) {
-            const profilePictureRef = ref(
-                storage,
-                `alumniProfilePictures/${new Date().getTime()}_${alumniProfilePicture.name}`
-            );
-            await uploadBytes(profilePictureRef, alumniProfilePicture);
-            newAlumni.profilePictureUrl = await getDownloadURL(profilePictureRef);
-        }
-        await addDoc(collection(firestore, 'alumni'), newAlumni);
-    };
-
-    // Update an existing alumni in Firestore
-    const updateAlumni = async (editingAlumni, alumniProfilePictureEdit) => {
-        if (alumniProfilePictureEdit) {
-            const profilePictureRef = ref(
-                storage,
-                `alumniProfilePictures/${new Date().getTime()}_${alumniProfilePictureEdit.name}`
-            );
-            await uploadBytes(profilePictureRef, alumniProfilePictureEdit);
-            editingAlumni.profilePictureUrl = await getDownloadURL(profilePictureRef);
-        }
-        const alumniRef = doc(firestore, 'alumni', editingAlumni.id);
-        await updateDoc(alumniRef, editingAlumni);
-    };
-
-    // Add this function to fetch available bigs
     const fetchAvailableBigs = async () => {
         const [usersSnapshot, alumniSnapshot] = await Promise.all([
             getDocs(collection(firestore, 'users')),
@@ -154,171 +118,174 @@ const UserManagement = () => {
         setAvailableBigs([...usersData, ...alumniData]);
     };
 
-    useEffect(() => {
-        const fetchAllData = async () => {
-            const usersList = await fetchUsers();
-            const alumniList = await fetchAlumni();
-            setUsers(usersList);
-            setAlumni(alumniList);
-        };
-        fetchAllData();
-        fetchAvailableBigs();
-    }, []);
-
-    const handleAddAlumni = async () => {
-        try {
-            // Validate LinkedIn URL if provided
-            if (newAlumni.linkedinUrl && !newAlumni.linkedinUrl.startsWith('https://www.linkedin.com/in/')) {
-                alert('LinkedIn URL must start with https://www.linkedin.com/in/');
-                return;
-            }
-            await addAlumni(newAlumni, alumniProfilePicture);
-            setNewAlumni({
-                firstName: '',
-                lastName: '',
-                graduationYear: '',
-                major: '',
-                profilePictureUrl: '',
-                bigId: '',
-                dropped: false,
-                family: '',
-                linkedinUrl: ''
-            });
-            setAlumniProfilePicture(null);
-            alert('Alumni added successfully');
-            const alumniList = await fetchAlumni();
-            setAlumni(alumniList);
-        } catch (error) {
-            console.error('Error adding alumni:', error);
+    // CRUD operations
+    const addUser = async (userData, profilePicture) => {
+        if (!validateLinkedInUrl(userData.linkedinUrl)) {
+            alert('LinkedIn URL must start with https://www.linkedin.com/in/');
+            return;
         }
-    };
 
-    const handleUpdateAlumni = async () => {
-        if (!editingAlumni) return;
-        try {
-            // Validate LinkedIn URL if provided
-            if (editingAlumni.linkedinUrl && !editingAlumni.linkedinUrl.startsWith('https://www.linkedin.com/in/')) {
-                alert('LinkedIn URL must start with https://www.linkedin.com/in/');
-                return;
-            }
-            await updateAlumni(editingAlumni, alumniProfilePictureEdit);
-            setEditingAlumni(null);
-            setAlumniProfilePictureEdit(null);
-            alert('Alumni updated successfully');
-            const alumniList = await fetchAlumni();
-            setAlumni(alumniList);
-        } catch (error) {
-            console.error('Error updating alumni:', error);
-        }
-    };
-
-    const handleCloseEditAlumni = () => {
-        setEditingAlumni(null);
-        setAlumniProfilePictureEdit(null);
-    };
-
-
-    const handleAddUser = async () => {
-        try {
-            // Validate LinkedIn URL if provided
-            if (newUser.linkedinUrl && !newUser.linkedinUrl.startsWith('https://www.linkedin.com/in/')) {
-                alert('LinkedIn URL must start with https://www.linkedin.com/in/');
-                return;
-            }
-            await addUser(newUser, profilePicture);
-            setNewUser({
-                email: '',
-                firstName: '',
-                lastName: '',
-                class: '',
-                graduationYear: '',
-                family: '',
-                major: '',
-                role: '',
-                points: 0,
-                profilePictureUrl: '',
-                bigId: '',
-                linkedinUrl: ''
-            });
-            setProfilePicture(null);
-            alert('User added successfully');
-            const usersList = await fetchUsers();
-            setUsers(usersList);
-        } catch (error) {
-            console.error('Error adding user:', error);
-        }
-    };
-
-    const handleUpdateUser = async () => {
-        if (!editingUser) return;
-        try {
-            // Validate LinkedIn URL if provided
-            if (editingUser.linkedinUrl && !editingUser.linkedinUrl.startsWith('https://www.linkedin.com/in/')) {
-                alert('LinkedIn URL must start with https://www.linkedin.com/in/');
-                return;
-            }
-            await updateUser(editingUser, profilePictureEdit);
-            setEditingUser(null);
-            setProfilePictureEdit(null);
-            alert('User updated successfully');
-            const usersList = await fetchUsers();
-            setUsers(usersList);
-        } catch (error) {
-            console.error('Error updating user:', error);
-        }
-    };
-
-    const convertToAlumni = async () => {
-        if (!editingUser) return;
+        const profilePictureUrl = await uploadProfilePicture(profilePicture, 'users');
+        if (profilePictureUrl) userData.profilePictureUrl = profilePictureUrl;
         
-        // Add confirmation prompt
+        await addDoc(collection(firestore, 'users'), userData);
+        const updatedUsers = await fetchUsers();
+        setUsers(updatedUsers);
+    };
+
+    const updateUser = async (userData, profilePicture) => {
+        if (!validateLinkedInUrl(userData.linkedinUrl)) {
+            alert('LinkedIn URL must start with https://www.linkedin.com/in/');
+            return;
+        }
+
+        const profilePictureUrl = await uploadProfilePicture(profilePicture, 'users');
+        if (profilePictureUrl) userData.profilePictureUrl = profilePictureUrl;
+        
+        const userRef = doc(firestore, 'users', userData.id);
+        await updateDoc(userRef, userData);
+        const updatedUsers = await fetchUsers();
+        setUsers(updatedUsers);
+    };
+
+    const addAlumni = async (alumniData, profilePicture) => {
+        if (!validateLinkedInUrl(alumniData.linkedinUrl)) {
+            alert('LinkedIn URL must start with https://www.linkedin.com/in/');
+            return;
+        }
+
+        const profilePictureUrl = await uploadProfilePicture(profilePicture, 'alumni');
+        if (profilePictureUrl) alumniData.profilePictureUrl = profilePictureUrl;
+        
+        await addDoc(collection(firestore, 'alumni'), alumniData);
+        const updatedAlumni = await fetchAlumni();
+        setAlumni(updatedAlumni);
+    };
+
+    const updateAlumni = async (alumniData, profilePicture) => {
+        if (!validateLinkedInUrl(alumniData.linkedinUrl)) {
+            alert('LinkedIn URL must start with https://www.linkedin.com/in/');
+            return;
+        }
+
+        const profilePictureUrl = await uploadProfilePicture(profilePicture, 'alumni');
+        if (profilePictureUrl) alumniData.profilePictureUrl = profilePictureUrl;
+        
+        const alumniRef = doc(firestore, 'alumni', alumniData.id);
+        await updateDoc(alumniRef, alumniData);
+        const updatedAlumni = await fetchAlumni();
+        setAlumni(updatedAlumni);
+    };
+
+    const convertToAlumni = async (userData) => {
         const confirmed = window.confirm(
-            `Are you sure you want to convert ${editingUser.firstName} ${editingUser.lastName} to alumni? This action cannot be undone.`
+            `Are you sure you want to convert ${userData.firstName} ${userData.lastName} to alumni? This action cannot be undone.`
         );
         
         if (!confirmed) return;
         
         try {
-            // Create alumni object from user data
             const alumniData = {
-                firstName: editingUser.firstName,
-                lastName: editingUser.lastName,
-                graduationYear: editingUser.graduationYear,
-                major: editingUser.major,
-                profilePictureUrl: editingUser.profilePictureUrl,
-                bigId: editingUser.bigId,
-                dropped: false
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                graduationYear: userData.graduationYear,
+                major: userData.major,
+                profilePictureUrl: userData.profilePictureUrl,
+                bigId: userData.bigId,
+                dropped: false,
+                family: userData.family,
+                linkedinUrl: userData.linkedinUrl
             };
 
-            // Add to alumni collection
-            await addAlumni(alumniData, null); // null for profile picture since we're reusing the URL
-
-            // Delete from users collection
-            const userRef = doc(firestore, 'users', editingUser.id);
-            await deleteDoc(userRef);
-
-            // Update state
-            setEditingUser(null);
-            setProfilePictureEdit(null);
-            alert('User converted to alumni successfully');
+            await addAlumni(alumniData, null);
+            await deleteDoc(doc(firestore, 'users', userData.id));
             
-            // Refresh both lists
-            const [usersList, alumniList] = await Promise.all([
+            const [updatedUsers, updatedAlumni] = await Promise.all([
                 fetchUsers(),
                 fetchAlumni()
             ]);
-            setUsers(usersList);
-            setAlumni(alumniList);
+            
+            setUsers(updatedUsers);
+            setAlumni(updatedAlumni);
+            setEditingUser(null);
         } catch (error) {
             console.error('Error converting user to alumni:', error);
             alert('Error converting user to alumni');
         }
     };
 
-    const handleCloseEditUser = () => {
-        setEditingUser(null);
-        setProfilePictureEdit(null);
+    // Event handlers
+    const handleAddUser = async () => {
+        try {
+            await addUser(newUser, profilePictureEdit);
+            setNewUser({
+                email: '', firstName: '', lastName: '', class: '',
+                graduationYear: '', family: '', major: '', role: '',
+                points: 0, profilePictureUrl: '', bigId: '', linkedinUrl: ''
+            });
+            setProfilePictureEdit(null);
+            alert('User added successfully');
+        } catch (error) {
+            console.error('Error adding user:', error);
+            alert('Error adding user');
+        }
     };
+
+    const handleUpdateUser = async () => {
+        if (!editingUser) return;
+        try {
+            await updateUser(editingUser, profilePictureEdit);
+            setEditingUser(null);
+            setProfilePictureEdit(null);
+            alert('User updated successfully');
+        } catch (error) {
+            console.error('Error updating user:', error);
+            alert('Error updating user');
+        }
+    };
+
+    const handleAddAlumni = async () => {
+        try {
+            await addAlumni(newAlumni, alumniProfilePictureEdit);
+            setNewAlumni({
+                firstName: '', lastName: '', graduationYear: '', major: '',
+                profilePictureUrl: '', bigId: '', dropped: false,
+                family: '', linkedinUrl: ''
+            });
+            setAlumniProfilePictureEdit(null);
+            alert('Alumni added successfully');
+        } catch (error) {
+            console.error('Error adding alumni:', error);
+            alert('Error adding alumni');
+        }
+    };
+
+    const handleUpdateAlumni = async () => {
+        if (!editingAlumni) return;
+        try {
+            await updateAlumni(editingAlumni, alumniProfilePictureEdit);
+            setEditingAlumni(null);
+            setAlumniProfilePictureEdit(null);
+            alert('Alumni updated successfully');
+        } catch (error) {
+            console.error('Error updating alumni:', error);
+            alert('Error updating alumni');
+        }
+    };
+
+    // Initialize data
+    useEffect(() => {
+        const fetchAllData = async () => {
+            const [usersList, alumniList] = await Promise.all([
+                fetchUsers(),
+                fetchAlumni()
+            ]);
+            setUsers(usersList);
+            setAlumni(alumniList);
+        };
+        fetchAllData();
+        fetchAvailableBigs();
+    }, []);
 
     return (
         <div className="admin-page">
@@ -327,92 +294,60 @@ const UserManagement = () => {
             {/* Add user section */}
             <div className="admin-add-user">
                 <h2>Add New User</h2>
-                <div className="admin-input-group">
-                    <label>Profile Picture</label>
-                    <input type="file" onChange={(e) => setProfilePicture(e.target.files[0])} />
-                </div>
-                <div className="admin-input-group">
-                    <label>Email</label>
-                    <input
-                        type="text"
-                        value={newUser.email}
-                        onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
-                        placeholder="Email"
-                    />
-                </div>
-                <div className="admin-input-group">
-                    <label>First Name</label>
-                    <input
-                        type="text"
-                        value={newUser.firstName}
-                        onChange={(e) => setNewUser({ ...newUser, firstName: e.target.value })}
-                        placeholder="First Name"
-                    />
-                </div>
-                <div className="admin-input-group">
-                    <label>Last Name</label>
-                    <input
-                        type="text"
-                        value={newUser.lastName}
-                        onChange={(e) => setNewUser({ ...newUser, lastName: e.target.value })}
-                        placeholder="Last Name"
-                    />
-                </div>
-                <div className="admin-input-group">
-                    <label>Class</label>
-                    <input
-                        type="text"
-                        value={newUser.class}
-                        onChange={(e) => setNewUser({ ...newUser, class: e.target.value })}
-                        placeholder="Class"
-                    />
-                </div>
-                <div className="admin-input-group">
-                    <label>Graduation Year</label>
-                    <input
-                        type="text"
-                        value={newUser.graduationYear}
-                        onChange={(e) => setNewUser({ ...newUser, graduationYear: e.target.value })}
-                        placeholder="Graduation Year"
-                    />
-                </div>
-                <div className="admin-input-group">
-                    <label>Family</label>
-                    <select
-                        value={newUser.family}
-                        onChange={(e) => setNewUser({ ...newUser, family: e.target.value })}
-                    >
-                        <option value="">Select a Family</option>
-                        {availableFamilies.map((family, index) => (
-                            <option key={index} value={family}>
-                                {family}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div className="admin-input-group">
-                    <label>Major</label>
-                    <input
-                        type="text"
-                        value={newUser.major}
-                        onChange={(e) => setNewUser({ ...newUser, major: e.target.value })}
-                        placeholder="Major"
-                    />
-                </div>
-                <div className="admin-input-group">
-                    <label>Role</label>
-                    <select
-                        value={newUser.role}
-                        onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
-                    >
-                        <option value="">No Role</option>
-                        {availableRoles.map((role, index) => (
-                            <option key={index} value={role}>
-                                {role}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <ProfilePictureInput 
+                    onChange={setProfilePictureEdit}
+                    label="Profile Picture"
+                />
+                <TextInput
+                    label="Email"
+                    value={newUser.email}
+                    onChange={(value) => setNewUser({ ...newUser, email: value })}
+                    placeholder="Email"
+                />
+                <TextInput
+                    label="First Name"
+                    value={newUser.firstName}
+                    onChange={(value) => setNewUser({ ...newUser, firstName: value })}
+                    placeholder="First Name"
+                />
+                <TextInput
+                    label="Last Name"
+                    value={newUser.lastName}
+                    onChange={(value) => setNewUser({ ...newUser, lastName: value })}
+                    placeholder="Last Name"
+                />
+                <TextInput
+                    label="Class"
+                    value={newUser.class}
+                    onChange={(value) => setNewUser({ ...newUser, class: value })}
+                    placeholder="Class"
+                />
+                <TextInput
+                    label="Graduation Year"
+                    value={newUser.graduationYear}
+                    onChange={(value) => setNewUser({ ...newUser, graduationYear: value })}
+                    placeholder="Graduation Year"
+                />
+                <SelectInput
+                    label="Family"
+                    value={newUser.family}
+                    onChange={(value) => setNewUser({ ...newUser, family: value })}
+                    options={AVAILABLE_FAMILIES}
+                    placeholder="Select a Family"
+                />
+                <TextInput
+                    label="Major"
+                    value={newUser.major}
+                    onChange={(value) => setNewUser({ ...newUser, major: value })}
+                    placeholder="Major"
+                />
+                <SelectInput
+                    label="Role"
+                    value={newUser.role}
+                    onChange={(value) => setNewUser({ ...newUser, role: value })}
+                    options={AVAILABLE_ROLES}
+                    placeholder="No Role"
+                />
                 <div className="admin-input-group">
                     <label>Points</label>
                     <input
@@ -422,15 +357,12 @@ const UserManagement = () => {
                         placeholder="Points"
                     />
                 </div>
-                <div className="admin-input-group">
-                    <label>LinkedIn URL</label>
-                    <input
-                        type="text"
-                        value={newUser.linkedinUrl}
-                        onChange={(e) => setNewUser({ ...newUser, linkedinUrl: e.target.value })}
-                        placeholder="https://www.linkedin.com/in/username"
-                    />
-                </div>
+                <TextInput
+                    label="LinkedIn URL"
+                    value={newUser.linkedinUrl}
+                    onChange={(value) => setNewUser({ ...newUser, linkedinUrl: value })}
+                    placeholder="https://www.linkedin.com/in/username"
+                />
                 <div className="admin-buttons">
                     <button className="add" onClick={handleAddUser}>
                         Add User
@@ -457,7 +389,6 @@ const UserManagement = () => {
                                 </span>
                                 <br />
                                 <span className="user-card-role">{user.role}</span>
-                                <br />
                             </div>
                         </div>
                     </div>
@@ -467,72 +398,50 @@ const UserManagement = () => {
             {/* Edit user modal */}
             {editingUser && (
                 <>
-                    <div className="admin-edit-user-overlay" onClick={handleCloseEditUser}></div>
+                    <div className="admin-edit-user-overlay" onClick={() => setEditingUser(null)}></div>
                     <div className="admin-edit-user">
                         <h2>Edit User</h2>
-                        <div className="admin-input-group">
-                            <label>Profile Picture</label>
-                            <input type="file" onChange={(e) => setProfilePictureEdit(e.target.files[0])} />
-                        </div>
-                        <div className="admin-input-group">
-                            <label>Email</label>
-                            <input
-                                type="text"
-                                value={editingUser.email}
-                                onChange={(e) => setEditingUser({ ...editingUser, email: e.target.value })}
-                                placeholder="Email"
-                            />
-                        </div>
-                        <div className="admin-input-group">
-                            <label>First Name</label>
-                            <input
-                                type="text"
-                                value={editingUser.firstName}
-                                onChange={(e) => setEditingUser({ ...editingUser, firstName: e.target.value })}
-                                placeholder="First Name"
-                            />
-                        </div>
-                        <div className="admin-input-group">
-                            <label>Last Name</label>
-                            <input
-                                type="text"
-                                value={editingUser.lastName}
-                                onChange={(e) => setEditingUser({ ...editingUser, lastName: e.target.value })}
-                                placeholder="Last Name"
-                            />
-                        </div>
-                        <div className="admin-input-group">
-                            <label>Class</label>
-                            <input
-                                type="text"
-                                value={editingUser.class}
-                                onChange={(e) => setEditingUser({ ...editingUser, class: e.target.value })}
-                                placeholder="Class"
-                            />
-                        </div>
-                        <div className="admin-input-group">
-                            <label>Graduation Year</label>
-                            <input
-                                type="text"
-                                value={editingUser.graduationYear}
-                                onChange={(e) => setEditingUser({ ...editingUser, graduationYear: e.target.value })}
-                                placeholder="Graduation Year"
-                            />
-                        </div>
-                        <div className="admin-input-group">
-                            <label>Family</label>
-                            <select
-                                value={editingUser.family}
-                                onChange={(e) => setEditingUser({ ...editingUser, family: e.target.value })}
-                            >
-                                <option value="">Select a Family</option>
-                                {availableFamilies.map((family, index) => (
-                                    <option key={index} value={family}>
-                                        {family}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
+                        <ProfilePictureInput 
+                            onChange={setProfilePictureEdit}
+                            label="Profile Picture"
+                        />
+                        <TextInput
+                            label="Email"
+                            value={editingUser.email}
+                            onChange={(value) => setEditingUser({ ...editingUser, email: value })}
+                            placeholder="Email"
+                        />
+                        <TextInput
+                            label="First Name"
+                            value={editingUser.firstName}
+                            onChange={(value) => setEditingUser({ ...editingUser, firstName: value })}
+                            placeholder="First Name"
+                        />
+                        <TextInput
+                            label="Last Name"
+                            value={editingUser.lastName}
+                            onChange={(value) => setEditingUser({ ...editingUser, lastName: value })}
+                            placeholder="Last Name"
+                        />
+                        <TextInput
+                            label="Class"
+                            value={editingUser.class}
+                            onChange={(value) => setEditingUser({ ...editingUser, class: value })}
+                            placeholder="Class"
+                        />
+                        <TextInput
+                            label="Graduation Year"
+                            value={editingUser.graduationYear}
+                            onChange={(value) => setEditingUser({ ...editingUser, graduationYear: value })}
+                            placeholder="Graduation Year"
+                        />
+                        <SelectInput
+                            label="Family"
+                            value={editingUser.family}
+                            onChange={(value) => setEditingUser({ ...editingUser, family: value })}
+                            options={AVAILABLE_FAMILIES}
+                            placeholder="Select a Family"
+                        />
                         <div className="admin-input-group">
                             <label>Big Brother:</label>
                             <select
@@ -542,7 +451,7 @@ const UserManagement = () => {
                             >
                                 <option value="">Select a Big Brother</option>
                                 {availableBigs
-                                    .filter(member => member.id !== editingUser.id) // Don't allow self-selection
+                                    .filter(member => member.id !== editingUser.id)
                                     .map(member => (
                                         <option key={member.id} value={member.id}>
                                             {member.firstName} {member.lastName}
@@ -551,45 +460,33 @@ const UserManagement = () => {
                                     ))}
                             </select>
                         </div>
-                        <div className="admin-input-group">
-                            <label>Role</label>
-                            <select
-                                value={editingUser.role}
-                                onChange={(e) => setEditingUser({ ...editingUser, role: e.target.value })}
-                            >
-                                <option value="">No Role</option>
-                                {availableRoles.map((role, index) => (
-                                    <option key={index} value={role}>
-                                        {role}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
+                        <SelectInput
+                            label="Role"
+                            value={editingUser.role}
+                            onChange={(value) => setEditingUser({ ...editingUser, role: value })}
+                            options={AVAILABLE_ROLES}
+                            placeholder="No Role"
+                        />
                         <div className="admin-input-group">
                             <label>Points</label>
                             <input
                                 type="number"
                                 value={editingUser.points}
-                                onChange={(e) =>
-                                    setEditingUser({ ...editingUser, points: parseInt(e.target.value, 10) })
-                                }
+                                onChange={(e) => setEditingUser({ ...editingUser, points: parseInt(e.target.value, 10) })}
                                 placeholder="Points"
                             />
                         </div>
-                        <div className="admin-input-group">
-                            <label>LinkedIn URL</label>
-                            <input
-                                type="text"
-                                value={editingUser.linkedinUrl || ''}
-                                onChange={(e) => setEditingUser({ ...editingUser, linkedinUrl: e.target.value })}
-                                placeholder="https://www.linkedin.com/in/username"
-                            />
-                        </div>
+                        <TextInput
+                            label="LinkedIn URL"
+                            value={editingUser.linkedinUrl || ''}
+                            onChange={(value) => setEditingUser({ ...editingUser, linkedinUrl: value })}
+                            placeholder="https://www.linkedin.com/in/username"
+                        />
                         <div className="admin-buttons">
-                            <button className="close" onClick={handleCloseEditUser}>
+                            <button className="close" onClick={() => setEditingUser(null)}>
                                 Close
                             </button>
-                            <button className="convert" onClick={convertToAlumni}>
+                            <button className="convert" onClick={() => convertToAlumni(editingUser)}>
                                 Convert to Alumni
                             </button>
                             <button className="update" onClick={handleUpdateUser}>
@@ -600,62 +497,44 @@ const UserManagement = () => {
                 </>
             )}
 
+            {/* Add alumni section */}
             <div className="admin-add-user">
                 <h2>Add New Alumni</h2>
-                <div className="admin-input-group">
-                    <label>Profile Picture</label>
-                    <input type="file" onChange={(e) => setAlumniProfilePicture(e.target.files[0])} />
-                </div>
-                <div className="admin-input-group">
-                    <label>First Name</label>
-                    <input
-                        type="text"
-                        value={newAlumni.firstName}
-                        onChange={(e) => setNewAlumni({ ...newAlumni, firstName: e.target.value })}
-                        placeholder="First Name"
-                    />
-                </div>
-                <div className="admin-input-group">
-                    <label>Last Name</label>
-                    <input
-                        type="text"
-                        value={newAlumni.lastName}
-                        onChange={(e) => setNewAlumni({ ...newAlumni, lastName: e.target.value })}
-                        placeholder="Last Name"
-                    />
-                </div>
-                <div className="admin-input-group">
-                    <label>Graduation Year</label>
-                    <input
-                        type="text"
-                        value={newAlumni.graduationYear}
-                        onChange={(e) => setNewAlumni({ ...newAlumni, graduationYear: e.target.value })}
-                        placeholder="Graduation Year"
-                    />
-                </div>
-                <div className="admin-input-group">
-                    <label>Major</label>
-                    <input
-                        type="text"
-                        value={newAlumni.major}
-                        onChange={(e) => setNewAlumni({ ...newAlumni, major: e.target.value })}
-                        placeholder="Major"
-                    />
-                </div>
-                <div className="admin-input-group">
-                    <label>Family</label>
-                    <select
-                        value={newAlumni.family}
-                        onChange={(e) => setNewAlumni({ ...newAlumni, family: e.target.value })}
-                    >
-                        <option value="">Select a Family</option>
-                        {availableFamilies.map((family, index) => (
-                            <option key={index} value={family}>
-                                {family}
-                            </option>
-                        ))}
-                    </select>
-                </div>
+                <ProfilePictureInput 
+                    onChange={setAlumniProfilePictureEdit}
+                    label="Profile Picture"
+                />
+                <TextInput
+                    label="First Name"
+                    value={newAlumni.firstName}
+                    onChange={(value) => setNewAlumni({ ...newAlumni, firstName: value })}
+                    placeholder="First Name"
+                />
+                <TextInput
+                    label="Last Name"
+                    value={newAlumni.lastName}
+                    onChange={(value) => setNewAlumni({ ...newAlumni, lastName: value })}
+                    placeholder="Last Name"
+                />
+                <TextInput
+                    label="Graduation Year"
+                    value={newAlumni.graduationYear}
+                    onChange={(value) => setNewAlumni({ ...newAlumni, graduationYear: value })}
+                    placeholder="Graduation Year"
+                />
+                <TextInput
+                    label="Major"
+                    value={newAlumni.major}
+                    onChange={(value) => setNewAlumni({ ...newAlumni, major: value })}
+                    placeholder="Major"
+                />
+                <SelectInput
+                    label="Family"
+                    value={newAlumni.family}
+                    onChange={(value) => setNewAlumni({ ...newAlumni, family: value })}
+                    options={AVAILABLE_FAMILIES}
+                    placeholder="Select a Family"
+                />
                 <div className="admin-input-group">
                     <label>Dropped</label>
                     <input
@@ -680,15 +559,12 @@ const UserManagement = () => {
                         ))}
                     </select>
                 </div>
-                <div className="admin-input-group">
-                    <label>LinkedIn URL:</label>
-                    <input
-                        type="text"
-                        value={newAlumni.linkedinUrl || ''}
-                        onChange={(e) => setNewAlumni({ ...newAlumni, linkedinUrl: e.target.value })}
-                        placeholder="https://www.linkedin.com/in/username"
-                    />
-                </div>
+                <TextInput
+                    label="LinkedIn URL"
+                    value={newAlumni.linkedinUrl || ''}
+                    onChange={(value) => setNewAlumni({ ...newAlumni, linkedinUrl: value })}
+                    placeholder="https://www.linkedin.com/in/username"
+                />
                 <div className="admin-buttons">
                     <button className="add" onClick={handleAddAlumni}>
                         Add Alumni
@@ -715,7 +591,6 @@ const UserManagement = () => {
                                 </span>
                                 <br />
                                 <span className="user-card-role">{alum.graduationYear}</span>
-                                <br />
                             </div>
                         </div>
                     </div>
@@ -725,69 +600,44 @@ const UserManagement = () => {
             {/* Edit alumni modal */}
             {editingAlumni && (
                 <>
-                    <div className="admin-edit-user-overlay" onClick={handleCloseEditAlumni}></div>
+                    <div className="admin-edit-user-overlay" onClick={() => setEditingAlumni(null)}></div>
                     <div className="admin-edit-user">
                         <h2>Edit Alumni</h2>
-                        <div className="admin-input-group">
-                            <label>Profile Picture</label>
-                            <input type="file" onChange={(e) => setAlumniProfilePictureEdit(e.target.files[0])} />
-                        </div>
-                        <div className="admin-input-group">
-                            <label>First Name</label>
-                            <input
-                                type="text"
-                                value={editingAlumni.firstName}
-                                onChange={(e) =>
-                                    setEditingAlumni({ ...editingAlumni, firstName: e.target.value })
-                                }
-                                placeholder="First Name"
-                            />
-                        </div>
-                        <div className="admin-input-group">
-                            <label>Last Name</label>
-                            <input
-                                type="text"
-                                value={editingAlumni.lastName}
-                                onChange={(e) =>
-                                    setEditingAlumni({ ...editingAlumni, lastName: e.target.value })
-                                }
-                                placeholder="Last Name"
-                            />
-                        </div>
-                        <div className="admin-input-group">
-                            <label>Graduation Year</label>
-                            <input
-                                type="text"
-                                value={editingAlumni.graduationYear}
-                                onChange={(e) =>
-                                    setEditingAlumni({ ...editingAlumni, graduationYear: e.target.value })
-                                }
-                                placeholder="Graduation Year"
-                            />
-                        </div>
-                        <div className="admin-input-group">
-                            <label>Major</label>
-                            <input
-                                type="text"
-                                value={editingAlumni.major}
-                                onChange={(e) => setEditingAlumni({ ...editingAlumni, major: e.target.value })}
-                                placeholder="Major"
-                            />
-                        </div>
-                        <div className="admin-input-group">
-                            <label>Family</label>
-                            <select
-                                value={editingAlumni.family}
-                                onChange={(e) => setEditingAlumni({ ...editingAlumni, family: e.target.value })}
-                            >
-                                <option value="">Select a Family</option>
-                                {availableFamilies.map((family, index) => (
-                                    <option key={index} value={family}>
-                                        {family}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
+                        <ProfilePictureInput 
+                            onChange={setAlumniProfilePictureEdit}
+                            label="Profile Picture"
+                        />
+                        <TextInput
+                            label="First Name"
+                            value={editingAlumni.firstName}
+                            onChange={(value) => setEditingAlumni({ ...editingAlumni, firstName: value })}
+                            placeholder="First Name"
+                        />
+                        <TextInput
+                            label="Last Name"
+                            value={editingAlumni.lastName}
+                            onChange={(value) => setEditingAlumni({ ...editingAlumni, lastName: value })}
+                            placeholder="Last Name"
+                        />
+                        <TextInput
+                            label="Graduation Year"
+                            value={editingAlumni.graduationYear}
+                            onChange={(value) => setEditingAlumni({ ...editingAlumni, graduationYear: value })}
+                            placeholder="Graduation Year"
+                        />
+                        <TextInput
+                            label="Major"
+                            value={editingAlumni.major}
+                            onChange={(value) => setEditingAlumni({ ...editingAlumni, major: value })}
+                            placeholder="Major"
+                        />
+                        <SelectInput
+                            label="Family"
+                            value={editingAlumni.family}
+                            onChange={(value) => setEditingAlumni({ ...editingAlumni, family: value })}
+                            options={AVAILABLE_FAMILIES}
+                            placeholder="Select a Family"
+                        />
                         <div className="admin-input-group">
                             <label>Dropped</label>
                             <input
@@ -805,7 +655,7 @@ const UserManagement = () => {
                             >
                                 <option value="">Select a Big Brother</option>
                                 {availableBigs
-                                    .filter(member => member.id !== editingAlumni.id) // Don't allow self-selection
+                                    .filter(member => member.id !== editingAlumni.id)
                                     .map(member => (
                                         <option key={member.id} value={member.id}>
                                             {member.firstName} {member.lastName}
@@ -814,17 +664,14 @@ const UserManagement = () => {
                                     ))}
                             </select>
                         </div>
-                        <div className="admin-input-group">
-                            <label>LinkedIn URL:</label>
-                            <input
-                                type="text"
-                                value={editingAlumni.linkedinUrl || ''}
-                                onChange={(e) => setEditingAlumni({ ...editingAlumni, linkedinUrl: e.target.value })}
-                                placeholder="https://www.linkedin.com/in/username"
-                            />
-                        </div>
+                        <TextInput
+                            label="LinkedIn URL"
+                            value={editingAlumni.linkedinUrl || ''}
+                            onChange={(value) => setEditingAlumni({ ...editingAlumni, linkedinUrl: value })}
+                            placeholder="https://www.linkedin.com/in/username"
+                        />
                         <div className="admin-buttons">
-                            <button className="close" onClick={handleCloseEditAlumni}>
+                            <button className="close" onClick={() => setEditingAlumni(null)}>
                                 Close
                             </button>
                             <button className="update" onClick={handleUpdateAlumni}>
