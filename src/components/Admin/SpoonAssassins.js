@@ -18,12 +18,6 @@ const styles = {
         padding: '15px',
         boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
     },
-    currentAssignmentsSection: {
-        backgroundColor: '#f4f4f8',
-        borderRadius: '8px',
-        padding: '15px',
-        boxShadow: '0 2px 5px rgba(0,0,0,0.1)',
-    },
     userSelect: {
         padding: '8px',
         borderRadius: '4px',
@@ -48,21 +42,6 @@ const styles = {
         borderRadius: '50%',
         color: '#800000',
     },
-    assignmentTable: {
-        width: '100%',
-        borderCollapse: 'collapse',
-        marginTop: '15px',
-    },
-    tableHeader: {
-        backgroundColor: '#800000',
-        color: 'white',
-        textAlign: 'left',
-        padding: '10px',
-    },
-    tableCell: {
-        border: '1px solid #ddd',
-        padding: '8px',
-    },
     spinner: {
         display: 'block',
         margin: '20px auto',
@@ -72,16 +51,6 @@ const styles = {
         width: '30px',
         height: '30px',
         animation: 'spin 1s linear infinite',
-    },
-    chainItem: {
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        margin: '10px 0',
-        padding: '10px',
-        backgroundColor: '#fff',
-        borderRadius: '5px',
-        boxShadow: '0 1px 3px rgba(0,0,0,0.1)',
     },
     personBox: {
         padding: '7px',
@@ -105,15 +74,6 @@ const styles = {
         cursor: 'pointer',
         transition: 'all 0.2s ease',
     },
-    arrow: {
-        margin: '10px 0',
-        fontSize: '24px',
-        color: '#800000',
-        transform: 'rotate(90deg)',
-    },
-    builderContainer: {
-        marginTop: '20px',
-    },
     warningText: {
         color: 'red',
         marginBottom: '10px',
@@ -132,12 +92,9 @@ const SpoonAssassins = () => {
     const [error, setError] = useState('');
     const [eliminatedUsers, setEliminatedUsers] = useState([]);
     const navigate = useNavigate();
-
-    // New state for the builder
     const [chain, setChain] = useState([{ userId: '', targetId: '' }]);
 
     useEffect(() => {
-        // Verify authentication and role
         const unsubscribe = checkUserRole(navigate);
         return () => unsubscribe && unsubscribe();
     }, [navigate]);
@@ -146,17 +103,14 @@ const SpoonAssassins = () => {
         const fetchData = async () => {
             setLoading(true);
             try {
-                // Fetch users for assigning targets
                 const usersSnapshot = await getDocs(collection(firestore, 'users'));
                 const usersList = usersSnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
                 setUsers(usersList);
 
-                // Fetch current Spoon Assassins targets
                 const targetsSnapshot = await getDocs(collection(firestore, 'targets'));
                 const targetsList = targetsSnapshot.docs.map((doc) => doc.data());
                 setAssignments(targetsList);
 
-                // Get eliminated users from targets collection
                 const eliminatedUsersList = targetsList
                     .filter(target => target.isEliminated)
                     .map(target => target.userId);
@@ -178,78 +132,61 @@ const SpoonAssassins = () => {
             return `${user.firstName} ${user.lastName}`;
         } else if (user?.displayName) {
             return user.displayName;
-        } else {
-            return 'Unknown';
         }
+        return 'Unknown';
     };
 
     const getUserById = (userId) => {
         return users.find(user => user.id === userId);
     };
 
-    // Add a new player to the chain
     const addPlayerToChain = () => {
         setChain([...chain, { userId: '', targetId: '' }]);
     };
 
-    // Remove a player from the chain
     const removePlayerFromChain = (index) => {
         const newChain = [...chain];
         newChain.splice(index, 1);
         setChain(newChain);
     };
 
-    // Update the player in the chain
     const updatePlayerInChain = (index, userId) => {
         const newChain = [...chain];
         newChain[index].userId = userId;
         setChain(newChain);
     };
 
-    // Auto-connect targets when a user is selected
     useEffect(() => {
         if (chain.length > 0) {
             const newChain = [...chain];
-
             for (let i = 0; i < newChain.length; i++) {
-                // If this is not the last item, set target to the next person
                 if (i < newChain.length - 1) {
                     newChain[i].targetId = newChain[i + 1].userId;
                 } else {
-                    // The last person targets the first person to complete the loop
                     newChain[i].targetId = newChain[0].userId;
                 }
             }
-
             setChain(newChain);
         }
     }, [chain.map(item => item.userId).join(',')]);
 
-    // Check if the chain is valid for saving
     const isValidChain = () => {
-        // Check if any user appears more than once
         const userIds = chain.map(item => item.userId).filter(id => id !== '');
         const uniqueUserIds = new Set(userIds);
-
         if (userIds.length === 0) return false;
         if (uniqueUserIds.size !== userIds.length) return false;
-
-        // Make sure no empty selections
         return !chain.some(item => item.userId === '' || item.targetId === '');
     };
 
-    // Toggle the elimination status of a user
     const toggleEliminationStatus = async (userId) => {
         try {
             const newEliminatedUsers = [...eliminatedUsers];
             const index = newEliminatedUsers.indexOf(userId);
             const isEliminated = index === -1;
 
-            // Update the target document in Firestore
             const targetRef = doc(firestore, 'targets', userId);
             await setDoc(targetRef, { isEliminated }, { merge: true });
 
-            // Update local state
             if (isEliminated) {
                 newEliminatedUsers.push(userId);
             } else {
@@ -265,7 +202,6 @@ const SpoonAssassins = () => {
         }
     };
 
-    // Save the assignments to Firestore
     const saveAssignments = async () => {
         if (!isValidChain()) {
             setError('Cannot save. Please make sure all players are selected and no player appears more than once.');
@@ -276,14 +212,11 @@ const SpoonAssassins = () => {
             setLoading(true);
             setError('');
 
-            // Delete all current assignments
-            const promises = [];
-            for (const assignment of assignments) {
-                promises.push(deleteDoc(doc(firestore, 'targets', assignment.userId)));
-            }
+            const promises = assignments.map(assignment => 
+                deleteDoc(doc(firestore, 'targets', assignment.userId))
+            );
             await Promise.all(promises);
 
-            // Create new assignments
             const newAssignments = [];
             for (const item of chain) {
                 const user = getUserById(item.userId);
@@ -305,8 +238,6 @@ const SpoonAssassins = () => {
 
             setAssignments(newAssignments);
             setSuccess('Assignments saved successfully!');
-
-            // Clear success message after 3 seconds
             setTimeout(() => setSuccess(''), 3000);
         } catch (error) {
             console.error('Error saving assignments:', error);
@@ -316,12 +247,10 @@ const SpoonAssassins = () => {
         }
     };
 
-    // Create an ordered chain for display, following the target links for proper circle
     const getOrderedChain = () => {
         if (assignments.length === 0) return [];
         const map = new Map();
         assignments.forEach(a => map.set(a.userId, a));
-        // Find a start (any user who isn't someone else's target, or just the first assignment)
         let start = assignments[0].userId;
         let visited = new Set();
         const ordered = [];
@@ -346,7 +275,6 @@ const SpoonAssassins = () => {
 
             {!loading && (
                 <div style={styles.container}>
-                    {/* Builder Section */}
                     <div style={styles.builderSection}>
                         <h3>Target Builder</h3>
                         <p>Add players and arrange them in the order you want. Each player will target the next person in the chain.</p>
@@ -354,7 +282,7 @@ const SpoonAssassins = () => {
                         {error && <div style={styles.warningText}>{error}</div>}
                         {success && <div style={styles.successText}>{success}</div>}
 
-                        <div style={styles.builderContainer}>
+                        <div>
                             {chain.map((item, index) => (
                                 <div key={index} style={styles.builderRow}>
                                     <select
@@ -365,7 +293,6 @@ const SpoonAssassins = () => {
                                         <option value="">-- Select Player {index + 1} --</option>
                                         {users
                                             .filter(user =>
-                                                // Show the user if they're not selected elsewhere or if they're the current selection
                                                 !chain.some((chainItem, idx) =>
                                                     idx !== index &&
                                                     chainItem.userId === user.id
@@ -416,37 +343,6 @@ const SpoonAssassins = () => {
                             </button>
                         </div>
                     </div>
-
-                    {/* Current Assignments Section */}
-                    {assignments.length > 0 && (
-                        <div style={styles.currentAssignmentsSection}>
-                            <h3>Current Assignments</h3>
-                            <p style={{ marginBottom: '15px' }}>
-                                This table shows who is targeting whom in a tabular format.
-                            </p>
-
-                            <table style={styles.assignmentTable}>
-                                <thead>
-                                <tr>
-                                    <th style={styles.tableHeader}>Assassin</th>
-                                    <th style={styles.tableHeader}>Target</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {assignments.map((assignment) => (
-                                    <tr key={assignment.userId}>
-                                        <td style={styles.tableCell}>
-                                            {assignment.firstName} {assignment.lastName}
-                                        </td>
-                                        <td style={styles.tableCell}>
-                                            {assignment.targetName}
-                                        </td>
-                                    </tr>
-                                ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    )}
                 </div>
             )}
 
@@ -456,7 +352,6 @@ const SpoonAssassins = () => {
                     display: 'flex',
                     flexDirection: 'column',
                     alignItems: 'center',
-                    // background: 'none',  <-- No longer needed, just here for clarity.
                 }}>
                     <h3>Assassination Chain</h3>
                     <p style={{ marginBottom: '15px' }}>
@@ -464,18 +359,12 @@ const SpoonAssassins = () => {
                         Eliminated players will be highlighted in red.
                     </p>
 
-                    <div
-                        style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            alignItems: 'center',
-                            margin: '10px 0',
-                            // backgroundColor: 'none', // Remove background
-                            borderRadius: '0',
-                            boxShadow: 'none',
-                            padding: 0,
-                        }}
-                    >
+                    <div style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        margin: '10px 0',
+                    }}>
                         {orderedChain.map((assignment, index) => {
                             const isEliminated = eliminatedUsers.includes(assignment.userId);
                             return (
@@ -497,16 +386,14 @@ const SpoonAssassins = () => {
                                         </strong>
                                     </div>
                                     {index < orderedChain.length - 1 && (
-                                        <div
-                                            style={{
-                                                display: 'flex',
-                                                flexDirection: 'column',
-                                                alignItems: 'center',
-                                                justifyContent: 'center',
-                                                width: '100%',
-                                                margin: '10px 0',
-                                            }}
-                                        >
+                                        <div style={{
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'center',
+                                            justifyContent: 'center',
+                                            width: '100%',
+                                            margin: '10px 0',
+                                        }}>
                                             <FaArrowRight style={{ fontSize: 32, color: '#800000', transform: 'rotate(90deg)' }} />
                                         </div>
                                     )}
