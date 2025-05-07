@@ -132,10 +132,10 @@ const FamilyTree = () => {
                 />
                 <rect
                     x="-50"
-                    y="35"
+                    y="31"
                     width="100"
-                    height={isFamily ? "20" : "30"}
-                    fill="#f5f5f5"
+                    height={isFamily ? "20" : "33"}
+                    fill="#ffffff"
                     stroke="none"
                     rx="5"
                 />
@@ -173,15 +173,15 @@ const FamilyTree = () => {
         <div className="family-tree-container">
             <h2>FAMILY TREE</h2>
             {treeData && (
-                <div style={{ width: '100%', height: '800px' }}>
-                    <Tree 
-                        data={treeData} 
+                <div style={{ width: '100%', height: '638px' }}>
+                    <Tree
+                        data={treeData}
                         orientation="vertical"
                         pathFunc="step"
                         translate={{ x: 500, y: 50 }}
-                        nodeSize={{ x: 200, y: 150 }}
+                        nodeSize={{ x: 150, y: 150 }} // Use this to control the size of nodes
                         renderCustomNodeElement={CustomNode}
-                        separation={{ siblings: 2, nonSiblings: 2.5 }}
+                        separation={{ siblings: 1, nonSiblings: 1.5 }} // Change the spacing between nodes in the tree
                     />
                 </div>
             )}
