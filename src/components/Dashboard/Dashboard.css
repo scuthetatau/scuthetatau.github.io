@@ -225,3 +225,139 @@ h2 {
         margin-top: 5px;
     }
 }
+
+.points-breakdown {
+    margin: 20px 0;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.event-points-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    animation: fadeIn 0.3s ease-out;
+    animation-fill-mode: both;
+}
+
+.event-points-row:last-child {
+    border-bottom: none;
+}
+
+.event-points-row.total {
+    font-weight: bold;
+    background-color: #f8f8f8;
+    margin-top: 10px;
+    padding: 15px 10px;
+    border-radius: 5px;
+    animation: fadeIn 0.3s ease-out;
+    animation-delay: 0.6s;
+    animation-fill-mode: both;
+}
+
+.event-name {
+    color: #252525;
+}
+
+.event-points {
+    color: #881616;
+    font-weight: 500;
+}
+
+.details-btn {
+    width: 100%;
+    margin-top: 10px;
+    background-color: #881616;
+    color: white;
+    border: none;
+    padding: 8px 16px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.details-btn:hover {
+    background-color: #6b1212;
+}
+
+/* Modal Animation Styles */
+.admin-edit-user-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.4);
+    z-index: 1000;
+    animation: fadeIn 0.3s ease-out;
+}
+
+.admin-edit-user-overlay.closing {
+    animation: fadeOut 0.3s ease-out;
+}
+
+.admin-edit-user {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%;
+    max-width: 500px;
+    padding: 20px;
+    background-color: #ffffff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    z-index: 1001;
+    animation: slideUp 0.4s ease-out;
+}
+
+.admin-edit-user.closing {
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+    to {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+    to {
+        opacity: 0;
+        transform: translate(-50%, -40%);
+    }
+}
+
+/* Add hover effect to rows */
+.event-points-row:hover {
+    background-color: #f8f8f8;
+    transition: background-color 0.2s ease;
+}

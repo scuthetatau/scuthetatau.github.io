@@ -83,8 +83,43 @@ const SpoonAssassinCard = ({ target }) => (
     </div>
 );
 
-const PointsCard = ({ points }) => {
+const PointsCard = ({ points, userId }) => {
+    const [showDetails, setShowDetails] = useState(false);
+    const [isClosing, setIsClosing] = useState(false);
+    const [eventPoints, setEventPoints] = useState({});
+    const [events, setEvents] = useState([]);
     const progressPercentage = (points / PROGRESS_GOAL) * 100;
+
+    useEffect(() => {
+        const fetchPointsData = async () => {
+            try {
+                // Fetch user's event points
+                const pointsDoc = await getDoc(doc(firestore, 'eventPoints', userId));
+                if (pointsDoc.exists()) {
+                    setEventPoints(pointsDoc.data());
+                }
+
+                // Fetch all events
+                const eventsSnapshot = await getDocs(collection(firestore, 'events'));
+                const eventsList = eventsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setEvents(eventsList);
+            } catch (error) {
+                console.error('Error fetching points data:', error);
+            }
+        };
+
+        if (userId) {
+            fetchPointsData();
+        }
+    }, [userId]);
+
+    const handleClose = () => {
+        setIsClosing(true);
+        setTimeout(() => {
+            setShowDetails(false);
+            setIsClosing(false);
+        }, 300); // Match this with the animation duration
+    };
     
     return (
         <div className="card progress-card">
@@ -98,6 +133,40 @@ const PointsCard = ({ points }) => {
             <p>
                 {points} / {PROGRESS_GOAL} Points
             </p>
+            <button 
+                className="rush-btn"
+                onClick={() => setShowDetails(true)}
+                style={{ marginTop: '10px' }}
+            >
+                More Details
+            </button>
+
+            {showDetails && (
+                <>
+                    <div 
+                        className={`admin-edit-user-overlay ${isClosing ? 'closing' : ''}`} 
+                        onClick={handleClose}
+                    />
+                    <div className={`admin-edit-user ${isClosing ? 'closing' : ''}`}>
+                        <h2>Points Breakdown</h2>
+                        <div className="points-breakdown">
+                            {events.map(event => (
+                                <div key={event.id} className="event-points-row">
+                                    <span className="event-name">{event.name}</span>
+                                    <span className="event-points">{eventPoints[event.id] || 0} points</span>
+                                </div>
+                            ))}
+                            <div className="event-points-row total">
+                                <span className="event-name">Total</span>
+                                <span className="event-points">{points} points</span>
+                            </div>
+                        </div>
+                        <div className="admin-buttons">
+                            <button className="close" onClick={handleClose}>Close</button>
+                        </div>
+                    </div>
+                </>
+            )}
         </div>
     );
 };
@@ -316,7 +385,7 @@ const Dashboard = () => {
             </div>
 
             <div className="widgets">
-                <PointsCard points={points} />
+                <PointsCard points={points} userId={user?.id} />
                 <CalendarCard events={events} />
             </div>
 
