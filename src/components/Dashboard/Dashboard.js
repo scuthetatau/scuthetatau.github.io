@@ -150,12 +150,14 @@ const PointsCard = ({ points, userId }) => {
                     <div className={`admin-edit-user ${isClosing ? 'closing' : ''}`}>
                         <h2>Points Breakdown</h2>
                         <div className="points-breakdown">
-                            {events.map(event => (
-                                <div key={event.id} className="event-points-row">
-                                    <span className="event-name">{event.name}</span>
-                                    <span className="event-points">{eventPoints[event.id] || 0} points</span>
-                                </div>
-                            ))}
+                            {events
+                                .filter(event => eventPoints[event.id] > 0)
+                                .map(event => (
+                                    <div key={event.id} className="event-points-row">
+                                        <span className="event-name">{event.name}</span>
+                                        <span className="event-points">{eventPoints[event.id]} points</span>
+                                    </div>
+                                ))}
                             <div className="event-points-row total">
                                 <span className="event-name">Total</span>
                                 <span className="event-points">{points} points</span>
