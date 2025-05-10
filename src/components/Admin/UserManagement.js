@@ -27,7 +27,7 @@ const validateLinkedInUrl = (url) => {
 
 const uploadProfilePicture = async (file, collectionName) => {
     if (!file) return null;
-    const path = `${collectionName}ProfilePictures/${new Date().getTime()}_${file.name}`;
+    const path = `profilePictures/${new Date().getTime()}_${file.name}`;
     const fileRef = ref(storage, path);
     await uploadBytes(fileRef, file);
     return await getDownloadURL(fileRef);
