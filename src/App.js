@@ -17,6 +17,8 @@ import Dashboard from "./components/Dashboard/Dashboard";
 import ScribeEditor from "./components/ScribeEditor/ScribeEditor";
 // import BroDatesPage from './components/Brodates/BroDatesPage';
 
+import { Analytics } from "@vercel/analytics/react"
+
 function App() {
     return (
         <Router>
@@ -45,6 +47,7 @@ function App() {
             <footer className="footer">
                 <p>&copy; {new Date().getFullYear()} Upsilon Epsilon Chapter of Theta Tau. All rights reserved.</p>
             </footer>
+            <Analytics />
         </Router>
     );
 }
