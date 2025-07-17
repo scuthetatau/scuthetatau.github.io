@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import "./AboutUs.css";
 import thetaClass from "../assets/LiamSophieSethi.jpeg";
+import InteractiveMap from "./InteractiveMap";
 
 // Helper to import all images
 const importAll = (r) => r.keys().map(r);
@@ -185,20 +186,11 @@ const AboutUs = () => {
                         </button>
                         <h3 className="history-heading">Theta Tau Northwestern Region</h3>
                         <p>
-                            The Epsilon Chapter belongs to the Northwestern Region of Theta Tau,
-                            with 7 active chapters:
+                            The Epsilon Chapter belongs to the Northwestern Region of Theta Tau, with 7 active chapters
                         </p>
-                        <ul className="chapters-list">
-                            <li>Epsilon Chapter (University of California, Berkeley)</li>
-                            <li>Theta Beta Chapter (University of Washington)</li>
-                            <li>Lambda Delta Chapter (University of the Pacific)</li>
-                            <li>Mu Delta Chapter (University of California, Merced)</li>
-                            <li>Rho Delta Chapter (University of Nevada, Reno)</li>
-                            <li>Upsilon Epsilon Chapter (Santa Clara University)</li>
-                            <li>Omega Epsilon Chapter (San Jose State University)</li>
-                        </ul>
                     </div>
                 </div>
+                <InteractiveMap />
             </div>
         </div>
     );
