@@ -43,7 +43,7 @@ function App() {
                     <Route path="/scribe-editor" element={<ScribeEditor/>}/>
                     <Route path="/family-tree" element={<FamilyTree/>}/>
 
-                    <Route path="/bro-dates" element={<BroDatesPage/>}/>
+                    {/*<Route path="/bro-dates" element={<BroDatesPage/>}/>*/}
                 </Routes>
             </div>
             <footer className="footer">
