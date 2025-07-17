@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import './Rush.css'; // Import the CSS file
-import backgroundImage from '../assets/ThetaClassInitiation.png'; // Update with the correct path to your image
+import './Rush.css';
+import IotaClass from '../assets/IotaClass.JPG';
 
 const Rush = () => {
     const [timeLeft, setTimeLeft] = useState({});
@@ -30,7 +30,7 @@ const Rush = () => {
             <div
                 className="rush-hero-section"
                 style={{
-                    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${backgroundImage})`,
+                    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${IotaClass})`,
                     backgroundSize: 'cover',
                     backgroundPosition: 'center',
                     height: '93vh',

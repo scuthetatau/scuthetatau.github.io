@@ -5,7 +5,7 @@ import CoatArms from '../assets/CoatArms.png';
 import GenericProfile from '../assets/generic.png';
 import './MeetTheBrothers.css';
 import { firestore, storage } from '../../firebase';
-import thetaClass from "../assets/ChapterPhoto.jpeg"; // Adjust the path as necessary
+import thetaClass from "../assets/SillyChapterPhoto.jpeg";
 
 const MeetTheBrothers = () => {
     const [users, setUsers] = useState([]);
