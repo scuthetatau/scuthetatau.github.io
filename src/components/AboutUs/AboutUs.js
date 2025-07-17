@@ -5,10 +5,19 @@ import thetaClass from "../assets/LiamSophieSethi.jpeg";
 // Helper to import all images
 const importAll = (r) => r.keys().map(r);
 
+const shuffleArray = (array) => {
+    const shuffled = [...array];
+    for (let i = shuffled.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+    return shuffled;
+};
+
 // Dynamically import all images from the specified directory
-const images = importAll(
+const images = shuffleArray(importAll(
     require.context("../assets/rotatingImages", false, /\.(jpg|png|JPG|heic)$/)
-);
+));
 
 const AboutUs = () => {
     const [isHovered, setIsHovered] = useState(false);
@@ -131,28 +140,28 @@ const AboutUs = () => {
                 </div>
 
                  {/*Image Scroller Section */}
-                {/*<div*/}
-                {/*    className="image-scroller"*/}
-                {/*    ref={scrollRef}*/}
-                {/*    onScroll={handleScroll}*/}
-                {/*    // Attach mouse events only on non-mobile devices*/}
-                {/*    {...(!isMobile && {*/}
-                {/*        onMouseEnter: () => setIsHovered(true),*/}
-                {/*        onMouseLeave: () => setIsHovered(false),*/}
-                {/*    })}*/}
-                {/*>*/}
-                {/*    <div className="scroller-content" style={{ display: "flex", width: "200%" }}>*/}
-                {/*        /!* Duplicate the images array to allow for seamless looping *!/*/}
-                {/*        {[...images, ...images].map((image, index) => (*/}
-                {/*            <img*/}
-                {/*                key={index}*/}
-                {/*                src={image}*/}
-                {/*                alt={`About us ${index}`}*/}
-                {/*                className="scroller-image rounded"*/}
-                {/*            />*/}
-                {/*        ))}*/}
-                {/*    </div>*/}
-                {/*</div>*/}
+                <div
+                    className="image-scroller"
+                    ref={scrollRef}
+                    onScroll={handleScroll}
+                    // Attach mouse events only on non-mobile devices
+                    {...(!isMobile && {
+                        onMouseEnter: () => setIsHovered(true),
+                        onMouseLeave: () => setIsHovered(false),
+                    })}
+                >
+                    <div className="scroller-content" style={{ display: "flex", width: "200%" }}>
+                        {/* Duplicate the images array to allow for seamless looping */}
+                        {[...images, ...images].map((image, index) => (
+                            <img
+                                key={index}
+                                src={image}
+                                alt={`About us ${index}`}
+                                className="scroller-image rounded"
+                            />
+                        ))}
+                    </div>
+                </div>
 
                 {/* National History Section */}
                 <div className="timeline-container">
