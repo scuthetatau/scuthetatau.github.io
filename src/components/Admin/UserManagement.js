@@ -196,7 +196,7 @@ const UserManagement = () => {
                 bigId: userData.bigId,
                 dropped: false,
                 family: userData.family,
-                linkedinUrl: userData.linkedinUrl
+                linkedinUrl: userData.linkedinUrl || ''
             };
 
             await addAlumni(alumniData, null);
