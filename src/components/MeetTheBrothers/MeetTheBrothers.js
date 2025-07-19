@@ -120,6 +120,7 @@ const MeetTheBrothers = () => {
                                     alt={`${user.firstName} ${user.lastName}`}
                                     className="meet-the-brothers-executive-board-profile-pic"
                                     onError={handleImageError}
+                                    loading="lazy"
                                 />
                                 <div
                                     className="meet-the-brothers-executive-board-name">{user.firstName} {user.lastName}</div>
@@ -141,6 +142,7 @@ const MeetTheBrothers = () => {
                                     alt={`${user.firstName} ${user.lastName}`}
                                     className="meet-the-brothers-leadership-profile-pic"
                                     onError={handleImageError}
+                                    loading="lazy"
                                 />
                                 <div className="meet-the-brothers-leadership-name">{user.firstName} {user.lastName}</div>
                                 <div className="meet-the-brothers-leadership-role">{user.role}</div>
@@ -166,6 +168,7 @@ const MeetTheBrothers = () => {
                                     alt={`${user.firstName} ${user.lastName}`}
                                     className="meet-the-brothers-profile-pic"
                                     onError={handleImageError}
+                                    loading="lazy"
                                 />
                                 <p className="meet-the-brothers-user-name">{user.firstName} {user.lastName}</p>
                                 {user.role && user.role !== 'Mediation Chair' && <p className="meet-the-brothers-user-role">{user.role}</p>}

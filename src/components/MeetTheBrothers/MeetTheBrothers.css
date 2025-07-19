@@ -57,6 +57,7 @@
 .meet-the-brothers-leadership-profile-pic {
     width: 150px; /* Adjust size as necessary */
     height: 150px;
+    aspect-ratio: 1 / 1;
     border-radius: 50%;
     object-fit: cover;
     margin-bottom: 20px;
@@ -160,7 +161,8 @@
     padding: 10px;
     width: 100%; /* Ensure images scale with card */
     max-width: 150px; /* Limit image width */
-    height: auto; /* Maintain aspect ratio */
+    height: 150px; /* Maintain aspect ratio */
+    aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: 50%;
     margin-bottom: -35px;
@@ -194,6 +196,7 @@
 .meet-the-brothers-executive-board-profile-pic {
     width: 150px; /* Adjust size as necessary */
     height: 150px;
+    aspect-ratio: 1 / 1;
     border-radius: 50%;
     object-fit: cover;
     margin-bottom: 20px;

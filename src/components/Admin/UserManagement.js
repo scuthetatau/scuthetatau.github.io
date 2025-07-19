@@ -454,6 +454,12 @@ const UserManagement = () => {
                             options={AVAILABLE_FAMILIES}
                             placeholder="Select a Family"
                         />
+                        <TextInput
+                            label="Major"
+                            value={editingUser.major}
+                            onChange={(value) => setEditingUser({ ...editingUser, major: value })}
+                            placeholder="Major"
+                        />
                         <div className="admin-input-group">
                             <label>Big Brother:</label>
                             <select

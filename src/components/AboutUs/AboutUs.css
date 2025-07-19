@@ -21,7 +21,10 @@
 }
 
 .scroller-image {
-    max-height: 400px;
+    width: 711px; /* Calculated from 400px height and 16:9 aspect ratio */
+    height: 400px;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
     margin-right: 10px;
     flex-shrink: 0;
     border-radius: 2%;

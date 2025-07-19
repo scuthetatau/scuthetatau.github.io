@@ -101,6 +101,8 @@
     width: 100%;
     max-width: 250px;
     height: auto;
+    aspect-ratio: 1 / 1; /* Reserve space for the image */
+    object-fit: cover; /* Ensure the image covers the reserved space */
     margin-top: 18%;
     border-radius: 8px;
     margin-right: 30px;
