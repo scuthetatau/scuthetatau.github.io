@@ -216,6 +216,46 @@ const UserManagement = () => {
         }
     };
 
+    const convertToUser = async (alumniData) => {
+        const confirmed = window.confirm(
+            `Are you sure you want to convert ${alumniData.firstName} ${alumniData.lastName} back to an active user?`
+        );
+
+        if (!confirmed) return;
+
+        try {
+            const userData = {
+                email: '', // Alumni don't have emails in this schema, so we'll leave it blank or prompt for it.
+                firstName: alumniData.firstName,
+                lastName: alumniData.lastName,
+                class: '', // Alumni don't have class in this schema, so we'll leave it blank or prompt for it.
+                graduationYear: alumniData.graduationYear,
+                family: alumniData.family,
+                major: alumniData.major,
+                role: '', // Alumni don't have roles, so we'll leave it blank or prompt for it.
+                points: 0, // Alumni don't have points, so we'll set to 0 or prompt for it.
+                profilePictureUrl: alumniData.profilePictureUrl,
+                bigId: alumniData.bigId,
+                linkedinUrl: alumniData.linkedinUrl || ''
+            };
+
+            await addUser(userData, null);
+            await deleteDoc(doc(firestore, 'alumni', alumniData.id));
+
+            const [updatedUsers, updatedAlumni] = await Promise.all([
+                fetchUsers(),
+                fetchAlumni()
+            ]);
+
+            setUsers(updatedUsers);
+            setAlumni(updatedAlumni);
+            setEditingAlumni(null);
+        } catch (error) {
+            console.error('Error converting alumni to user:', error);
+            alert('Error converting alumni to user');
+        }
+    };
+
     // Event handlers
     const handleAddUser = async () => {
         try {
@@ -694,6 +734,9 @@ const UserManagement = () => {
                             </button>
                             <button className="update" onClick={handleUpdateAlumni}>
                                 Update Alumni
+                            </button>
+                            <button className="convert" onClick={() => convertToUser(editingAlumni)}>
+                                Convert to User
                             </button>
                         </div>
                     </div>
