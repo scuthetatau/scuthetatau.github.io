@@ -75,6 +75,24 @@ const Header = () => {
                     // Get user permissions
                     const permissions = await getUserPermissions(currentUser);
                     setUserPermissions(permissions);
+
+                    // Log visit only once per session
+                    if (window.sessionStorage && !window.sessionStorage.getItem('visit-logged')) {
+                        fetch('/api/log-visit', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({ email }),
+                        })
+                        .then(() => {
+                            window.sessionStorage.setItem('visit-logged', 'true');
+                        })
+                        .catch((err) => {
+                            // Optionally handle error
+                            console.error('Failed to log visit:', err);
+                        });
+                    }
                 } catch (error) {
                     console.error('Error fetching user data:', error);
                     setUser(null);
