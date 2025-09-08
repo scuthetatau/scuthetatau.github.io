@@ -1,12 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { ref, getDownloadURL } from 'firebase/storage';
-import { auth } from '../firebase';
-import { onAuthStateChanged } from 'firebase/auth';
+import React, {useEffect, useState} from 'react';
+import {collection, getDocs} from 'firebase/firestore';
+import {getDownloadURL, ref} from 'firebase/storage';
+import {auth, firestore, storage} from '../firebase';
+import {onAuthStateChanged} from 'firebase/auth';
 import CoatArms from './assets/CoatArms.png'; // Fallback image
 import UpsilonClass from './assets/UpsilonEpsilonThetaTau.png'
 import './MeetTheBrothers/MeetTheBrothers.css'; // Use styling similar to `MeetTheBrothers`
-import { firestore, storage } from '../firebase';
 
 const Alumni = () => {
     const [alumni, setAlumni] = useState([]);

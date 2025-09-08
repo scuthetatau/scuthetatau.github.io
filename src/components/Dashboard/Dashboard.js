@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from 'react';
-import { auth, firestore, storage } from '../../firebase';
-import { onAuthStateChanged } from 'firebase/auth';
-import { collection, getDocs, query, where, doc, getDoc } from 'firebase/firestore';
-import { getDownloadURL, ref } from 'firebase/storage';
+import React, {useEffect, useState} from 'react';
+import {auth, firestore, storage} from '../../firebase';
+import {onAuthStateChanged} from 'firebase/auth';
+import {collection, doc, getDoc, getDocs, query, where} from 'firebase/firestore';
+import {getDownloadURL, ref} from 'firebase/storage';
 import './Dashboard.css';
-import { AiOutlineEdit } from 'react-icons/ai';
+import {AiOutlineEdit} from 'react-icons/ai';
 import EditUserPopup from './EditUserPopup';
-import { initClient, getUpcomingEvents } from './googleCalendarService';
+import {getUpcomingEvents, initClient} from './googleCalendarService';
 
 // Constants
 const PROGRESS_GOAL = 2500;
@@ -382,9 +382,9 @@ const Dashboard = () => {
                 <UserInfo user={user} onEditClick={() => setIsEditPopupOpen(true)} />
             </div>
 
-            {/*<div className="widgets">*/}
-            {/*    <SpoonAssassinCard target={target} />*/}
-            {/*</div>*/}
+            <div className="widgets">
+                <SpoonAssassinCard target={target} />
+            </div>
 
             <div className="widgets">
                 <PointsCard points={points} userId={user?.id} />

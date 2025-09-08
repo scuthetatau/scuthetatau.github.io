@@ -4,9 +4,9 @@ import './Header.css';
 import WhiteTT from '../assets/WhiteTT.png';
 import {auth, firestore, storage} from '../../firebase';
 import {onAuthStateChanged, signOut} from 'firebase/auth';
-import {query, collection, getDocs} from 'firebase/firestore';
+import {collection, getDocs, query} from 'firebase/firestore';
 import {getDownloadURL, ref} from 'firebase/storage';
-import { getUserPermissions } from '../Admin/auth';
+import {getUserPermissions} from '../Admin/auth';
 
 const Header = () => {
     const [user, setUser] = useState(null);

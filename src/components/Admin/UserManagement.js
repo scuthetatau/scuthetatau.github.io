@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { collection, getDocs, addDoc, updateDoc, doc, deleteDoc } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { firestore, storage } from '../../firebase';
+import React, {useEffect, useState} from 'react';
+import {addDoc, collection, deleteDoc, doc, getDocs, updateDoc} from 'firebase/firestore';
+import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
+import {firestore, storage} from '../../firebase';
 import './Admin.css';
-import { checkUserRole } from './auth';
-import { useNavigate } from 'react-router-dom';
+import {checkUserRole} from './auth';
+import {useNavigate} from 'react-router-dom';
 
 // Constants
 const AVAILABLE_ROLES = [
@@ -25,7 +25,7 @@ const validateLinkedInUrl = (url) => {
     return url.startsWith('https://www.linkedin.com/in/');
 };
 
-const uploadProfilePicture = async (file, collectionName) => {
+const uploadProfilePicture = async (file) => {
     if (!file) return null;
     const path = `profilePictures/${new Date().getTime()}_${file.name}`;
     const fileRef = ref(storage, path);
@@ -127,7 +127,7 @@ const UserManagement = () => {
             return;
         }
 
-        const profilePictureUrl = await uploadProfilePicture(profilePicture, 'users');
+        const profilePictureUrl = await uploadProfilePicture(profilePicture);
         if (profilePictureUrl) userData.profilePictureUrl = profilePictureUrl;
         
         await addDoc(collection(firestore, 'users'), userData);
@@ -141,7 +141,7 @@ const UserManagement = () => {
             return;
         }
 
-        const profilePictureUrl = await uploadProfilePicture(profilePicture, 'users');
+        const profilePictureUrl = await uploadProfilePicture(profilePicture);
         if (profilePictureUrl) userData.profilePictureUrl = profilePictureUrl;
         
         const userRef = doc(firestore, 'users', userData.id);
@@ -156,7 +156,7 @@ const UserManagement = () => {
             return;
         }
 
-        const profilePictureUrl = await uploadProfilePicture(profilePicture, 'alumni');
+        const profilePictureUrl = await uploadProfilePicture(profilePicture);
         if (profilePictureUrl) alumniData.profilePictureUrl = profilePictureUrl;
         
         await addDoc(collection(firestore, 'alumni'), alumniData);
@@ -170,7 +170,7 @@ const UserManagement = () => {
             return;
         }
 
-        const profilePictureUrl = await uploadProfilePicture(profilePicture, 'alumni');
+        const profilePictureUrl = await uploadProfilePicture(profilePicture);
         if (profilePictureUrl) alumniData.profilePictureUrl = profilePictureUrl;
         
         const alumniRef = doc(firestore, 'alumni', alumniData.id);

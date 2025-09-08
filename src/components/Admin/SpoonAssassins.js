@@ -1,9 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { firestore } from '../../firebase';
-import { collection, doc, getDocs, setDoc, deleteDoc } from 'firebase/firestore';
-import { useNavigate } from 'react-router-dom';
-import { checkUserRole } from './auth';
-import { FaArrowRight, FaPlus, FaMinus, FaSave } from 'react-icons/fa';
+import React, {useEffect, useState} from 'react';
+import {firestore} from '../../firebase';
+import {collection, deleteDoc, doc, getDocs, setDoc} from 'firebase/firestore';
+import {useNavigate} from 'react-router-dom';
+import {checkUserRole} from './auth';
+import {FaArrowRight, FaMinus, FaPlus, FaSave} from 'react-icons/fa';
 import './Admin.css';
 
 const styles = {

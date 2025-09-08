@@ -16,10 +16,9 @@ import './components/Footer.css';
 import Dashboard from "./components/Dashboard/Dashboard";
 import ScribeEditor from "./components/ScribeEditor/ScribeEditor";
 // import BroDatesPage from './components/Brodates/BroDatesPage';
-
 // Vercel Imports
 import {Analytics} from "@vercel/analytics/react"
-import { SpeedInsights } from "@vercel/speed-insights/react"
+import {SpeedInsights} from "@vercel/speed-insights/react"
 
 function App() {
     return (

@@ -1,6 +1,6 @@
-import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, query, where, collection, getDocs } from 'firebase/firestore';
-import { auth, firestore } from '../../firebase';
+import {onAuthStateChanged} from 'firebase/auth';
+import {collection, getDocs, query, where} from 'firebase/firestore';
+import {auth, firestore} from '../../firebase';
 
 /**
  * Role-based access permissions mapping.
@@ -48,14 +48,12 @@ export const checkUserRole = (navigate, requiredPermission = null) => {
                     if (!requiredPermission) {
                         if (!ROLE_PERMISSIONS[userRole]) {
                             navigate('/');
-                            return;
                         }
                     } else {
                         // Check if user's role has the required permission
                         const userPermissions = ROLE_PERMISSIONS[userRole] || [];
                         if (!userPermissions.includes(requiredPermission)) {
                             navigate('/');
-                            return;
                         }
                     }
                 } else {

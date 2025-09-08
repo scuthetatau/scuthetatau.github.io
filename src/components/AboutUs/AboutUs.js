@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import "./AboutUs.css";
 import thetaClass from "../assets/LiamSophieSethi.jpeg";
 import InteractiveMap from "./InteractiveMap";

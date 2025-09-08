@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { fetchGroups, shuffleGroups } from './groupService';
-import { useNavigate } from 'react-router-dom'; // Import useNavigate
-import { checkUserRole } from './auth'; // Import checkUserRole function
+import React, {useEffect, useState} from 'react';
+import {fetchGroups, shuffleGroups} from './groupService';
+import {useNavigate} from 'react-router-dom'; // Import useNavigate
+import {checkUserRole} from './auth'; // Import checkUserRole function
 
 const ManageBroDates = () => {
     const [groups, setGroups] = useState([]);

@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import Tree from 'react-d3-tree';
-import { collection, getDocs } from 'firebase/firestore';
-import { firestore, auth } from '../firebase';
+import {collection, getDocs} from 'firebase/firestore';
+import {auth, firestore} from '../firebase';
 import genericProfile from './assets/WhiteTT.png';
 import './FamilyTree.css';
-import { useNavigate } from 'react-router-dom';
-import { onAuthStateChanged } from 'firebase/auth';
+import {useNavigate} from 'react-router-dom';
+import {onAuthStateChanged} from 'firebase/auth';
 
 const FamilyTree = () => {
     const [users, setUsers] = useState([]);

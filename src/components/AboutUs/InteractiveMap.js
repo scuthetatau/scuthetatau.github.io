@@ -5,7 +5,6 @@ import {
   Geographies,
   Geography,
   Marker,
-  Annotation,
 } from "react-simple-maps";
 
 const geoUrl = "https://cdn.jsdelivr.net/npm/us-atlas@3/states-10m.json";
@@ -50,7 +49,7 @@ const chapters = [
 
 const InteractiveMap = () => {
   const [hoveredChapter, setHoveredChapter] = useState(null);
-  const [annotationOpacity, setAnnotationOpacity] = useState(0);
+  const [setAnnotationOpacity] = useState(0);
 
   useEffect(() => {
     if (hoveredChapter) {

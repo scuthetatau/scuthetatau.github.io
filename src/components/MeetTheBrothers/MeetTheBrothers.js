@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react';
-import { collection, getDocs } from 'firebase/firestore';
-import { ref, getDownloadURL } from 'firebase/storage';
+import React, {useEffect, useState} from 'react';
+import {collection, getDocs} from 'firebase/firestore';
+import {getDownloadURL, ref} from 'firebase/storage';
 import CoatArms from '../assets/CoatArms.png';
 import GenericProfile from '../assets/generic.png';
 import './MeetTheBrothers.css';
-import { firestore, storage } from '../../firebase';
+import {firestore, storage} from '../../firebase';
 import ChapterPhoto from "../assets/ChapterPhoto.jpeg";
 
 const MeetTheBrothers = () => {
@@ -26,8 +26,7 @@ const MeetTheBrothers = () => {
                             user.profilePicUrl = user.profilePictureUrl;
                         } else {
                             try {
-                                const imageUrl = await getDownloadURL(ref(storage, user.profilePictureUrl));
-                                user.profilePicUrl = imageUrl;
+                                user.profilePicUrl = await getDownloadURL(ref(storage, user.profilePictureUrl));
                             } catch (error) {
                                 console.error(`Error getting image URL for user ${user.email}:`, error);
                             }

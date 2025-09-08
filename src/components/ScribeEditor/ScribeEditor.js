@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 // import { onAuthStateChanged } from 'firebase/auth';
-import { doc, getDoc, collection, getDocs, updateDoc, setDoc, query, where, deleteDoc } from 'firebase/firestore';
-import { auth, firestore } from '../../firebase';
+import { doc, collection, getDocs, updateDoc, setDoc, deleteDoc } from 'firebase/firestore';
+import { firestore } from '../../firebase';
 import { checkUserRole } from '../Admin/auth';
 import './ScribeEditor.css'; // Import new CSS file
 

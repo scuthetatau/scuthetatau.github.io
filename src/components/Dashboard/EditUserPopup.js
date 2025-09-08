@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { doc, updateDoc } from 'firebase/firestore';
-import { firestore, storage } from '../../firebase';
+import React, {useState} from 'react';
+import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
+import {doc, updateDoc} from 'firebase/firestore';
+import {firestore, storage} from '../../firebase';
 import '../Admin/Admin.css'; // Reusing Admin.css for the popup styling
 
 const EditUserPopup = ({ user, onClose }) => {

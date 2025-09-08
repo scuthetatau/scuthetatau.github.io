@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, {useEffect, useState} from 'react';
+import {Link, useNavigate} from 'react-router-dom';
 import './Admin.css';
-import { checkUserRole, getUserPermissions } from './auth';
-import { auth } from '../../firebase';
+import {checkUserRole, getUserPermissions} from './auth';
+import {auth} from '../../firebase';
 
 const Admin = () => {
     const navigate = useNavigate();

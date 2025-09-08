@@ -1,5 +1,5 @@
-import { collection, getDocs, addDoc, deleteDoc } from 'firebase/firestore';
-import { firestore } from '../../firebase';
+import {addDoc, collection, deleteDoc, getDocs} from 'firebase/firestore';
+import {firestore} from '../../firebase';
 
 export const fetchGroups = async () => {
     const groupsSnapshot = await getDocs(collection(firestore, 'brodates'));
