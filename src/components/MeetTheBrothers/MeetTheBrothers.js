@@ -5,7 +5,7 @@ import CoatArms from '../assets/CoatArms.png';
 import GenericProfile from '../assets/generic.png';
 import './MeetTheBrothers.css';
 import { firestore, storage } from '../../firebase';
-import ThetaClass from "../assets/ThetaClass.jpeg";
+import ChapterPhoto from "../assets/ChapterPhoto.jpeg";
 
 const MeetTheBrothers = () => {
     const [users, setUsers] = useState([]);
@@ -98,7 +98,7 @@ const MeetTheBrothers = () => {
 
     return (
         <div className="meet-the-brothers-component">
-            <div className="meet-the-brothers-hero" style={{backgroundImage: `url(${ThetaClass})`}}>
+            <div className="meet-the-brothers-hero" style={{backgroundImage: `url(${ChapterPhoto})`}}>
                 <div className="join-overlay">
                     <h2 className="hero-title">Meet the Brothers</h2>
                 </div>
