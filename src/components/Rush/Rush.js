@@ -49,7 +49,7 @@ const Rush = () => {
 
                     <button
                         className="rush-interest-button"
-                        onClick={() => window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSftXGQoQa-2I0ANqTsVRYeHeK1s9qK0a8mWzjULW8zO0f9kEQ/viewform?usp=sf_link'}
+                        onClick={() => window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSfMfMMKR3FQGXwspTYVGmzGnQj6uUY3nIWCwZcT415o4gBKCQ/viewform?usp=header'}
                     >
                         INTEREST FORM
                     </button>
