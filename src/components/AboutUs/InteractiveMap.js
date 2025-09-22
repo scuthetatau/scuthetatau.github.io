@@ -49,7 +49,7 @@ const chapters = [
 
 const InteractiveMap = () => {
   const [hoveredChapter, setHoveredChapter] = useState(null);
-  const [setAnnotationOpacity] = useState(0);
+  const [annotationOpacity, setAnnotationOpacity] = useState(0);
 
   useEffect(() => {
     if (hoveredChapter) {
