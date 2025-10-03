@@ -392,7 +392,7 @@ const Dashboard = () => {
             </div>
 
             <div className="widgets">
-                {/* <BroDateCard broDateGroup={broDateGroup} /> */}
+                 <BroDateCard broDateGroup={broDateGroup} /> 
                 <div className="card brother-card">
                     <h2>BroDates</h2>
                     <p>No groups assigned.</p>
