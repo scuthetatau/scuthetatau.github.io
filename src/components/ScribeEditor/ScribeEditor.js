@@ -52,9 +52,23 @@ const ScribeEditor = () => {
         setSearchTerm(event.target.value);
     };
 
-    const filteredUsers = users.filter(user =>
-        `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+    const filteredUsers = users
+        .filter(user =>
+            `${user.firstName} ${user.lastName}`.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+        .sort((a, b) => {
+            const lastA = (a.lastName || '').toLowerCase();
+            const lastB = (b.lastName || '').toLowerCase();
+            if (lastA < lastB) return -1;
+            if (lastA > lastB) return 1;
+
+            // Tiebreaker: first name
+            const firstA = (a.firstName || '').toLowerCase();
+            const firstB = (b.firstName || '').toLowerCase();
+            if (firstA < firstB) return -1;
+            if (firstA > firstB) return 1;
+            return 0;
+        });
 
     const handleCellEdit = (userId, eventId, value) => {
         setEventPoints(prev => ({
