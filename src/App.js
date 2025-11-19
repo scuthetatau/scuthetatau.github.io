@@ -15,7 +15,6 @@ import FamilyTree from './components/FamilyTree';
 import './components/Footer.css';
 import Dashboard from "./components/Dashboard/Dashboard";
 import ScribeEditor from "./components/ScribeEditor/ScribeEditor";
-// import BroDatesPage from './components/Brodates/BroDatesPage';
 // Vercel Imports
 import {Analytics} from "@vercel/analytics/react"
 import {SpeedInsights} from "@vercel/speed-insights/react"
@@ -41,8 +40,6 @@ function App() {
 
                     <Route path="/scribe-editor" element={<ScribeEditor/>}/>
                     <Route path="/family-tree" element={<FamilyTree/>}/>
-
-                    {/*<Route path="/bro-dates" element={<BroDatesPage/>}/>*/}
                 </Routes>
             </div>
             <footer className="footer">

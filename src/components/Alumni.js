@@ -48,8 +48,7 @@ const Alumni = () => {
                                 alum.profilePicUrl = alum.profilePictureUrl;
                             } else {
                                 try {
-                                    const imageUrl = await getDownloadURL(ref(storage, alum.profilePictureUrl));
-                                    alum.profilePicUrl = imageUrl;
+                                    alum.profilePicUrl = await getDownloadURL(ref(storage, alum.profilePictureUrl));
                                 } catch (error) {
                                     console.error(`Error getting image URL for alumni ${alum.firstName} ${alum.lastName}:`, error);
                                 }

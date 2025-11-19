@@ -4,14 +4,13 @@ import { useNavigate } from 'react-router-dom';
 import { doc, collection, getDocs, updateDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import { firestore } from '../../firebase';
 import { checkUserRole } from '../Admin/auth';
-import './ScribeEditor.css'; // Import new CSS file
+import './ScribeEditor.css';
 
 const ScribeEditor = () => {
     const [users, setUsers] = useState([]);
     const [events, setEvents] = useState([]);
     const [eventPoints, setEventPoints] = useState({});
     const [searchTerm, setSearchTerm] = useState("");
-    const [editingCell, setEditingCell] = useState(null);
     const [newEventName, setNewEventName] = useState("");
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [eventToDelete, setEventToDelete] = useState(null);

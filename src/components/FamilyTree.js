@@ -91,7 +91,7 @@ const FamilyTree = () => {
 
         // Build family nodes
         const familyNodes = families.map(family => {
-            const familyNode = {
+            return {
                 name: family.name,
                 attributes: {
                     isFamily: true
@@ -100,7 +100,6 @@ const FamilyTree = () => {
                     .filter(member => !member.bigId) // Only include root members of each family
                     .map(member => buildNode(member.id))
             };
-            return familyNode;
         });
 
         const tree = {
