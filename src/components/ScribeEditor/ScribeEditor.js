@@ -12,6 +12,8 @@ const ScribeEditor = () => {
     const [eventPoints, setEventPoints] = useState({});
     const [searchTerm, setSearchTerm] = useState("");
     const [newEventName, setNewEventName] = useState("");
+    const [newEventQuarter, setNewEventQuarter] = useState("");
+    const [expandedQuarters, setExpandedQuarters] = useState({});
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [eventToDelete, setEventToDelete] = useState(null);
     const [showResetConfirm, setShowResetConfirm] = useState(false);
@@ -105,13 +107,17 @@ const ScribeEditor = () => {
     };
 
     const handleAddEvent = async () => {
-        if (!newEventName.trim()) return;
+        if (!newEventName.trim() || !newEventQuarter.trim()) {
+            alert("Please enter both an event name and a quarter (e.g., 'Spring 25')");
+            return;
+        }
 
         try {
             const newEventRef = doc(collection(firestore, 'events'));
             const newEvent = {
                 id: newEventRef.id,
                 name: newEventName.trim(),
+                quarter: newEventQuarter.trim(),
                 date: new Date().toISOString()
             };
 
@@ -187,6 +193,32 @@ const ScribeEditor = () => {
         }
     };
 
+    const toggleQuarter = (quarter) => {
+        setExpandedQuarters(prev => ({
+            ...prev,
+            [quarter]: !prev[quarter]
+        }));
+    };
+
+    const groupedEvents = events.reduce((groups, event) => {
+        const quarter = event.quarter || 'Other';
+        if (!groups[quarter]) {
+            groups[quarter] = [];
+        }
+        groups[quarter].push(event);
+        return groups;
+    }, {});
+
+    // Sort quarters (e.g., Fall 24, Spring 25, Fall 25)
+    const sortedQuarters = Object.keys(groupedEvents).sort((a, b) => {
+        const parseQuarter = (q) => {
+            const [season, year] = q.split(' ');
+            const seasonScore = season === 'Spring' ? 0 : (season === 'Fall' ? 1 : 2);
+            return parseInt(year) * 10 + seasonScore;
+        };
+        return parseQuarter(a) - parseQuarter(b);
+    });
+
     return (
         <div className="admin-page">
             <h1>Scribe Editor</h1>
@@ -207,6 +239,13 @@ const ScribeEditor = () => {
                         value={newEventName}
                         onChange={(e) => setNewEventName(e.target.value)}
                     />
+                    <input
+                        type="text"
+                        placeholder="Quarter (e.g. Fall 24)"
+                        value={newEventQuarter}
+                        onChange={(e) => setNewEventQuarter(e.target.value)}
+                        style={{ width: '150px' }}
+                    />
                     <button className="rush-btn" onClick={handleAddEvent}>Add Event</button>
                 </div>
                 <button className="rush-btn" onClick={handleSave}>Save All Changes</button>
@@ -215,36 +254,80 @@ const ScribeEditor = () => {
                 <table className="spreadsheet">
                     <thead>
                         <tr>
-                            <th>Name</th>
-                            {events.map(event => (
-                                <th key={event.id}>
-                                    {event.name}
-                                    <button 
-                                        className="close"
-                                        onClick={() => confirmDelete(event)}
-                                        style={{ marginLeft: '8px', padding: '2px 6px' }}
-                                    >
-                                        ×
-                                    </button>
+                            <th rowSpan="2">Name</th>
+                            {sortedQuarters.map(quarter => (
+                                <th 
+                                    key={quarter} 
+                                    colSpan={expandedQuarters[quarter] ? groupedEvents[quarter].length + 1 : 1}
+                                    className="quarter-header"
+                                    onClick={() => toggleQuarter(quarter)}
+                                    style={{ cursor: 'pointer' }}
+                                >
+                                    {quarter} {expandedQuarters[quarter] ? '▼' : '▶'}
                                 </th>
                             ))}
-                            <th>Total Points</th>
+                            <th rowSpan="2">Total Points</th>
+                        </tr>
+                        <tr>
+                            {sortedQuarters.map(quarter => (
+                                <React.Fragment key={`${quarter}-sub`}>
+                                    {expandedQuarters[quarter] ? (
+                                        <>
+                                            {groupedEvents[quarter].map(event => (
+                                                <th key={event.id} className="sub-event-header">
+                                                    {event.name}
+                                                    <button 
+                                                        className="close"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            confirmDelete(event);
+                                                        }}
+                                                        style={{ marginLeft: '8px', padding: '2px 6px' }}
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </th>
+                                            ))}
+                                            <th className="quarter-total-header">Total</th>
+                                        </>
+                                    ) : (
+                                        <th className="quarter-summary-header">Total</th>
+                                    )}
+                                </React.Fragment>
+                            ))}
                         </tr>
                     </thead>
                     <tbody>
                         {filteredUsers.map(user => (
                             <tr key={user.id}>
                                 <td>{user.firstName} {user.lastName}</td>
-                                {events.map(event => (
-                                    <td key={event.id}>
-                                        <input
-                                            type="number"
-                                            value={eventPoints[user.id]?.[event.id] || ''}
-                                            onChange={(e) => handleCellEdit(user.id, event.id, e.target.value)}
-                                            min="0"
-                                        />
-                                    </td>
-                                ))}
+                                {sortedQuarters.map(quarter => {
+                                    const quarterEvents = groupedEvents[quarter];
+                                    const quarterTotal = quarterEvents.reduce((sum, event) => 
+                                        sum + (eventPoints[user.id]?.[event.id] || 0), 0);
+                                    
+                                    return (
+                                        <React.Fragment key={`${user.id}-${quarter}`}>
+                                            {expandedQuarters[quarter] ? (
+                                                <>
+                                                    {quarterEvents.map(event => (
+                                                        <td key={event.id}>
+                                                            <input
+                                                                type="number"
+                                                                value={eventPoints[user.id]?.[event.id] || ''}
+                                                                onChange={(e) => handleCellEdit(user.id, event.id, e.target.value)}
+                                                                min="0"
+                                                            />
+                                                        </td>
+                                                    ))}
+                                                    <td className="quarter-total-cell">{quarterTotal}</td>
+                                                </>
+                                            ) : (
+                                                <td className="quarter-total-cell">{quarterTotal}</td>
+                                            )}
+                                        </React.Fragment>
+                                    );
+                                })}
                                 <td className="total-points">
                                     {calculateTotalPoints(user.id)}
                                 </td>

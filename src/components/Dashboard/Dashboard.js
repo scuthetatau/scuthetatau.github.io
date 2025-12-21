@@ -88,7 +88,36 @@ const PointsCard = ({ points, userId }) => {
     const [isClosing, setIsClosing] = useState(false);
     const [eventPoints, setEventPoints] = useState({});
     const [events, setEvents] = useState([]);
+    const [expandedQuarters, setExpandedQuarters] = useState({});
     const progressPercentage = (points / PROGRESS_GOAL) * 100;
+
+    const toggleQuarter = (quarter) => {
+        setExpandedQuarters(prev => ({
+            ...prev,
+            [quarter]: !prev[quarter]
+        }));
+    };
+
+    const groupedEvents = events.reduce((groups, event) => {
+        const quarter = event.quarter || 'Other';
+        if (!groups[quarter]) {
+            groups[quarter] = [];
+        }
+        groups[quarter].push(event);
+        return groups;
+    }, {});
+
+    const sortedQuarters = Object.keys(groupedEvents).sort((a, b) => {
+        const parseQuarter = (q) => {
+            const parts = q.split(' ');
+            if (parts.length < 2) return 9999;
+            const season = parts[0];
+            const year = parts[1];
+            const seasonScore = season === 'Spring' ? 0 : (season === 'Fall' ? 1 : 2);
+            return parseInt(year) * 10 + seasonScore;
+        };
+        return parseQuarter(a) - parseQuarter(b);
+    });
 
     useEffect(() => {
         const fetchPointsData = async () => {
@@ -150,14 +179,32 @@ const PointsCard = ({ points, userId }) => {
                     <div className={`admin-edit-user ${isClosing ? 'closing' : ''}`}>
                         <h2>Points Breakdown</h2>
                         <div className="points-breakdown">
-                            {events
-                                .filter(event => eventPoints[event.id] > 0)
-                                .map(event => (
-                                    <div key={event.id} className="event-points-row">
-                                        <span className="event-name">{event.name}</span>
-                                        <span className="event-points">{eventPoints[event.id]} points</span>
+                            {sortedQuarters.map(quarter => {
+                                const quarterEvents = groupedEvents[quarter].filter(event => eventPoints[event.id] > 0);
+                                if (quarterEvents.length === 0) return null;
+                                
+                                const quarterTotal = quarterEvents.reduce((sum, event) => sum + (eventPoints[event.id] || 0), 0);
+                                const isExpanded = expandedQuarters[quarter];
+
+                                return (
+                                    <div key={quarter} className="quarter-group">
+                                        <div 
+                                            className="event-points-row quarter-summary-row" 
+                                            onClick={() => toggleQuarter(quarter)}
+                                            style={{ cursor: 'pointer', fontWeight: 'bold' }}
+                                        >
+                                            <span className="event-name">{quarter} {isExpanded ? '▼' : '▶'}</span>
+                                            <span className="event-points">{quarterTotal} points</span>
+                                        </div>
+                                        {isExpanded && quarterEvents.map(event => (
+                                            <div key={event.id} className="event-points-row sub-event-row">
+                                                <span className="event-name" style={{ paddingLeft: '20px' }}>{event.name}</span>
+                                                <span className="event-points">{eventPoints[event.id]} points</span>
+                                            </div>
+                                        ))}
                                     </div>
-                                ))}
+                                );
+                            })}
                             <div className="event-points-row total">
                                 <span className="event-name">Total</span>
                                 <span className="event-points">{points} points</span>
