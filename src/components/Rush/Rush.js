@@ -101,47 +101,47 @@ const Rush = () => {
                     <div className="rush-timeline-header">Rush 2026</div>
 
                     <div className="rush-event-item">
-                        <div className="rush-event-date">Week 1<br/>TBD</div>
+                        <div className="rush-event-date">Week 1<br/>Wednesday 1/07 7-9pm</div>
                         <div className="rush-event-details">
                             <div className="rush-event-title">Theta Tau Info Night</div>
                             {/*<div className="rush-event-location">Daly 207</div>*/}
-                            <div className="rush-event-description">Learn about what Theta Tau has to offer.</div>
+                            <div className="rush-event-description">Daly 207<br/>Learn about what Theta Tau has to offer.</div>
                         </div>
                     </div>
 
                     <div className="rush-event-item">
-                        <div className="rush-event-date">Week 1<br/>TBD</div>
+                        <div className="rush-event-date">Week 1<br/>Thursday 1/08 7-9pm</div>
                         <div className="rush-event-details">
                             <div className="rush-event-title">Meet the Actives</div>
                             {/*<div className="rush-event-location">Kenna 216</div>*/}
-                            <div className="rush-event-description">Chat with actives and get to know them.</div>
+                            <div className="rush-event-description">Vari 129/133/135<br/>Chat with actives and get to know them.</div>
                         </div>
                     </div>
 
                     <div className="rush-event-item">
-                        <div className="rush-event-date">Week 1<br/>TBD</div>
+                        <div className="rush-event-date">Week 1<br/>Friday 1/09 5:30-9pm</div>
                         <div className="rush-event-details">
                             <div className="rush-event-title">Innovation Night</div>
                             {/*<div className="rush-event-location">California Mission Room</div>*/}
-                            <div className="rush-event-description">Engage with peers and show skills, etc.</div>
+                            <div className="rush-event-description">Locatelli<br/>Engage with peers and show skills</div>
                         </div>
                     </div>
 
                     <div className="rush-event-item">
-                        <div className="rush-event-date">Week 2</div>
+                        <div className="rush-event-date">Week 2<br/>Invite Only</div>
                         <div className="rush-event-details">
                             <div className="rush-event-title">Coffee Chats</div>
                             {/*<div className="rush-event-location">TBD</div>*/}
-                            <div className="rush-event-description">Invite Only</div>
+                            <div className="rush-event-description">More details will be given later on in the rush process.</div>
                         </div>
                     </div>
 
                     <div className="rush-event-item">
-                        <div className="rush-event-date">Week 2</div>
+                        <div className="rush-event-date">Week 2<br/>Invite Only</div>
                         <div className="rush-event-details">
                             <div className="rush-event-title">Interviews</div>
                             {/*<div className="rush-event-location">TBD</div>*/}
-                            <div className="rush-event-description">Invite Only</div>
+                            <div className="rush-event-description">More details will be given later on in the rush process.</div>
                         </div>
                     </div>
                 </div>
