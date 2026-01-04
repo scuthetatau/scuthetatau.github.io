@@ -6,7 +6,7 @@ const Rush = () => {
     const [timeLeft, setTimeLeft] = useState({});
 
     useEffect(() => {
-        const countdownDate = new Date('Jan 8, 2026 19:00:00').getTime();
+        const countdownDate = new Date('Jan 7, 2026 19:00:00').getTime();
 
         const updateCountdown = () => {
             const now = new Date().getTime();
