@@ -101,7 +101,7 @@ const Rush = () => {
                     <div className="rush-timeline-header">Rush 2026</div>
 
                     <div className="rush-event-item">
-                        <div className="rush-event-date">Week 1<br/>Wednesday 1/07 7-9pm</div>
+                        <div className="rush-event-date">Week 1<br/>Wednesday 1/07 6-9pm</div>
                         <div className="rush-event-details">
                             <div className="rush-event-title">Theta Tau Info Night</div>
                             {/*<div className="rush-event-location">Daly 207</div>*/}
@@ -110,7 +110,7 @@ const Rush = () => {
                     </div>
 
                     <div className="rush-event-item">
-                        <div className="rush-event-date">Week 1<br/>Thursday 1/08 7-9pm</div>
+                        <div className="rush-event-date">Week 1<br/>Thursday 1/08 6-9pm</div>
                         <div className="rush-event-details">
                             <div className="rush-event-title">Meet the Actives</div>
                             {/*<div className="rush-event-location">Kenna 216</div>*/}
