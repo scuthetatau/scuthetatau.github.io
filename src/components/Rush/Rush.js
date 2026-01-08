@@ -38,20 +38,20 @@ const Rush = () => {
             >
                 <div className="rush-hero-content">
                     <h1 className="hero-title">Winter Rush 2026</h1>
-                    <h2 className="rush-hero-subtitle">Countdown to Rush</h2>
+                    <h2 className="rush-hero-subtitle">Rush is here!</h2>
                     <div className="rush-countdown">
-                        <span>{timeLeft.days} days</span> |
-                        <span>{timeLeft.hours} hours</span> |
-                        <span>{timeLeft.minutes} minutes</span> |
-                        <span>{timeLeft.seconds} seconds</span>
+                        {/*<span>{timeLeft.days} days</span> |*/}
+                        {/*<span>{timeLeft.hours} hours</span> |*/}
+                        {/*<span>{timeLeft.minutes} minutes</span> |*/}
+                        {/*<span>{timeLeft.seconds} seconds</span>*/}
                     </div>
 
 
                     <button
                         className="rush-interest-button"
-                        onClick={() => window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSfMfMMKR3FQGXwspTYVGmzGnQj6uUY3nIWCwZcT415o4gBKCQ/viewform?usp=header'}
+                        onClick={() => window.location.href = 'https://forms.gle/jveLESqs2rSRiBsN8'}
                     >
-                        INTEREST FORM
+                        APPLICATION
                     </button>
 
                     {/*<button*/}
