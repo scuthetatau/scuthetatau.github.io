@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {collection, getDocs} from 'firebase/firestore';
+import {collection, getDocs, orderBy, query} from 'firebase/firestore';
 import {getDownloadURL, ref} from 'firebase/storage';
 import CoatArms from '../assets/CoatArms.png';
 import GenericProfile from '../assets/generic.png';
@@ -17,7 +17,8 @@ const MeetTheBrothers = () => {
         const fetchUsers = async () => {
             try {
                 const usersCollection = collection(firestore, 'users');
-                const usersSnapshot = await getDocs(usersCollection);
+                const usersQuery = query(usersCollection, orderBy('lastName'));
+                const usersSnapshot = await getDocs(usersQuery);
                 const usersList = usersSnapshot.docs.map(doc => doc.data());
 
                 const usersWithImages = await Promise.all(usersList.map(async user => {

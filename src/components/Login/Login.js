@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import './Login.css';
 import { auth, firestore } from '../../firebase';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { query, collection, getDocs } from 'firebase/firestore'; // Removed 'where' since we're retrieving all users
+import { query, collection, getDocs, where } from 'firebase/firestore';
 
 const Login = () => {
     const [error, setError] = useState('');
@@ -30,27 +30,21 @@ const Login = () => {
                 console.log('Starting Firestore query for email:', email);
 
                 try {
-                    // Get all users from the 'users' collection instead of using a where clause
-                    const userQuery = query(collection(firestore, 'users'));
+                    // Query only the user with the matching email
+                    const userQuery = query(
+                        collection(firestore, 'users'),
+                        where('email', '==', email)
+                    );
                     const userSnapshot = await getDocs(userQuery);
 
                     console.log('Query results empty:', userSnapshot.empty);
 
-                    // Find a user with matching email (case-insensitive)
-                    const matchingUser = userSnapshot.docs.find(doc =>
-                        doc.data().email && doc.data().email.toLowerCase() === email.toLowerCase()
-                    );
-
-                    // Log all users to help debug
-                    userSnapshot.forEach(doc => {
-                        console.log('Found user document:', doc.id, doc.data());
-                    });
-
-                    if (!matchingUser) {
+                    if (userSnapshot.empty) {
                         console.log('No matching user found for email:', email);
                         throw new Error("Your account does not exist in the system. Please contact support.");
                     }
 
+                    const matchingUser = userSnapshot.docs[0];
                     console.log('Matching user found:', matchingUser.id, matchingUser.data());
 
                     // If user exists, navigate to the dashboard

@@ -4,7 +4,7 @@ import './Header.css';
 import WhiteTT from '../assets/WhiteTT.png';
 import {auth, firestore, storage} from '../../firebase';
 import {onAuthStateChanged, signOut} from 'firebase/auth';
-import {collection, getDocs, query} from 'firebase/firestore';
+import {collection, getDocs, query, where} from 'firebase/firestore';
 import {getDownloadURL, ref} from 'firebase/storage';
 import {getUserPermissions} from '../Admin/auth';
 import {getProfilePictureUrl} from '../../utils/imageUtils';
@@ -33,22 +33,20 @@ const Header = () => {
                 const {displayName, email} = currentUser;
 
                 try {
-                    // Query users collection to find matching user
-                    const userQuery = query(collection(firestore, 'users'));
-                    const userSnapshot = await getDocs(userQuery);
-                    
-                    // Find user with matching email (case-insensitive)
-                    const matchingUser = userSnapshot.docs.find(doc =>
-                        doc.data().email && doc.data().email.toLowerCase() === email.toLowerCase()
+                    // Query users collection to find matching user by email
+                    const userQuery = query(
+                        collection(firestore, 'users'),
+                        where('email', '==', email)
                     );
+                    const userSnapshot = await getDocs(userQuery);
 
-                    if (!matchingUser) {
+                    if (userSnapshot.empty) {
                         console.error("User not found in the system.");
                         setUser(null);
                         return;
                     }
 
-                    const userData = matchingUser.data();
+                    const userData = userSnapshot.docs[0].data();
                     const profilePicUrl = await getProfilePictureUrl(userData?.profilePictureUrl, currentUser.photoURL);
 
                     const [firstName, lastName] = displayName ? displayName.split(' ') : [null, null];
