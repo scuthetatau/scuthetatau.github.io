@@ -103,14 +103,16 @@ const PointsCard = ({ points, userId }) => {
     useEffect(() => {
         const fetchPointsData = async () => {
             try {
-                // Fetch user's event points
-                const pointsDoc = await getDoc(doc(firestore, 'eventPoints', userId));
+                // Fetch user's event points and all events in parallel
+                const [pointsDoc, eventsSnapshot] = await Promise.all([
+                    getDoc(doc(firestore, 'eventPoints', userId)),
+                    getDocs(collection(firestore, 'events'))
+                ]);
+
                 if (pointsDoc.exists()) {
                     setEventPoints(pointsDoc.data());
                 }
 
-                // Fetch all events
-                const eventsSnapshot = await getDocs(collection(firestore, 'events'));
                 const eventsList = eventsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 setEvents(eventsList);
             } catch (error) {
@@ -300,14 +302,23 @@ const Dashboard = () => {
                         collection(firestore, 'users'),
                         where('email', '==', currentUser.email)
                     );
-                    const userSnapshot = await getDocs(userQuery);
+
+                    // Fetch user data and BroDate group in parallel
+                    const [userSnapshot, broDatesSnapshot] = await Promise.all([
+                        getDocs(userQuery),
+                        getDocs(collection(firestore, 'brodates'))
+                    ]);
 
                     if (!userSnapshot.empty) {
                         const userData = userSnapshot.docs[0].data();
-                        const profilePicUrl = await getProfilePictureUrl(userData?.profilePictureUrl, currentUser.photoURL);
+                        const userId = userSnapshot.docs[0].id;
 
-                        // Fetch BroDate group
-                        const broDatesSnapshot = await getDocs(collection(firestore, 'brodates'));
+                        // Fetch profile picture and target data in parallel
+                        const [profilePicUrl] = await Promise.all([
+                            getProfilePictureUrl(userData?.profilePictureUrl, currentUser.photoURL),
+                            fetchTargetData(userId)
+                        ]);
+
                         const broDates = broDatesSnapshot.docs.map((doc) => ({
                             id: doc.id,
                             ...doc.data(),
@@ -322,14 +333,11 @@ const Dashboard = () => {
                         // Set user data
                         setUser({
                             ...userData,
-                            id: userSnapshot.docs[0].id,
+                            id: userId,
                             profilePictureUrl: profilePicUrl
                         });
                         setPoints(userData.points || 0);
                         setBroDateGroup(userGroup ? userGroup.members : []);
-
-                        // Fetch target data
-                        await fetchTargetData(userSnapshot.docs[0].id);
                     } else {
                         setError('User data not found');
                     }
