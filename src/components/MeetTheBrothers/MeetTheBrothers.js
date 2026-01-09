@@ -6,6 +6,7 @@ import GenericProfile from '../assets/generic.png';
 import './MeetTheBrothers.css';
 import {firestore, storage} from '../../firebase';
 import ChapterPhoto from "../assets/ChapterPhoto.jpeg";
+import {getProfilePictureUrl} from '../../utils/imageUtils';
 
 const MeetTheBrothers = () => {
     const [users, setUsers] = useState([]);
@@ -20,18 +21,7 @@ const MeetTheBrothers = () => {
                 const usersList = usersSnapshot.docs.map(doc => doc.data());
 
                 const usersWithImages = await Promise.all(usersList.map(async user => {
-                    if (user.profilePictureUrl) {
-                        // Check if the URL is a Firebase Storage URL
-                        if (user.profilePictureUrl.startsWith('https://lh3.googleusercontent.com/')) {
-                            user.profilePicUrl = user.profilePictureUrl;
-                        } else {
-                            try {
-                                user.profilePicUrl = await getDownloadURL(ref(storage, user.profilePictureUrl));
-                            } catch (error) {
-                                console.error(`Error getting image URL for user ${user.email}:`, error);
-                            }
-                        }
-                    }
+                    user.profilePicUrl = await getProfilePictureUrl(user.profilePictureUrl, null);
                     return user;
                 }));
 

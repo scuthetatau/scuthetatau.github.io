@@ -7,29 +7,10 @@ import './Dashboard.css';
 import {AiOutlineEdit} from 'react-icons/ai';
 import EditUserPopup from './EditUserPopup';
 import {getUpcomingEvents, initClient} from './googleCalendarService';
+import {getProfilePictureUrl} from '../../utils/imageUtils';
 
 // Constants
 const PROGRESS_GOAL = 2500;
-const GOOGLE_PHOTO_PREFIX = 'https://lh3.googleusercontent.com/';
-
-// Utility functions
-const getProfilePictureUrl = async (userData, currentUser) => {
-    let profilePicUrl = userData?.profilePictureUrl;
-
-    if (profilePicUrl && !profilePicUrl.startsWith(GOOGLE_PHOTO_PREFIX)) {
-        try {
-            const fileRef = ref(storage, profilePicUrl);
-            profilePicUrl = await getDownloadURL(fileRef);
-        } catch (error) {
-            console.error(`Error getting profile picture URL for ${currentUser.email}:`, error);
-            profilePicUrl = currentUser.photoURL;
-        }
-    } else {
-        profilePicUrl = currentUser.photoURL;
-    }
-
-    return profilePicUrl;
-};
 
 const formatEventDate = (event) => {
     if (event.start.date && !event.start.dateTime) {
@@ -323,7 +304,7 @@ const Dashboard = () => {
 
                     if (!userSnapshot.empty) {
                         const userData = userSnapshot.docs[0].data();
-                        const profilePicUrl = await getProfilePictureUrl(userData, currentUser);
+                        const profilePicUrl = await getProfilePictureUrl(userData?.profilePictureUrl, currentUser.photoURL);
 
                         // Fetch BroDate group
                         const broDatesSnapshot = await getDocs(collection(firestore, 'brodates'));

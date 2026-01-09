@@ -7,6 +7,7 @@ import {onAuthStateChanged, signOut} from 'firebase/auth';
 import {collection, getDocs, query} from 'firebase/firestore';
 import {getDownloadURL, ref} from 'firebase/storage';
 import {getUserPermissions} from '../Admin/auth';
+import {getProfilePictureUrl} from '../../utils/imageUtils';
 
 const Header = () => {
     const [user, setUser] = useState(null);
@@ -48,21 +49,7 @@ const Header = () => {
                     }
 
                     const userData = matchingUser.data();
-                    let profilePicUrl = userData?.profilePictureUrl;
-
-                    // Try to get Firebase Storage image first
-                    if (profilePicUrl && !profilePicUrl.startsWith('https://lh3.googleusercontent.com/')) {
-                        try {
-                            profilePicUrl = await getDownloadURL(ref(storage, profilePicUrl));
-                        } catch (error) {
-                            console.error(`Error getting image URL for user ${email}:`, error);
-                            // Fallback to Google photo if Firebase Storage image fails
-                            profilePicUrl = currentUser.photoURL;
-                        }
-                    } else {
-                        // If no Firebase Storage image is set, use Google photo
-                        profilePicUrl = currentUser.photoURL;
-                    }
+                    const profilePicUrl = await getProfilePictureUrl(userData?.profilePictureUrl, currentUser.photoURL);
 
                     const [firstName, lastName] = displayName ? displayName.split(' ') : [null, null];
                     setUser({
