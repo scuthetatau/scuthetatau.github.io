@@ -35,7 +35,7 @@ const Login = () => {
                 console.log('Starting Firestore query for email:', email);
 
                 try {
-                    // Query only the user with the matching email
+                    // Query only the user with the matching email (Hella efficent)
                     const userQuery = query(
                         collection(firestore, 'users'),
                         where('email', '==', email)
@@ -46,7 +46,8 @@ const Login = () => {
 
                     if (userSnapshot.empty) {
                         console.log('No matching user found for email:', email);
-                        throw new Error("Your account does not exist in the system. Please contact support.");
+                        setError("Your account does not exist in the system. Please contact support.");
+                        return;
                     }
 
                     const matchingUser = userSnapshot.docs[0];
