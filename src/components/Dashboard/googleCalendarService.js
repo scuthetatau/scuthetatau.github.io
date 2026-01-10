@@ -6,6 +6,10 @@ const CALENDAR_ID = process.env.REACT_APP_GOOGLE_CALENDAR_ID;
 const SCOPES = 'https://www.googleapis.com/auth/calendar.readonly';
 
 export const initClient = () => {
+    if (!API_KEY || !CLIENT_ID) {
+        console.warn('Google API Key or Client ID is not configured.');
+        return Promise.resolve();
+    }
     return new Promise((resolve, reject) => {
         gapi.load('client:auth2', () => {
             gapi.client
@@ -26,6 +30,10 @@ export const initClient = () => {
 };
 
 export const getUpcomingEvents = () => {
+    if (!CALENDAR_ID) {
+        console.warn('Google Calendar ID is not configured.');
+        return Promise.resolve([]);
+    }
     return gapi.client.calendar.events
         .list({
             calendarId: CALENDAR_ID,

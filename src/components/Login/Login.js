@@ -3,7 +3,12 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import './Login.css';
 import { auth, firestore } from '../../firebase';
 import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
-import { query, collection, getDocs, where } from 'firebase/firestore';
+import { query, collection, getDocs, where, doc, setDoc } from 'firebase/firestore';
+
+const ADMIN_ROLES = [
+    'Webmaster', 'Regent', 'Vice Regent', 'Treasurer', 'Scribe',
+    'Brotherhood Chair', 'Mediation Chair', 'Historian'
+];
 
 const Login = () => {
     const [error, setError] = useState('');
@@ -45,7 +50,21 @@ const Login = () => {
                     }
 
                     const matchingUser = userSnapshot.docs[0];
-                    console.log('Matching user found:', matchingUser.id, matchingUser.data());
+                    const userData = matchingUser.data();
+                    console.log('Matching user found:', matchingUser.id, userData);
+
+                    // Sync admin role to 'admins' collection for security rules
+                    if (ADMIN_ROLES.includes(userData.role)) {
+                        try {
+                            await setDoc(doc(firestore, 'admins', email), {
+                                role: userData.role,
+                                userId: matchingUser.id
+                            });
+                            console.log('Admin role synced to Firestore');
+                        } catch (adminErr) {
+                            console.warn('Failed to sync admin role (this is expected if not an admin or first time):', adminErr);
+                        }
+                    }
 
                     // If user exists, navigate to the dashboard
                     navigate('/dashboard');

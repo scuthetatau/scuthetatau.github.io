@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from 'react';
-import {addDoc, collection, deleteDoc, doc, getDocs, updateDoc} from 'firebase/firestore';
+import {addDoc, collection, deleteDoc, doc, getDocs, updateDoc, setDoc} from 'firebase/firestore';
 import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
 import {firestore, storage} from '../../firebase';
 import './Admin.css';
@@ -64,6 +64,11 @@ const SelectInput = ({ label, value, onChange, options, placeholder }) => (
         </select>
     </div>
 );
+
+const ADMIN_ROLES = [
+    'Webmaster', 'Regent', 'Vice Regent', 'Treasurer', 'Scribe',
+    'Brotherhood Chair', 'Mediation Chair', 'Historian'
+];
 
 const UserManagement = () => {
     // State management
@@ -131,6 +136,20 @@ const UserManagement = () => {
         if (profilePictureUrl) userData.profilePictureUrl = profilePictureUrl;
         
         await addDoc(collection(firestore, 'users'), userData);
+        
+        // Sync admin role to 'admins' collection for security rules
+        if (ADMIN_ROLES.includes(userData.role)) {
+            // We need the ID from the newly created doc
+            const usersSnapshot = await getDocs(collection(firestore, 'users'));
+            const newDoc = usersSnapshot.docs.find(d => d.data().email === userData.email);
+            if (newDoc) {
+                await setDoc(doc(firestore, 'admins', userData.email), {
+                    role: userData.role,
+                    userId: newDoc.id
+                });
+            }
+        }
+
         const updatedUsers = await fetchUsers();
         setUsers(updatedUsers);
     };
@@ -146,6 +165,22 @@ const UserManagement = () => {
         
         const userRef = doc(firestore, 'users', userData.id);
         await updateDoc(userRef, userData);
+
+        // Sync admin role to 'admins' collection for security rules
+        if (ADMIN_ROLES.includes(userData.role)) {
+            await setDoc(doc(firestore, 'admins', userData.email), {
+                role: userData.role,
+                userId: userData.id
+            });
+        } else {
+            // If they no longer have an admin role, remove from 'admins' collection
+            try {
+                await deleteDoc(doc(firestore, 'admins', userData.email));
+            } catch (err) {
+                // Ignore if it doesn't exist
+            }
+        }
+
         const updatedUsers = await fetchUsers();
         setUsers(updatedUsers);
     };
