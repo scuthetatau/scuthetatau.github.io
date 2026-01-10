@@ -319,6 +319,8 @@ const Dashboard = () => {
                             fetchTargetData(userId)
                         ]);
 
+                        // The security rules now limit getDocs(collection(firestore, 'brodates'))
+                        // to only return the documents the user is allowed to see.
                         const broDates = broDatesSnapshot.docs.map((doc) => ({
                             id: doc.id,
                             ...doc.data(),

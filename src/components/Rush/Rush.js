@@ -12,12 +12,17 @@ const Rush = () => {
             const now = new Date().getTime();
             const difference = countdownDate - now;
 
+            if (difference <= 0) {
+                setTimeLeft("RUSH IS HERE!");
+                return;
+            }
+
             const days = Math.floor(difference / (1000 * 60 * 60 * 24));
             const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
             const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((difference % (1000 * 60)) / 1000);
 
-            setTimeLeft({ days, hours, minutes, seconds });
+            setTimeLeft({days, hours, minutes, seconds});
         };
 
         const interval = setInterval(updateCountdown, 1000);

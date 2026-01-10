@@ -118,9 +118,9 @@ const FamilyTree = () => {
         const isFamily = nodeDatum?.attributes?.isFamily;
 
         return (
-            <g onClick={toggleNode} className={`node ${isAlumni ? 'alumni' : ''}`}>
-                <circle r={30} fill={isAlumni ? '#252525' : '#881616'} />
-                <circle r={25} fill="none" stroke={isAlumni ? '#252525' : '#881616'} strokeWidth="2" />
+            <g className={`node ${isAlumni ? 'alumni' : ''}`}>
+                <circle r={30} fill={isAlumni ? '#252525' : '#881616'}/>
+                <circle r={25} fill="none" stroke={isAlumni ? '#252525' : '#881616'} strokeWidth="2"/>
                 <image
                     href={profilePicture}
                     x="-25"
@@ -142,7 +142,7 @@ const FamilyTree = () => {
                     dy={isFamily ? "45" : "45"}
                     textAnchor="middle"
                     className="name"
-                    style={{ 
+                    style={{
                         fontSize: '14px',
                         fill: '#252525',
                         fontFamily: 'Mohave, sans-serif'
@@ -155,7 +155,7 @@ const FamilyTree = () => {
                         dy="60"
                         textAnchor="middle"
                         className="class"
-                        style={{ 
+                        style={{
                             fontSize: '12px',
                             fill: '#666',
                             fontFamily: 'Mohave, sans-serif'
