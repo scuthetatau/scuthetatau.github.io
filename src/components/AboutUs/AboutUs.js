@@ -1,7 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 import "./AboutUs.css";
 import thetaClass from "../assets/LiamSophieSethi.jpeg";
-import InteractiveMap from "./InteractiveMap";
 
 // Helper to import all images
 const importAll = (r) => r.keys().map(r);
@@ -190,7 +189,6 @@ const AboutUs = () => {
                         </p>
                     </div>
                 </div>
-                <InteractiveMap />
             </div>
         </div>
     );
