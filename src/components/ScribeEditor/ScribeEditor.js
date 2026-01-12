@@ -28,23 +28,28 @@ const ScribeEditor = () => {
 
     useEffect(() => {
         const fetchData = async () => {
-            // Fetch users
-            const usersSnapshot = await getDocs(collection(firestore, 'users'));
-            const usersList = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setUsers(usersList);
+            try {
+                // Fetch users
+                const usersSnapshot = await getDocs(collection(firestore, 'users'));
+                const usersList = usersSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setUsers(usersList);
 
-            // Fetch events
-            const eventsSnapshot = await getDocs(collection(firestore, 'events'));
-            const eventsList = eventsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-            setEvents(eventsList);
+                // Fetch events
+                const eventsSnapshot = await getDocs(collection(firestore, 'events'));
+                const eventsList = eventsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setEvents(eventsList);
 
-            // Fetch event points
-            const pointsSnapshot = await getDocs(collection(firestore, 'eventPoints'));
-            const pointsData = {};
-            pointsSnapshot.docs.forEach(doc => {
-                pointsData[doc.id] = doc.data();
-            });
-            setEventPoints(pointsData);
+                // Fetch event points
+                const pointsSnapshot = await getDocs(collection(firestore, 'eventPoints'));
+                const pointsData = {};
+                pointsSnapshot.docs.forEach(doc => {
+                    pointsData[doc.id] = doc.data();
+                });
+                setEventPoints(pointsData);
+            } catch (error) {
+                console.error("Error fetching data: ", error);
+                // Optionally handle error (e.g., show a message to the user)
+            }
         };
         fetchData();
     }, []);
