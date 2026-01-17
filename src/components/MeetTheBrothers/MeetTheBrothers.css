@@ -36,16 +36,14 @@
 }
 
 /* Renamed from h1 to match generic usage, and targeted .hero-title specifically */
-.hero-title {
+/* Renamed from h1 to match generic usage, and targeted .hero-title specifically */
+/* .hero-title {
     font-size: 4em;
     color: #ffffff;
-    /* Ensure white text on dark overlay */
     text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
-    /* Add legibility */
     margin: 0;
-    /* Remove default margins for better centering */
     text-align: center;
-}
+} */
 
 .meet-the-brothers-coat-arms {
     width: 5%;

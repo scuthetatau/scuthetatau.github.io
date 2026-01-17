@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
-import {collection, getDocs, orderBy, query} from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
+import { collection, getDocs, orderBy, query } from 'firebase/firestore';
 import CoatArms from '../assets/CoatArms.png';
 import GenericProfile from '../assets/generic.png';
 import './MeetTheBrothers.css';
-import {firestore} from '../../firebase';
+import { firestore } from '../../firebase';
 import ChapterPhoto from "../assets/ChapterPhoto.jpeg";
-import {getProfilePictureUrl} from '../../utils/imageUtils';
+import { getProfilePictureUrl } from '../../utils/imageUtils';
 
 const MeetTheBrothers = () => {
     const [users, setUsers] = useState([]);
@@ -59,9 +59,9 @@ const MeetTheBrothers = () => {
         });
 
     const hiddenRoles = ['Mediation Chair']; // Roles to be hidden from leadership section
-    const leadershipUsers = sortByLastName(users.filter(user => 
-        user.role && 
-        !executiveBoardRoles.includes(user.role) && 
+    const leadershipUsers = sortByLastName(users.filter(user =>
+        user.role &&
+        !executiveBoardRoles.includes(user.role) &&
         !hiddenRoles.includes(user.role)
     ));
 
@@ -73,6 +73,23 @@ const MeetTheBrothers = () => {
         groups[classGroup].push(user);
         return groups;
     }, {});
+
+    const greekAlphabet = [
+        'Alpha', 'Beta', 'Gamma', 'Delta', 'Epsilon', 'Zeta', 'Eta', 'Theta', 'Iota',
+        'Kappa', 'Lambda', 'Mu', 'Nu', 'Xi', 'Omicron', 'Pi', 'Rho', 'Sigma', 'Tau',
+        'Upsilon', 'Phi', 'Chi', 'Psi', 'Omega'
+    ];
+
+    const sortedClassGroups = Object.keys(groupedUsers).sort((a, b) => {
+        const indexA = greekAlphabet.indexOf(a);
+        const indexB = greekAlphabet.indexOf(b);
+        // Handle unknown classes (put them at the end)
+        if (indexA === -1 && indexB === -1) return 0;
+        if (indexA === -1) return 1;
+        if (indexB === -1) return -1;
+        // Sort in descending order (Newest/Higher Index first)
+        return indexB - indexA;
+    });
 
     const handleImageError = (event) => {
         event.target.onerror = null; // Prevents infinite loop if fallback image fails
@@ -87,9 +104,11 @@ const MeetTheBrothers = () => {
 
     return (
         <div className="meet-the-brothers-component">
-            <div className="meet-the-brothers-hero" style={{backgroundImage: `url(${ChapterPhoto})`}}>
+            <div className="meet-the-brothers-hero" style={{ backgroundImage: `url(${ChapterPhoto})` }}>
                 <div className="join-overlay">
-                    <h2 className="hero-title">Meet the Brothers</h2>
+                    <h1 className="font-anton text-7xl md:text-9xl text-white uppercase tracking-tighter leading-none mb-4 drop-shadow-2xl text-center">
+                        MEET THE <span className="text-accent">BROTHERS</span>
+                    </h1>
                 </div>
             </div>
             {/*<img src={CoatArms} alt="CoatArms" className="meet-the-brothers-coat-arms"/>*/}
@@ -141,7 +160,7 @@ const MeetTheBrothers = () => {
                 </div>
             )}
 
-            {Object.keys(groupedUsers).map(classGroup => (
+            {sortedClassGroups.map(classGroup => (
                 <div key={classGroup} className="meet-the-brothers-class-group">
                     <h2>{classGroup} Class</h2>
                     <div className="meet-the-brothers-user-grid">
