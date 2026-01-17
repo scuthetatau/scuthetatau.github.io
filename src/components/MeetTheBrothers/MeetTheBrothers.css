@@ -58,9 +58,13 @@
 }
 
 .meet-the-brothers-leadership-section h2 {
+    font-family: 'Anton', sans-serif;
     font-size: 2.5em;
+    /* Keep text size same */
     margin-bottom: 1em;
     color: #881616;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
 .meet-the-brothers-leadership-grid {
@@ -108,13 +112,17 @@
 .meet-the-brothers-class-group {
     margin-bottom: 40px;
     width: 100%;
+    padding: 20px;
 }
 
 .meet-the-brothers-class-group h2 {
+    font-family: 'Anton', sans-serif;
     text-align: center;
     margin-bottom: 5vh;
     color: #881616;
     font-size: 2em;
+    /*font-weight: normal;*/
+    text-transform: uppercase;
 }
 
 .meet-the-brothers-user-grid {
@@ -154,9 +162,10 @@
 }
 
 .meet-the-brothers-user-name {
-    padding-top: 30px;
+    /* Reduced from 30px since img margin is fixed */
     font-size: 1.2em;
     font-weight: bold;
+    padding: 10px;
 }
 
 .meet-the-brothers-user-role {
@@ -199,8 +208,10 @@
     object-fit: cover;
     border-radius: 50%;
     object-fit: cover;
+    object-fit: cover;
     border-radius: 50%;
-    margin-bottom: -35px;
+    margin-bottom: 10px;
+    /* Changed from -35px to positive for spacing */
     display: block;
     /* Ensure it behaves as a block for centering */
     margin-left: auto;
@@ -213,13 +224,21 @@
 .meet-the-brothers-executive-board-section {
     width: 100%;
     padding: 20px;
+    width: 100%;
+    padding: 20px;
     text-align: center;
+    margin-top: 50px;
+    /* Added padding between hero and title */
 }
 
 .meet-the-brothers-executive-board-section h2 {
+    font-family: 'Anton', sans-serif;
     font-size: 2.5em;
+    /* Keep text size same */
     margin-bottom: 1em;
     color: #881616;
+    font-weight: bold;
+    text-transform: uppercase;
 }
 
 .meet-the-brothers-executive-board-grid {
