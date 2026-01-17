@@ -1,8 +1,7 @@
 import React, {useEffect, useState} from 'react';
-import {auth, firestore, storage} from '../../firebase';
+import {auth, firestore} from '../../firebase';
 import {onAuthStateChanged} from 'firebase/auth';
 import {collection, doc, getDoc, getDocs, query, where} from 'firebase/firestore';
-import {getDownloadURL, ref} from 'firebase/storage';
 import './Dashboard.css';
 import {AiOutlineEdit} from 'react-icons/ai';
 import EditUserPopup from './EditUserPopup';
@@ -420,9 +419,9 @@ const Dashboard = () => {
                 <UserInfo user={user} onEditClick={() => setIsEditPopupOpen(true)} />
             </div>
 
-            <div className="widgets">
-                <SpoonAssassinCard target={target} />
-            </div>
+            {/*<div className="widgets">*/}
+            {/*    <SpoonAssassinCard target={target} />*/}
+            {/*</div>*/}
 
             <div className="widgets">
                 <PointsCard points={points} userId={user?.id} />

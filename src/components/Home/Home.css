@@ -1,391 +1,56 @@
-@import url('https://fonts.googleapis.com/css2?family=Mohave:wght@300;400;700&display=swap');
-
-/* General Styles */
-* {
-    box-sizing: border-box; /* Include padding and border in element's width */
+.glass-nav {
+    backdrop-filter: blur(12px);
+    background: rgba(18, 18, 18, 0.7);
 }
 
-.hero {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    color: white;
-    font-family: 'Mohave', sans-serif;
-    position: relative;
-    height: 100vh;
-    text-align: center;
-    overflow: hidden; /* Prevent content overflow */
-    width: 100%;
+.reveal {
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.content {
-    position: relative;
-    z-index: 1;
-    width: 90%; /* Adjusting width for smaller screens */
-    max-width: 100vw; /* Ensure content does not exceed viewport width */
+.reveal.active {
+    opacity: 1;
+    transform: translateY(0);
 }
 
-.subheading {
-    font-size: 1.5rem;
-    margin-bottom: 1rem;
+.reveal-left {
+    opacity: 0;
+    transform: translateX(-50px);
+    transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.BIG-title {
-    font-size: 6em; /* Decreased from 4rem */
-    font-weight: bold;
-    margin-bottom: 0.5rem;
+.reveal-left.active {
+    opacity: 1;
+    transform: translateX(0);
 }
 
-.heading {
-    font-size: 2.4em; /* Decreased from 4rem */
-    font-weight: bold;
-    margin-bottom: 0.5rem;
-    color: #961111;
+.reveal-right {
+    opacity: 0;
+    transform: translateX(50px);
+    transition: all 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.chapter {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #FFD700;
-    margin-bottom: 1rem;
-    font-style: italic;
-    text-transform: uppercase;
+.reveal-right.active {
+    opacity: 1;
+    transform: translateX(0);
 }
 
-.description {
-    font-size: 1.25rem;
-    margin-bottom: 2rem;
+.pillar-card {
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
-.rush-btn {
-    background-color: #FFD700;
-    border: none;
-    padding: 1rem 2rem;
-    font-size: 1.25rem;
-    cursor: pointer;
-    font-weight: bold;
-    color: #000;
-    transition: background-color 0.3s ease;
-    font-family: 'Mohave', sans-serif;
-    margin: 10px;
-    text-transform: uppercase;
+.pillar-card:hover {
+    transform: translateY(-15px);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
 }
 
-.rush-btn:hover {
-    background-color: #ffcc00;
+.glassmorphism {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
-/* Regent Section */
-.regent-section-unique {
-    padding: 4rem 2rem;
-    text-align: center;
-    width: 90%;
-    margin: auto;
-}
-
-.regent-section {
-    width: 100%;
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 20px;
-    background-color: #fff;
-}
-
-.regent-content {
-    display: flex;
-    align-items: flex-start;
-    flex-wrap: wrap; /* Allow flex items to wrap on small screens */
-}
-
-.regent-image {
-    width: 100%;
-    max-width: 250px;
-    height: auto;
-    aspect-ratio: 1 / 1; /* Reserve space for the image */
-    object-fit: cover; /* Ensure the image covers the reserved space */
-    margin-top: 18%;
-    border-radius: 8px;
-    margin-right: 30px;
-    margin-left: 0;
-}
-
-.regent-text {
-    flex: 1;
-    margin-left: 0;
-    text-align: left;
-}
-
-.regent-text p {
-    font-family: 'Mohave', sans-serif;
-    font-size: 1rem;
-    line-height: 1.5;
-    color: #000;
-    margin-bottom: 1rem;
-}
-
-.regent-signature {
-    font-family: 'Mohave', sans-serif;
-    font-size: 1rem;
-    font-weight: 500;
-    color: #333;
-    text-align: left;
-    margin-top: 20px;
-}
-
-/* Core Pillars Section */
-.core-pillars-section {
-    width: 100%;
-    max-width: 900px;
-    margin: 40px auto;
-    padding: 20px;
-    background-color: #fff;
-}
-
-.pillars-header {
-    text-align: center;
-    margin-bottom: 30px;
-}
-
-.divider-line {
-    width: 100%;
-    border: none;
-    border-top: 1px solid #000; /* Line at the top */
-    margin-bottom: 20px;
-}
-
-.pillars-title {
-    font-family: 'Mohave', sans-serif;
-    font-size: 2rem;
-    font-weight: 700;
-    color: #B22222; /* Dark Red */
-}
-
-.pillars-content {
-    display: flex;
-    justify-content: space-between;
-    text-align: center;
-    flex-wrap: wrap; /* Adjust flex direction for smaller screens */
-}
-
-.pillar {
-    flex: 1;
-    padding: 0 20px;
-    border-right: 1px solid #333; /* Divider between columns */
-    box-sizing: border-box; /* Ensure padding is included in width */
-    max-width: 100vw; /* Ensure pillar does not exceed viewport width */
-}
-
-/* Remove borders on the last child */
-.pillar:last-child {
-    border-right: none;
-}
-
-.pillar-title {
-    font-family: 'Mohave', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #000;
-    margin-bottom: 10px;
-}
-
-.pillar-description {
-    font-family: 'Mohave', sans-serif;
-    font-size: 1rem;
-    font-style: italic;
-    font-weight: 400;
-    color: #333;
-    line-height: 1.5;
-}
-
-@media (max-width: 768px) {
-    .regent-content {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .regent-image {
-        width: 200px;
-        margin: 0 auto 20px auto;
-        margin-top: 0;
-    }
-
-    .regent-text {
-        width: 100%;
-        /*text-align: center;*/
-    }
-
-    .regent-signature {
-        /*text-align: center;*/
-    }
-
-    .pillars-content {
-        flex-direction: column;
-    }
-
-    .pillar {
-        padding: 20px 0;
-        border-right: none;
-        border-bottom: 1px solid #333;
-    }
-
-    .pillar:last-child {
-        border-bottom: none;
-    }
-
-    .heading {
-        margin-top: -15px;
-        font-size: 4rem; /* Further reduction for smaller devices */
-    }
-
-    .BIG-title {
-        font-size: 3.5em;
-    }
-
-    .chapter {
-        font-size: 1.5rem;
-    }
-
-    .subheading {
-        font-size: 1.2rem;
-    }
-
-    .description {
-        font-size: 1rem;
-    }
-
-    .heading {
-        font-size: 2em;
-    }
-
-    .join-title {
-        font-size: 2rem;
-    }
-
-    .pillar-title {
-        font-size: 1.3rem;
-    }
-
-    .pillar-description {
-        font-size: 0.9rem;
-    }
-
-    .regent-text p {
-        font-size: 0.9rem;
-    }
-
-    .regent-signature {
-        font-size: 0.9rem;
-    }
-
-    .rush-highlight-title {
-        font-size: 2rem;
-    }
-
-    .rush-highlight-text {
-        font-size: 1rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .BIG-title {
-        font-size: 2.5em;
-    }
-
-    .chapter {
-        font-size: 1.2rem;
-    }
-
-    .subheading {
-        font-size: 1rem;
-    }
-
-    .description {
-        font-size: 0.9rem;
-    }
-
-    .heading {
-        font-size: 1.8em;
-    }
-
-    .join-title {
-        font-size: 1.8rem;
-    }
-
-    .rush-btn {
-        font-size: 1rem;
-        padding: 0.8rem 1.5rem;
-    }
-}
-
-/* Join Section */
-.join-section {
-    position: relative;
-    width: 100%;
-    height: 500px;
-    background-size: cover;
-    background-position: center;
-    text-transform: uppercase;
-}
-
-.join-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent overlay */
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    padding: 20px; /* Added padding for smaller screens */
-    max-width: 100vw; /* Ensure join-overlay does not exceed viewport width */
-}
-
-.join-title {
-    font-family: 'Mohave', sans-serif;
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: #fff;
-    margin-bottom: 20px;
-    text-align: center;
-}
-
-.rush-button {
-    font-family: 'Mohave', sans-serif;
-    font-size: 1.5rem;
-    font-weight: 700;
-    color: #000;
-    background-color: #FFD700; /* Gold background */
-    border: none;
-    padding: 10px 20px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.rush-button:hover {
-    background-color: #FFC107; /* Slightly darker on hover */
-}
-
-.rush-highlight-section {
-    background-color: #bd1d1d; /* Light red background to grab attention */
-    color: #ffffff; /* Darker text for contrast */
-    padding: 60px 20px;
-    text-align: center;
-}
-
-.rush-highlight-content {
-    max-width: 800px;
-    margin: 0 auto;
-}
-
-.rush-highlight-title {
-    font-size: 2.5rem;
-    font-weight: bold;
-    margin-bottom: 20px;
-}
-
-.rush-highlight-text {
-    font-size: 1.25rem;
-    margin-bottom: 40px;
+.material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
 }
