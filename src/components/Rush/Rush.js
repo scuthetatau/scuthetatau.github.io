@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
 import iotaClass from '../assets/IotaClass.JPG';
+import rushInfoNight from '../assets/Rush_Info_Night_2026.JPG';
 import './Rush.css';
 
 const Rush = () => {
@@ -83,7 +84,7 @@ const Rush = () => {
                     </div>
                     <div className="relative reveal h-96 md:h-[500px]" style={{ transitionDelay: "300ms" }}>
                         <div className="absolute inset-0 border-2 border-accent translate-x-4 translate-y-4"></div>
-                        <img alt="Engineering Students Collaborating" className="relative w-full h-full object-cover shadow-2xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPVKBzEzyLVBF8KPzR465R-7ZTRnZ6eMsT9qD7t9MtyCnZ1TcMgn-pGzn5tYxFUKCq_5uZ7bFi8ZuHFzHD-ImRN-makJOU066rS6UmfCayhdgaIDJummCN6mHzwWNaTc3UGHYIHs5_9FeBV9WQrfT1sWMsgPItG8ePwgEFGWRfN3bbkQVLsSCqvZtLOPlk6wC5b5-eLK2nIv9ReBwSEf1HaYGnUZRNeRzWeI1Vn9esUY2AGe6v79uO-3Xcw2MgU-oH4h_CzQJuPF5A" />
+                        <img alt="Engineering Students Collaborating" className="relative w-full h-full object-cover shadow-2xl" src={rushInfoNight} />
                     </div>
                 </div>
             </section>
