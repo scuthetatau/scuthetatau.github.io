@@ -112,9 +112,6 @@ const Rush = () => {
                                     <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-xl event-card">
                                         <p className="text-sm text-gray-500 mb-2 font-semibold">LOCATION: DALY 207</p>
                                         <p className="dark:text-gray-300">Learn about what Theta Tau has to offer and meet the executive board.</p>
-                                        <button className="mt-4 flex items-center gap-2 text-primary font-bold hover:underline">
-                                            <span className="material-icons text-sm">notifications</span> REMIND ME
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -132,9 +129,6 @@ const Rush = () => {
                                     <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-xl event-card">
                                         <p className="text-sm text-gray-500 mb-2 font-semibold">LOCATION: VARI 129/133/135</p>
                                         <p className="dark:text-gray-300">Chat with active brothers in an informal setting and get to know them personally.</p>
-                                        <button className="mt-4 flex items-center gap-2 text-primary font-bold hover:underline">
-                                            <span className="material-icons text-sm">notifications</span> REMIND ME
-                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -152,9 +146,6 @@ const Rush = () => {
                                     <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-xl event-card">
                                         <p className="text-sm text-gray-500 mb-2 font-semibold">LOCATION: LOCATELLI</p>
                                         <p className="dark:text-gray-300">Engage with peers, show your engineering skills, and participate in collaborative challenges.</p>
-                                        <button className="mt-4 flex items-center gap-2 text-primary font-bold hover:underline">
-                                            <span className="material-icons text-sm">notifications</span> REMIND ME
-                                        </button>
                                     </div>
                                 </div>
                             </div>
