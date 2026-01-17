@@ -8,7 +8,23 @@
     text-transform: uppercase;
     background-color: #ffffff;
     color: #252525;
-    overflow-x: hidden; /* Add this line to prevent horizontal scrolling */
+    color: #252525;
+    overflow-x: hidden;
+    /* Add this line to prevent horizontal scrolling */
+}
+
+/* Add join-overlay to darken the hero image and center content */
+.join-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4);
+    /* Dark overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 .meet-the-brothers-hero {
@@ -19,9 +35,16 @@
     background-position: center;
 }
 
-.meet-the-brothers-component h1 {
+/* Renamed from h1 to match generic usage, and targeted .hero-title specifically */
+.hero-title {
     font-size: 4em;
-    margin-bottom: 10vh;
+    color: #ffffff;
+    /* Ensure white text on dark overlay */
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+    /* Add legibility */
+    margin: 0;
+    /* Remove default margins for better centering */
+    text-align: center;
 }
 
 .meet-the-brothers-coat-arms {
@@ -55,12 +78,19 @@
 }
 
 .meet-the-brothers-leadership-profile-pic {
-    width: 150px; /* Adjust size as necessary */
+    width: 150px;
+    /* Adjust size as necessary */
     height: 150px;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     object-fit: cover;
     margin-bottom: 20px;
+    display: block;
+    /* Ensure it behaves as a block for centering */
+    margin-left: auto;
+    /* Center horizontally */
+    margin-right: auto;
+    /* Center horizontally */
 }
 
 .meet-the-brothers-leadership-name {
@@ -100,13 +130,15 @@
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.09);
     text-align: center;
-    width: 15%; /* Default width for larger screens */
+    width: 15%;
+    /* Default width for larger screens */
     background-color: rgb(248, 248, 248);
     padding: 20px;
     color: black;
     cursor: pointer;
     transition: transform 0.2s;
-    line-height: 1.2em; /* Adjust line height for better readability */
+    line-height: 1.2em;
+    /* Adjust line height for better readability */
 }
 
 .meet-the-brothers-brother-card:hover {
@@ -159,13 +191,24 @@
 
 .meet-the-brothers-profile-pic {
     padding: 10px;
-    width: 100%; /* Ensure images scale with card */
-    max-width: 150px; /* Limit image width */
-    height: 150px; /* Maintain aspect ratio */
+    width: 100%;
+    /* Ensure images scale with card */
+    max-width: 150px;
+    /* Limit image width */
+    height: 150px;
+    /* Maintain aspect ratio */
     aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: 50%;
+    object-fit: cover;
+    border-radius: 50%;
     margin-bottom: -35px;
+    display: block;
+    /* Ensure it behaves as a block for centering */
+    margin-left: auto;
+    /* Center horizontally */
+    margin-right: auto;
+    /* Center horizontally */
 }
 
 /* Add new styles for the executive board section */
@@ -194,12 +237,20 @@
 }
 
 .meet-the-brothers-executive-board-profile-pic {
-    width: 150px; /* Adjust size as necessary */
+    width: 150px;
+    /* Adjust size as necessary */
     height: 150px;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     object-fit: cover;
+    object-fit: cover;
     margin-bottom: 20px;
+    display: block;
+    /* Ensure it behaves as a block for centering */
+    margin-left: auto;
+    /* Center horizontally */
+    margin-right: auto;
+    /* Center horizontally */
 }
 
 .meet-the-brothers-executive-board-name {
@@ -219,42 +270,51 @@
 /* Add responsive styles */
 @media (max-width: 768px) {
     .meet-the-brothers-user-grid {
-        gap: 10px; /* Reduce gap between cards */
+        gap: 10px;
+        /* Reduce gap between cards */
     }
 
     .meet-the-brothers-brother-card {
-        width: 45%; /* Set width to 45% to fit two cards side by side with gap */
-        padding: 10px; /* Adjust padding */
-        font-size: 0.9em; /* Adjust text size */
+        width: 45%;
+        /* Set width to 45% to fit two cards side by side with gap */
+        padding: 10px;
+        /* Adjust padding */
+        font-size: 0.9em;
+        /* Adjust text size */
     }
 
     .meet-the-brothers-leadership-profile-pic,
     .meet-the-brothers-profile-pic {
-        width: 100px; /* Smaller image size for mobile */
+        width: 100px;
+        /* Smaller image size for mobile */
         height: 100px;
     }
 
     .meet-the-brothers-leadership-name,
     .meet-the-brothers-user-name {
-        font-size: 1em; /* Adjust name size */
+        font-size: 1em;
+        /* Adjust name size */
     }
 
     .meet-the-brothers-leadership-role,
     .meet-the-brothers-user-role,
     .meet-the-brothers-user-major,
     .meet-the-brothers-user-graduation-year {
-        font-size: 0.8em; /* Adjust role, major, and graduation year text sizes */
+        font-size: 0.8em;
+        /* Adjust role, major, and graduation year text sizes */
     }
 
     .meet-the-brothers-component h1,
     .meet-the-brothers-leadership-section h2,
     .meet-the-brothers-class-group h2,
     .meet-the-brothers-executive-board-section h2 {
-        font-size: 1.5em; /* Adjust section header sizes */
+        font-size: 1.5em;
+        /* Adjust section header sizes */
     }
 
     .meet-the-brothers-hero {
-        height: 60vh; /* Reduce hero section height */
+        height: 60vh;
+        /* Reduce hero section height */
     }
 }
 
@@ -283,7 +343,8 @@
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Spacing between elements inside the popup */
+    gap: 20px;
+    /* Spacing between elements inside the popup */
 }
 
 
@@ -331,50 +392,70 @@
 /* Popup Main Container */
 .popup-main {
     display: flex;
-    flex-direction: row; /* Keep the horizontal layout */
-    align-items: center; /* Vertically center the profile picture and details */
-    justify-content: flex-start; /* Align content to the start (left) */
-    gap: 30px; /* Add spacing between the profile picture and details */
-    height: 100%; /* Ensure this container fills the vertical space */
+    flex-direction: row;
+    /* Keep the horizontal layout */
+    align-items: center;
+    /* Vertically center the profile picture and details */
+    justify-content: flex-start;
+    /* Align content to the start (left) */
+    gap: 30px;
+    /* Add spacing between the profile picture and details */
+    height: 100%;
+    /* Ensure this container fills the vertical space */
 }
 
 /* Popup User Image Container */
 .popup-user-image-container {
-    flex-shrink: 0; /* Prevent the image size from shrinking */
-    display: flex; /* Use flexbox for internal alignment */
-    align-items: center; /* Center the image vertically within its parent */
-    justify-content: center; /* Center the image horizontally within its parent */
+    flex-shrink: 0;
+    /* Prevent the image size from shrinking */
+    display: flex;
+    /* Use flexbox for internal alignment */
+    align-items: center;
+    /* Center the image vertically within its parent */
+    justify-content: center;
+    /* Center the image horizontally within its parent */
 }
 
 /* Popup User Image */
 .popup-user-image {
-    width: 120px; /* Set a fixed size for the image */
+    width: 120px;
+    /* Set a fixed size for the image */
     height: 120px;
-    border-radius: 50%; /* Circular image */
-    object-fit: cover; /* Maintain aspect ratio */
-    padding: 0; /* Remove any additional spacing */
+    border-radius: 50%;
+    /* Circular image */
+    object-fit: cover;
+    /* Maintain aspect ratio */
+    padding: 0;
+    /* Remove any additional spacing */
 }
 
 /* Popup Content */
 .popup-content {
     background: #fff;
     border-radius: 15px;
-    padding: 40px; /* Increased padding for better overall spacing */
+    padding: 40px;
+    /* Increased padding for better overall spacing */
     min-height: 33%;
-    width: 500px; /* Slightly wider to accommodate content */
-    max-width: 90%; /* Responsive sizing */
+    width: 500px;
+    /* Slightly wider to accommodate content */
+    max-width: 90%;
+    /* Responsive sizing */
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     position: relative;
     display: flex;
     flex-direction: column;
-    gap: 20px; /* Spacing between elements inside the popup */
+    gap: 20px;
+    /* Spacing between elements inside the popup */
 }
 
 /* Popup User Details */
 .popup-user-info {
-    flex: 1; /* Ensure this section takes up extra space */
-    text-align: left; /* Align details to the left side */
-    padding: 10px; /* Add padding for spacing */
+    flex: 1;
+    /* Ensure this section takes up extra space */
+    text-align: left;
+    /* Align details to the left side */
+    padding: 10px;
+    /* Add padding for spacing */
 }
 
 .popup-user-info h2 {
@@ -384,8 +465,10 @@
 }
 
 .popup-user-info p {
-    margin: 8px 0; /* More spacing between paragraphs */
-    font-size: 1.1em; /* Slightly larger text */
+    margin: 8px 0;
+    /* More spacing between paragraphs */
+    font-size: 1.1em;
+    /* Slightly larger text */
     color: #666;
 }
 
@@ -398,31 +481,38 @@
     border-radius: 5px;
     cursor: pointer;
     position: absolute;
-    bottom: 20px; /* Position close button at the bottom-right */
+    bottom: 20px;
+    /* Position close button at the bottom-right */
     right: 20px;
     font-size: 1em;
     font-weight: bold;
 }
 
 .popup-close-button:hover {
-    background: #670808; /* Darker shade of red on hover */
+    background: #670808;
+    /* Darker shade of red on hover */
 }
 
 /* Responsive Adjustments for Mobile Screens */
 @media (max-width: 768px) {
     .popup-main {
-        flex-direction: column; /* Stack profile picture and details */
-        align-items: center; /* Center-align for mobile */
+        flex-direction: column;
+        /* Stack profile picture and details */
+        align-items: center;
+        /* Center-align for mobile */
         gap: 20px;
     }
 
     .popup-user-info {
-        text-align: center; /* Center-align on smaller screens */
-        padding: 0; /* Remove extra padding for compact view */
+        text-align: center;
+        /* Center-align on smaller screens */
+        padding: 0;
+        /* Remove extra padding for compact view */
     }
 
     .popup-content {
-        padding: 20px; /* Slightly smaller padding for mobile */
+        padding: 20px;
+        /* Slightly smaller padding for mobile */
         width: 90%;
     }
 

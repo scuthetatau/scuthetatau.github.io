@@ -1,10 +1,9 @@
 import React, {useEffect, useState} from 'react';
 import {collection, getDocs, orderBy, query} from 'firebase/firestore';
-import {getDownloadURL, ref} from 'firebase/storage';
 import CoatArms from '../assets/CoatArms.png';
 import GenericProfile from '../assets/generic.png';
 import './MeetTheBrothers.css';
-import {firestore, storage} from '../../firebase';
+import {firestore} from '../../firebase';
 import ChapterPhoto from "../assets/ChapterPhoto.jpeg";
 import {getProfilePictureUrl} from '../../utils/imageUtils';
 
