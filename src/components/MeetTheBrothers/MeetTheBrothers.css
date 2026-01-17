@@ -80,19 +80,16 @@
 }
 
 .meet-the-brothers-leadership-profile-pic {
-    width: 150px;
-    /* Adjust size as necessary */
-    height: 150px;
+        width: 100%;
+    max-width: 150px;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     object-fit: cover;
     margin-bottom: 20px;
     display: block;
-    /* Ensure it behaves as a block for centering */
     margin-left: auto;
-    /* Center horizontally */
     margin-right: auto;
-    /* Center horizontally */
+    height: auto;
 }
 
 .meet-the-brothers-leadership-name {
@@ -130,21 +127,26 @@
     flex-wrap: wrap;
     gap: 20px;
     justify-content: center;
+    width: 100%;
+    max-width: 1400px;
+    margin: 0 auto;
 }
 
 .meet-the-brothers-brother-card {
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.09);
     text-align: center;
-    width: 15%;
-    /* Default width for larger screens */
     background-color: rgb(248, 248, 248);
     padding: 20px;
     color: black;
     cursor: pointer;
     transition: transform 0.2s;
     line-height: 1.2em;
-    /* Adjust line height for better readability */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 0 1 200px;
+    /* Fixed base size for cards in flex container */
 }
 
 .meet-the-brothers-brother-card:hover {
@@ -199,25 +201,13 @@
 .meet-the-brothers-profile-pic {
     padding: 10px;
     width: 100%;
-    /* Ensure images scale with card */
     max-width: 150px;
-    /* Limit image width */
-    height: 150px;
-    /* Maintain aspect ratio */
     aspect-ratio: 1 / 1;
     object-fit: cover;
     border-radius: 50%;
-    object-fit: cover;
-    object-fit: cover;
-    border-radius: 50%;
     margin-bottom: 10px;
-    /* Changed from -35px to positive for spacing */
     display: block;
-    /* Ensure it behaves as a block for centering */
-    margin-left: auto;
-    /* Center horizontally */
-    margin-right: auto;
-    /* Center horizontally */
+    height: auto;
 }
 
 /* Add new styles for the executive board section */
@@ -254,20 +244,16 @@
 }
 
 .meet-the-brothers-executive-board-profile-pic {
-    width: 150px;
-    /* Adjust size as necessary */
-    height: 150px;
+    width: 100%;
+    max-width: 150px;
     aspect-ratio: 1 / 1;
     border-radius: 50%;
     object-fit: cover;
-    object-fit: cover;
     margin-bottom: 20px;
     display: block;
-    /* Ensure it behaves as a block for centering */
     margin-left: auto;
-    /* Center horizontally */
     margin-right: auto;
-    /* Center horizontally */
+    height: auto;
 }
 
 .meet-the-brothers-executive-board-name {
@@ -288,23 +274,21 @@
 @media (max-width: 768px) {
     .meet-the-brothers-user-grid {
         gap: 10px;
-        /* Reduce gap between cards */
     }
 
     .meet-the-brothers-brother-card {
-        width: 45%;
-        /* Set width to 45% to fit two cards side by side with gap */
         padding: 10px;
-        /* Adjust padding */
         font-size: 0.9em;
-        /* Adjust text size */
+        flex: 0 1 140px;
+        /* Smaller flex basis for mobile */
     }
 
     .meet-the-brothers-leadership-profile-pic,
-    .meet-the-brothers-profile-pic {
-        width: 100px;
-        /* Smaller image size for mobile */
-        height: 100px;
+    .meet-the-brothers-profile-pic,
+    .meet-the-brothers-executive-board-profile-pic {
+        width: 80%;
+        max-width: 120px;
+        height: auto;
     }
 
     .meet-the-brothers-leadership-name,
