@@ -1,8 +1,8 @@
-import React, {useEffect, useState} from 'react';
-import {collection, getDocs} from 'firebase/firestore';
-import {getDownloadURL, ref} from 'firebase/storage';
-import {auth, firestore, storage} from '../firebase';
-import {onAuthStateChanged} from 'firebase/auth';
+import React, { useEffect, useState } from 'react';
+import { collection, getDocs } from 'firebase/firestore';
+import { getDownloadURL, ref } from 'firebase/storage';
+import { auth, firestore, storage } from '../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
 import CoatArms from './assets/CoatArms.png'; // Fallback image
 import UpsilonClass from './assets/UpsilonEpsilonThetaTau.png'
 import './MeetTheBrothers/MeetTheBrothers.css'; // Use styling similar to `MeetTheBrothers`
@@ -115,14 +115,16 @@ const Alumni = () => {
         <div className="meet-the-brothers-component">
             <div className="meet-the-brothers-hero" style={{ backgroundImage: `url(${UpsilonClass})` }}>
                 <div className="join-overlay">
-                    <h2 className="hero-title">Our Alumni</h2>
+                    <h1 className="font-anton text-7xl md:text-9xl text-white uppercase tracking-tighter leading-none mb-4 drop-shadow-2xl text-center">
+                        OUR <span className="text-accent">ALUMNI</span>
+                    </h1>
                 </div>
             </div>
 
             {error && <p className="error-message">{error}</p>}
 
             {sortedYears.map((year) => (
-                <div key={year} className="meet-the-brothers-executive-board-section">
+                <div key={year} className="meet-the-brothers-class-group">
                     <h2>Class of {year} </h2>
                     <div className="meet-the-brothers-user-grid">
                         {sortByLastName(groupedAlumni[year]).map((alum, index) => (
