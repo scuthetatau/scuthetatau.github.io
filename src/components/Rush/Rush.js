@@ -39,7 +39,7 @@ const Rush = () => {
     }, []);
 
     return (
-        <div className="bg-background-light dark:bg-background-dark text-charcoal dark:text-gray-200 font-sans selection:bg-accent selection:text-black">
+        <div className="bg-background-light dark:bg-background-dark text-charcoal dark:text-gray-200 font-sans">
             {/* Hero Section */}
             <section className="relative h-screen flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 bg-black">

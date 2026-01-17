@@ -46,7 +46,7 @@ const Home = () => {
     }, []);
 
     return (
-        <div className="bg-background-light dark:bg-background-dark text-charcoal dark:text-gray-200 font-sans selection:bg-accent selection:text-black overflow-x-hidden">
+        <div className="bg-background-light dark:bg-background-dark text-charcoal dark:text-gray-200 font-sans overflow-x-hidden">
             {/* Hero Section */}
             <section className="relative h-screen flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0 bg-black">

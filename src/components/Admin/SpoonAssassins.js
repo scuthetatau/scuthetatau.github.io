@@ -392,7 +392,7 @@ const SpoonAssassins = () => {
 
 
     return (
-        <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden font-sans text-text-main antialiased selection:bg-brand-gold selection:text-black">
+        <div className="relative flex min-h-screen w-full flex-col overflow-x-hidden font-sans text-text-main antialiased">
             {/* Notification Toast */}
             {notification && (
                 <div className={`fixed top-24 right-10 z-[60] px-6 py-4 rounded shadow-lg border-l-4 ${notification.type === 'success' ? 'bg-white border-green-500 text-green-800' : 'bg-white border-red-500 text-red-800'
