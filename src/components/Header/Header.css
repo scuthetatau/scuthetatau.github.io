@@ -5,9 +5,11 @@
     padding: 15px;
     display: flex;
     justify-content: space-between;
-    align-items: center; /* Ensure items are centered vertically */
+    align-items: center;
+    /* Ensure items are centered vertically */
     position: relative;
-    z-index: 10; /* Set high z-index for the header */
+    z-index: 10;
+    /* Set high z-index for the header */
 }
 
 .logo {
@@ -24,7 +26,8 @@
     border: none;
     font-size: 2rem;
     cursor: pointer;
-    order: 3; /* Move hamburger to the end */
+    order: 3;
+    /* Move hamburger to the end */
 }
 
 .nav-links {
@@ -33,13 +36,16 @@
     align-items: center;
     justify-content: center;
     transition: max-height 0.3s ease-in-out;
-    z-index: 10; /* Set high z-index for the nav links */
+    z-index: 10;
+    /* Set high z-index for the nav links */
 }
 
 .header-profile {
     display: flex;
     align-items: center;
-} /* Container for profile name and picture */
+}
+
+/* Container for profile name and picture */
 
 .header-profile-picture {
     width: 30px;
@@ -47,7 +53,9 @@
     border-radius: 50%;
     margin-right: -20px;
     margin-left: 10px;
-} /* Profile picture styling */
+}
+
+/* Profile picture styling */
 
 .nav-links ul {
     list-style: none;
@@ -138,7 +146,8 @@
     display: none;
     align-items: center;
     margin-right: 10px;
-    order: 2; /* Place before hamburger icon */
+    order: 2;
+    /* Place before hamburger icon */
 }
 
 .mobile-profile-picture {
@@ -189,7 +198,8 @@
 
     .nav-links ul li {
         display: block;
-        padding: 10px 0; /*Change this to change the padding in between links on mobile*/
+        padding: 10px 0;
+        /*Change this to change the padding in between links on mobile*/
         width: 100%;
         opacity: 0;
         transform: translateY(-10px);
@@ -208,35 +218,106 @@
         transition-delay: 0s;
     }
 
-    .nav-links ul li:nth-child(1) { transition-delay: 0.1s; }
-    .nav-links ul li:nth-child(2) { transition-delay: 0.15s; }
-    .nav-links ul li:nth-child(3) { transition-delay: 0.2s; }
-    .nav-links ul li:nth-child(4) { transition-delay: 0.25s; }
-    .nav-links ul li:nth-child(5) { transition-delay: 0.3s; }
-    .nav-links ul li:nth-child(6) { transition-delay: 0.35s; }
-    .nav-links ul li:nth-child(7) { transition-delay: 0.4s; }
-    .nav-links ul li:nth-child(8) { transition-delay: 0.45s; }
-    .nav-links ul li:nth-child(9) { transition-delay: 0.5s; }
-    .nav-links ul li:nth-child(10) { transition-delay: 0.55s; }
-    .nav-links ul li:nth-child(11) { transition-delay: 0.6s; }
-    .nav-links ul li:nth-child(12) { transition-delay: 0.65s; }
+    .nav-links ul li:nth-child(1) {
+        transition-delay: 0.1s;
+    }
 
-    .nav-links.visible ul li:nth-child(1) { transition-delay: 0.1s; }
-    .nav-links.visible ul li:nth-child(2) { transition-delay: 0.15s; }
-    .nav-links.visible ul li:nth-child(3) { transition-delay: 0.2s; }
-    .nav-links.visible ul li:nth-child(4) { transition-delay: 0.25s; }
-    .nav-links.visible ul li:nth-child(5) { transition-delay: 0.3s; }
-    .nav-links.visible ul li:nth-child(6) { transition-delay: 0.35s; }
-    .nav-links.visible ul li:nth-child(7) { transition-delay: 0.4s; }
-    .nav-links.visible ul li:nth-child(8) { transition-delay: 0.45s; }
-    .nav-links.visible ul li:nth-child(9) { transition-delay: 0.5s; }
-    .nav-links.visible ul li:nth-child(10) { transition-delay: 0.55s; }
-    .nav-links.visible ul li:nth-child(11) { transition-delay: 0.6s; }
-    .nav-links.visible ul li:nth-child(12) { transition-delay: 0.65s; }
+    .nav-links ul li:nth-child(2) {
+        transition-delay: 0.15s;
+    }
+
+    .nav-links ul li:nth-child(3) {
+        transition-delay: 0.2s;
+    }
+
+    .nav-links ul li:nth-child(4) {
+        transition-delay: 0.25s;
+    }
+
+    .nav-links ul li:nth-child(5) {
+        transition-delay: 0.3s;
+    }
+
+    .nav-links ul li:nth-child(6) {
+        transition-delay: 0.35s;
+    }
+
+    .nav-links ul li:nth-child(7) {
+        transition-delay: 0.4s;
+    }
+
+    .nav-links ul li:nth-child(8) {
+        transition-delay: 0.45s;
+    }
+
+    .nav-links ul li:nth-child(9) {
+        transition-delay: 0.5s;
+    }
+
+    .nav-links ul li:nth-child(10) {
+        transition-delay: 0.55s;
+    }
+
+    .nav-links ul li:nth-child(11) {
+        transition-delay: 0.6s;
+    }
+
+    .nav-links ul li:nth-child(12) {
+        transition-delay: 0.65s;
+    }
+
+    .nav-links.visible ul li:nth-child(1) {
+        transition-delay: 0.1s;
+    }
+
+    .nav-links.visible ul li:nth-child(2) {
+        transition-delay: 0.15s;
+    }
+
+    .nav-links.visible ul li:nth-child(3) {
+        transition-delay: 0.2s;
+    }
+
+    .nav-links.visible ul li:nth-child(4) {
+        transition-delay: 0.25s;
+    }
+
+    .nav-links.visible ul li:nth-child(5) {
+        transition-delay: 0.3s;
+    }
+
+    .nav-links.visible ul li:nth-child(6) {
+        transition-delay: 0.35s;
+    }
+
+    .nav-links.visible ul li:nth-child(7) {
+        transition-delay: 0.4s;
+    }
+
+    .nav-links.visible ul li:nth-child(8) {
+        transition-delay: 0.45s;
+    }
+
+    .nav-links.visible ul li:nth-child(9) {
+        transition-delay: 0.5s;
+    }
+
+    .nav-links.visible ul li:nth-child(10) {
+        transition-delay: 0.55s;
+    }
+
+    .nav-links.visible ul li:nth-child(11) {
+        transition-delay: 0.6s;
+    }
+
+    .nav-links.visible ul li:nth-child(12) {
+        transition-delay: 0.65s;
+    }
 
     .hamburger-icon {
         display: block;
-        order: 3; /* Keep hamburger at the end */
+        order: 3;
+        /* Keep hamburger at the end */
         transition: transform 0.3s ease-in-out;
     }
 

@@ -1,230 +1,55 @@
 /* Dashboard.css */
 
-.new-dashboard-container {
-    display: flex;
-    flex-direction: column;
-    padding: 10px 3%;
-    z-index: 1; /* Lower z-index to avoid overlapping */
+.glass {
+    background: rgba(255, 255, 255, 0.03);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
 }
 
-.dashboard-header {
-    margin-left: 3%;
-    margin-top: 3%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 20px;
-    z-index: 1; /* Lower z-index to avoid overlapping */
+.light .glass {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.user-info {
-    display: flex;
-    align-items: center;
-    z-index: 1; /* Lower z-index to avoid overlapping */
-}
-
-.profile-picture {
-    width: 200px;
-    height: auto;
-    border-radius: 50%;
-    margin-right: 20px;
-}
-
-.welcome-container {
-    display: flex;
-    flex-direction: column;
-}
-
-.welcome-message {
-    font-size: 36px;
-    font-weight: bold;
-    color: #333;
-    margin: 0 0 0 20px;
-}
-
-.user-details {
-    color: grey;
-    margin-left: 20px;
-}
-
-.user-details p {
-    margin: 0 0;
-}
-
-.edit-icon {
-    cursor: pointer;
-    font-size: 24px;
-    color: #555;
-}
-
-.widgets {
-    display: flex;
-    padding: 10px;
-    flex-wrap: wrap;
-}
-
-.card {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    flex: 1;
-    margin: -5px 10px 10px;
-    min-width: 300px;
-}
-
-h2 {
-    margin-top: 0;
-}
-
-.progress-card .progress-bar {
-    width: 100%;
-    background-color: #f3f3f3;
-    border-radius: 5px;
-    overflow: hidden;
-    margin: 13px 0;
-}
-
-.progress-card .progress {
-    height: 20px;
-    background-color: #9a0706;
-}
-
-.buttons-container {
-    display: flex;
-    justify-content: center;
-    padding-bottom: 10px;
-    flex-wrap: wrap;
-    gap: 10px;
-}
-
-.spoon-card {
-    background: #860303;
-    color: white;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    flex: 1;
-    margin: -5px 10px 10px;
-    min-width: 300px;
-}
-
-.calendar-card {
-    display: flex;
-    flex-direction: column;
-}
-
-.calendar-card .event {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    padding: 10px;
-    border-bottom: 1px solid #f0f0f0;
-}
-
-.calendar-card .event-name {
-    font-weight: bold;
-    color: #333;
-}
-
-.calendar-card .event-date {
-    color: #666;
-    text-align: right;
-}
-
-.new-target-notice {
-    color: #800000;
-    font-weight: bold;
-    margin-top: 5px;
-    animation: fadeIn 0.5s ease-in;
-}
-
-@keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
-    to {
-        opacity: 1;
+/* Ensure glass works in default light mode if .light class isn't on body/main */
+@media (prefers-color-scheme: light) {
+    .glass {
+        background: rgba(255, 255, 255, 0.7);
+        border: 1px solid rgba(0, 0, 0, 0.05);
     }
 }
 
-/* Mobile Responsive Styles */
-@media screen and (max-width: 768px) {
-    .dashboard-header {
-        flex-direction: column;
-        align-items: flex-start;
-        margin-left: 5%;
-        margin-right: 5%;
+/* Or if we enforce light mode background, enforce light glass */
+.glass-light-forced {
+    background: rgba(255, 255, 255, 0.7);
+    border: 1px solid rgba(0, 0, 0, 0.05);
+}
+
+.animate-gradient {
+    background-size: 200% 200%;
+    animation: gradientMove 8s ease infinite;
+}
+
+@keyframes gradientMove {
+    0% {
+        background-position: 0% 50%;
     }
 
-    .user-info {
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        width: 100%;
+    50% {
+        background-position: 100% 50%;
     }
 
-    .profile-picture {
-        width: 120px;
-        margin-right: 0;
-        margin-bottom: 15px;
-    }
-
-    .welcome-message {
-        font-size: 28px;
-        margin: 0;
-        text-align: center;
-    }
-
-    .user-details {
-        margin-left: 0;
-        text-align: center;
-    }
-
-    .edit-icon {
-        position: absolute;
-        top: 20px;
-        right: 20px;
-    }
-
-    .widgets {
-        flex-direction: column;
-        padding: 5px;
-    }
-
-    .card {
-        margin: 5px 0;
-        min-width: unset;
-        width: 100%;
-    }
-
-    .spoon-card {
-        margin: 5px 0;
-        min-width: unset;
-        width: 100%;
-    }
-
-    .buttons-container {
-        flex-direction: column;
-        align-items: center;
-    }
-
-    .buttons-container button {
-        width: 100%;
-        margin: 5px 0;
-    }
-
-    .calendar-card .event {
-        flex-direction: column;
-        text-align: center;
-    }
-
-    .calendar-card .event-date {
-        text-align: center;
-        margin-top: 5px;
+    100% {
+        background-position: 0% 50%;
     }
 }
 
+.progress-glow {
+    box-shadow: 0 0 15px rgba(128, 0, 0, 0.5);
+}
+
+/* Points Breakdown Styles (Preserved) */
 .points-breakdown {
     margin: 20px 0;
     max-height: 400px;
@@ -264,20 +89,25 @@ h2 {
     font-weight: 500;
 }
 
-.details-btn {
-    width: 100%;
-    margin-top: 10px;
-    background-color: #881616;
-    color: white;
-    border: none;
-    padding: 8px 16px;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
+.quarter-group {
+    border-bottom: 1px solid #eee;
 }
 
-.details-btn:hover {
-    background-color: #6b1212;
+.quarter-summary-row {
+    background-color: #fcfcfc;
+}
+
+.quarter-summary-row:hover {
+    background-color: #f5f5f5 !important;
+}
+
+.sub-event-row {
+    background-color: #ffffff;
+    font-size: 0.9em;
+}
+
+.sub-event-row .event-name {
+    color: #555;
 }
 
 /* Modal Animation Styles */
@@ -315,10 +145,20 @@ h2 {
     animation: slideDown 0.3s ease-out;
 }
 
+.admin-buttons .close {
+    background-color: #ddd;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    float: right;
+}
+
 @keyframes fadeIn {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -328,6 +168,7 @@ h2 {
     from {
         opacity: 1;
     }
+
     to {
         opacity: 0;
     }
@@ -338,6 +179,7 @@ h2 {
         opacity: 0;
         transform: translate(-50%, -40%);
     }
+
     to {
         opacity: 1;
         transform: translate(-50%, -50%);
@@ -349,35 +191,9 @@ h2 {
         opacity: 1;
         transform: translate(-50%, -50%);
     }
+
     to {
         opacity: 0;
         transform: translate(-50%, -40%);
     }
-}
-
-/* Add hover effect to rows */
-.event-points-row:hover {
-    background-color: #f8f8f8;
-    transition: background-color 0.2s ease;
-}
-
-.quarter-group {
-    border-bottom: 1px solid #eee;
-}
-
-.quarter-summary-row {
-    background-color: #fcfcfc;
-}
-
-.quarter-summary-row:hover {
-    background-color: #f5f5f5 !important;
-}
-
-.sub-event-row {
-    background-color: #ffffff;
-    font-size: 0.9em;
-}
-
-.sub-event-row .event-name {
-    color: #555;
 }

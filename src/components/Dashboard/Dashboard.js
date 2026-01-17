@@ -1,12 +1,12 @@
-import React, {useEffect, useState} from 'react';
-import {auth, firestore} from '../../firebase';
-import {onAuthStateChanged} from 'firebase/auth';
-import {collection, doc, getDoc, getDocs, query, where} from 'firebase/firestore';
+import React, { useEffect, useState } from 'react';
+import { auth, firestore } from '../../firebase';
+import { onAuthStateChanged } from 'firebase/auth';
+import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { Link, useNavigate } from 'react-router-dom';
 import './Dashboard.css';
-import {AiOutlineEdit} from 'react-icons/ai';
 import EditUserPopup from './EditUserPopup';
-import {getUpcomingEvents, initClient} from './googleCalendarService';
-import {getProfilePictureUrl} from '../../utils/imageUtils';
+import { getUpcomingEvents, initClient } from './googleCalendarService';
+import { getProfilePictureUrl } from '../../utils/imageUtils';
 
 // Constants
 const PROGRESS_GOAL = 2500;
@@ -22,67 +22,64 @@ const formatEventDate = (event) => {
     return new Date(event.start.dateTime).toLocaleString();
 };
 
-// Reusable components
-const UserInfo = ({ user, onEditClick }) => (
-    <div className="user-info">
-        <img
-            className="profile-picture"
-            src={user.profilePictureUrl}
-            alt="Profile"
-        />
-        <div className="welcome-container">
-            <h1 className="welcome-message">
-                Welcome, {user.firstName}
-            </h1>
-            <div className="user-details">
-                <p>{user.email}</p>
-                <p>{user.role}</p>
-                <p>{user.major}</p>
-                <p>{user.class} Class</p>
-                <p>{user.graduationYear}</p>
-                <p>{user.family}</p>
-            </div>
-        </div>
-        <AiOutlineEdit className="edit-icon" onClick={onEditClick} />
-    </div>
-);
+const getEventMonth = (event) => {
+    const date = event.start.date ? new Date(event.start.date) : new Date(event.start.dateTime);
+    return date.toLocaleString('default', { month: 'short' });
+}
 
-const SpoonAssassinCard = ({ target }) => (
-    <div 
-        className={`card spoon-card ${target?.isEliminated ? 'eliminated' : ''}`}
-        style={target?.isEliminated ? { backgroundColor: '#2c2c2c', color: 'white' } : {}}
-    >
-        <h2>Spoon Assassin</h2>
-        {target?.isEliminated ? (
-            <p>You have been eliminated</p>
-        ) : (
-            <p>
-                Your target: {target ? target.targetName : 'No target assigned'}
-            </p>
-        )}
-    </div>
-);
+const getEventDay = (event) => {
+    const date = event.start.date ? new Date(event.start.date.replace(/-/g, '/')) : new Date(event.start.dateTime);
+    return date.getDate();
+}
+
+const getEventTime = (event) => {
+    if (event.start.date && !event.start.dateTime) return "All Day";
+    return new Date(event.start.dateTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+// Reusable Components
 
 const PointsCard = ({ points, userId }) => {
-    const [showDetails, setShowDetails] = useState(false);
+    const [showBreakdown, setShowBreakdown] = useState(false);
     const [isClosing, setIsClosing] = useState(false);
     const [eventPoints, setEventPoints] = useState({});
-    const [events, setEvents] = useState([]);
+    const [allEvents, setAllEvents] = useState([]);
     const [expandedQuarters, setExpandedQuarters] = useState({});
-    const progressPercentage = (points / PROGRESS_GOAL) * 100;
+
+    // Calculate progress
+    const progressPercentage = Math.min((points / PROGRESS_GOAL) * 100, 100);
+    const pointsNeeded = Math.max(PROGRESS_GOAL - points, 0);
+
+    // Fetch breakdown data
+    useEffect(() => {
+        const fetchPointsData = async () => {
+            try {
+                const [pointsDoc, eventsSnapshot] = await Promise.all([
+                    getDoc(doc(firestore, 'eventPoints', userId)),
+                    getDocs(collection(firestore, 'events'))
+                ]);
+
+                if (pointsDoc.exists()) {
+                    setEventPoints(pointsDoc.data());
+                }
+                const eventsList = eventsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                setAllEvents(eventsList);
+            } catch (error) {
+                console.error('Error fetching points data:', error);
+            }
+        };
+        if (userId && showBreakdown) {
+            fetchPointsData();
+        }
+    }, [userId, showBreakdown]);
 
     const toggleQuarter = (quarter) => {
-        setExpandedQuarters(prev => ({
-            ...prev,
-            [quarter]: !prev[quarter]
-        }));
+        setExpandedQuarters(prev => ({ ...prev, [quarter]: !prev[quarter] }));
     };
 
-    const groupedEvents = events.reduce((groups, event) => {
+    const groupedEvents = allEvents.reduce((groups, event) => {
         const quarter = event.quarter || 'Other';
-        if (!groups[quarter]) {
-            groups[quarter] = [];
-        }
+        if (!groups[quarter]) groups[quarter] = [];
         groups[quarter].push(event);
         return groups;
     }, {});
@@ -99,79 +96,59 @@ const PointsCard = ({ points, userId }) => {
         return parseQuarter(a) - parseQuarter(b);
     });
 
-    useEffect(() => {
-        const fetchPointsData = async () => {
-            try {
-                // Fetch user's event points and all events in parallel
-                const [pointsDoc, eventsSnapshot] = await Promise.all([
-                    getDoc(doc(firestore, 'eventPoints', userId)),
-                    getDocs(collection(firestore, 'events'))
-                ]);
-
-                if (pointsDoc.exists()) {
-                    setEventPoints(pointsDoc.data());
-                }
-
-                const eventsList = eventsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-                setEvents(eventsList);
-            } catch (error) {
-                console.error('Error fetching points data:', error);
-            }
-        };
-
-        if (userId) {
-            fetchPointsData();
-        }
-    }, [userId]);
-
-    const handleClose = () => {
+    const handleCloseBreakdown = () => {
         setIsClosing(true);
         setTimeout(() => {
-            setShowDetails(false);
+            setShowBreakdown(false);
             setIsClosing(false);
-        }, 300); // Match this with the animation duration
+        }, 300);
     };
-    
+
     return (
-        <div className="card progress-card">
-            <h2>Points</h2>
-            <div className="progress-bar">
-                <div
-                    className="progress"
-                    style={{ width: `${progressPercentage}%` }}
-                ></div>
+        <section className="glass p-8 rounded-3xl flex flex-col justify-between group hover:border-primary/30 transition-all">
+            <div>
+                <div className="flex items-center gap-3 mb-8">
+                    <span className="material-icons-outlined text-primary">analytics</span>
+                    <h2 className="text-xl font-display">Member Status</h2>
+                </div>
+                <div className="mb-6">
+                    <div className="flex justify-between items-end mb-4">
+                        <span className="text-sm font-medium text-slate-500 uppercase">Points Progress</span>
+                        <span className="text-2xl font-display text-primary">{points} <span className="text-sm font-sans text-slate-500">/ {PROGRESS_GOAL}</span></span>
+                    </div>
+                    <div className="h-3 w-full bg-slate-200 rounded-full overflow-hidden">
+                        <div className="h-full bg-primary progress-glow animate-pulse" style={{ width: `${progressPercentage}%` }}></div>
+                    </div>
+                </div>
+                <p className="text-sm text-slate-500 leading-relaxed mb-6">
+                    {pointsNeeded > 0
+                        ? `You're ${pointsNeeded} points away from meeting this quarter's professional requirement. Keep it up!`
+                        : "You've met the professional requirement! Great job!"}
+                </p>
             </div>
-            <p>
-                {points} / {PROGRESS_GOAL} Points
-            </p>
-            <button 
-                className="rush-btn"
-                onClick={() => setShowDetails(true)}
-                style={{ marginTop: '10px' }}
+            <button
+                className="w-full py-4 glass rounded-xl hover:bg-primary hover:text-white transition-all duration-300 font-semibold uppercase tracking-widest text-xs flex items-center justify-center gap-2"
+                onClick={() => setShowBreakdown(true)}
             >
-                More Details
+                View Breakdown <span className="material-icons-outlined text-sm">trending_up</span>
             </button>
 
-            {showDetails && (
+            {showBreakdown && (
                 <>
-                    <div 
-                        className={`admin-edit-user-overlay ${isClosing ? 'closing' : ''}`} 
-                        onClick={handleClose}
-                    />
+                    <div className={`admin-edit-user-overlay ${isClosing ? 'closing' : ''}`} onClick={handleCloseBreakdown} />
                     <div className={`admin-edit-user ${isClosing ? 'closing' : ''}`}>
                         <h2>Points Breakdown</h2>
                         <div className="points-breakdown">
                             {sortedQuarters.map(quarter => {
-                                const quarterEvents = groupedEvents[quarter].filter(event => eventPoints[event.id] > 0);
+                                const quarterEvents = groupedEvents[quarter].filter(event => (eventPoints[event.id] || 0) > 0);
                                 if (quarterEvents.length === 0) return null;
-                                
-                                const quarterTotal = quarterEvents.reduce((sum, event) => sum + (eventPoints[event.id] || 0), 0);
+                                const quarterTotal = quarterEvents.reduce((sum, e) => sum + (eventPoints[e.id] || 0), 0);
                                 const isExpanded = expandedQuarters[quarter];
 
                                 return (
                                     <div key={quarter} className="quarter-group">
-                                        <div 
-                                            className="event-points-row quarter-summary-row" 
+                                        <div
+                                            className="event-points-row quarter-summary-row"
                                             onClick={() => toggleQuarter(quarter)}
                                             style={{ cursor: 'pointer', fontWeight: 'bold' }}
                                         >
@@ -193,93 +170,115 @@ const PointsCard = ({ points, userId }) => {
                             </div>
                         </div>
                         <div className="admin-buttons">
-                            <button className="close" onClick={handleClose}>Close</button>
+                            <button className="close" onClick={handleCloseBreakdown}>Close</button>
                         </div>
                     </div>
                 </>
             )}
-        </div>
+        </section>
     );
 };
 
-const CalendarCard = ({ events }) => (
-    <div className="card calendar-card">
-        <h2>Upcoming Events</h2>
-        {events.length > 0 ? (
-            events.map((event, index) => (
-                <div className="event" key={index}>
-                    <div className="event-name">{event.summary}</div>
-                    <div className="event-date">{formatEventDate(event)}</div>
+const EventsCard = ({ events }) => (
+    <section className="glass p-8 rounded-3xl group hover:border-gold/30 transition-all h-[500px] overflow-y-auto custom-scrollbar">
+        <div className="flex items-center gap-3 mb-8 sticky top-0 bg-transparent z-10">
+            <span className="material-icons-outlined text-gold">calendar_month</span>
+            <h2 className="text-xl font-display">Upcoming Events</h2>
+        </div>
+        <div className="space-y-6">
+            {events.length > 0 ? events.map((event, index) => (
+                <div key={index} className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/5 hover:bg-white/10 transition-colors">
+                    <div className="flex-shrink-0 w-12 h-12 flex flex-col items-center justify-center glass rounded-lg border-gold/20">
+                        <span className="text-[10px] uppercase font-bold text-gold">{getEventMonth(event)}</span>
+                        <span className="text-lg font-bold">{getEventDay(event)}</span>
+                    </div>
+                    <div className="flex-1">
+                        <h3 className="font-semibold text-sm">{event.summary}</h3>
+                        <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                            <span className="material-icons-outlined text-xs">schedule</span> {getEventTime(event)}
+                        </p>
+                    </div>
                 </div>
-            ))
-        ) : (
-            <p>No upcoming events</p>
-        )}
-    </div>
+            )) : (
+                <p className="text-slate-500 text-sm">No upcoming events found.</p>
+            )}
+        </div>
+    </section>
 );
 
-const BroDateCard = ({ broDateGroup }) => (
-    <div className="card brother-card">
-        <h2>BroDates</h2>
-        {broDateGroup.length > 0 ? (
-            <ul>
-                {broDateGroup.map((member, index) => (
-                    <li key={index}>
-                        {member.firstName} {member.lastName}
-                    </li>
-                ))}
-            </ul>
-        ) : (
-            <p>No BroDate group found.</p>
-        )}
-    </div>
-);
+const BroDatesCard = ({ broDateGroup }) => {
+    // We only have names/emails, not profile pics for all members usually. 
+    // We'll use a placeholder or check if we can get them. 
+    // For now, using placeholders for consistency with the design if URL missing.
+    // Ideally we would fetch them.
 
-const AdminButtons = ({ user }) => {
-    const buttons = [
-        {
-            roles: ['Webmaster', 'Scribe'],
-            label: 'Scribe Editor',
-            path: '/scribe-editor'
-        },
-        {
-            roles: ['Webmaster'],
-            label: 'Admin',
-            path: '/admin'
-        },
-        {
-            roles: ['Webmaster'],
-            label: 'User Management',
-            path: '/admin/user-management'
-        },
-        {
-            roles: ['Webmaster', 'Brotherhood Chair', 'Mediation Chair'],
-            label: 'Manage Brodates',
-            path: '/admin/bro-dates'
-        },
-        {
-            roles: ['Webmaster', 'Brotherhood Chair'],
-            label: 'Spoon Assassins',
-            path: '/admin/spoon-assassins'
-        }
+    return (
+        <section className="glass p-8 rounded-3xl flex flex-col justify-between group hover:border-slate-500/30 transition-all">
+            <div>
+                <div className="flex items-center gap-3 mb-8">
+                    <span className="material-icons-outlined text-slate-400">handshake</span>
+                    <h2 className="text-xl font-display">BroDates</h2>
+                </div>
+                {broDateGroup.length > 0 ? (
+                    <>
+                        <div className="flex -space-x-4 mb-8">
+                            {broDateGroup.map((member, i) => (
+                                <img
+                                    key={i}
+                                    alt={`${member.firstName}`}
+                                    className="w-16 h-16 rounded-full border-4 border-white object-cover hover:scale-110 transition-transform cursor-pointer"
+                                    src={member.profilePictureUrl || "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg"}
+                                    title={`${member.firstName} ${member.lastName}`}
+                                />
+                            ))}
+                        </div>
+                        <div className="space-y-2 mb-8">
+                            <p className="text-sm font-semibold">Your Group for the Week:</p>
+                            <ul className="text-xs text-slate-500 space-y-1">
+                                {broDateGroup.map((member, i) => (
+                                    <li key={i}>{member.firstName} {member.lastName}</li>
+                                ))}
+                            </ul>
+                        </div>
+                    </>
+                ) : (
+                    <p className="text-slate-500 mb-8">No BroDate group assigned.</p>
+                )}
+            </div>
+            {/*<button className="w-full py-4 bg-primary text-white rounded-xl hover:bg-primary/80 transition-all duration-300 font-semibold uppercase tracking-widest text-xs flex items-center justify-center gap-2 shadow-lg shadow-primary/20">*/}
+            {/*    Organize Hangout <span className="material-icons-outlined text-sm">rocket_launch</span>*/}
+            {/*</button>*/}
+        </section>
+    );
+}
+
+const FooterLinks = ({ user }) => {
+    // Mapping roles to links, similar to old AdminButtons
+    // If user has access to any admin feature, show relevant links.
+    // The design has fixed links in footer. We will show them but maybe disable/hide if no permission? 
+    // The design implies these are standard footer links.
+
+    const links = [
+        { name: 'Scribe Editor', path: '/scribe-editor', roles: ['Webmaster', 'Scribe'] },
+        { name: 'Admin', path: '/admin', roles: ['Webmaster'] },
+        { name: 'User Management', path: '/admin/user-management', roles: ['Webmaster'] },
+        { name: 'Manage Brodates', path: '/admin/bro-dates', roles: ['Webmaster', 'Brotherhood Chair', 'Mediation Chair'] },
+        { name: 'Spoon Assassins', path: '/admin/spoon-assassins', roles: ['Webmaster', 'Brotherhood Chair'] }
     ];
 
     return (
-        <div className="buttons-container">
-            {buttons.map((button, index) => (
-                button.roles.includes(user?.role) && (
-                    <button
-                        key={index}
-                        className="rush-btn"
-                        onClick={() => window.location.href = button.path}
-                    >
-                        {button.label}
-                    </button>
-                )
-            ))}
-        </div>
+        <footer className="mt-16 pt-8 border-t border-slate-200">
+            <div className="flex flex-wrap items-center justify-center gap-6 md:gap-12 uppercase text-[10px] font-bold tracking-[0.2em] text-slate-500">
+                {links.map(link => {
+                    if (user && link.roles.includes(user.role)) {
+                        return <Link key={link.name} to={link.path} className="hover:text-gold transition-colors">{link.name}</Link>
+                    }
+                    return null;
+                })}
+            </div>
+        </footer>
     );
-};
+}
 
 const Dashboard = () => {
     const [user, setUser] = useState(null);
@@ -289,20 +288,14 @@ const Dashboard = () => {
     const [isEditPopupOpen, setIsEditPopupOpen] = useState(false);
     const [events, setEvents] = useState([]);
     const [broDateGroup, setBroDateGroup] = useState([]);
-    const [target, setTarget] = useState(null);
 
-    // Fetch user data and related information
+    // Fetch user data
     useEffect(() => {
         const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
             setLoading(true);
             if (currentUser) {
                 try {
-                    const userQuery = query(
-                        collection(firestore, 'users'),
-                        where('email', '==', currentUser.email)
-                    );
-
-                    // Fetch user data and BroDate group in parallel
+                    const userQuery = query(collection(firestore, 'users'), where('email', '==', currentUser.email));
                     const [userSnapshot, broDatesSnapshot] = await Promise.all([
                         getDocs(userQuery),
                         getDocs(collection(firestore, 'brodates'))
@@ -312,38 +305,23 @@ const Dashboard = () => {
                         const userData = userSnapshot.docs[0].data();
                         const userId = userSnapshot.docs[0].id;
 
-                        // Fetch profile picture and target data in parallel
-                        const [profilePicUrl] = await Promise.all([
-                            getProfilePictureUrl(userData?.profilePictureUrl, currentUser.photoURL),
-                            fetchTargetData(userId)
-                        ]);
+                        const profilePicUrl = await getProfilePictureUrl(userData?.profilePictureUrl, currentUser.photoURL);
 
-                        // The security rules now limit getDocs(collection(firestore, 'brodates'))
-                        // to only return the documents the user is allowed to see.
-                        const broDates = broDatesSnapshot.docs.map((doc) => ({
-                            id: doc.id,
-                            ...doc.data(),
-                        }));
+                        const broDates = broDatesSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                        const userGroup = broDates.find(group => group.members.some(m => m.email === currentUser.email));
 
-                        const userGroup = broDates.find((group) =>
-                            group.members.some(
-                                (member) => member.email === currentUser.email
-                            )
-                        );
+                        // Try to populate bro date group with PFP if we can, else just raw data
+                        // NOTE: In a real app we might fetch user docs for these emails to get their PFPs
+                        // For now we use what we have in the group object or defaults.
 
-                        // Set user data
-                        setUser({
-                            ...userData,
-                            id: userId,
-                            profilePictureUrl: profilePicUrl
-                        });
+                        setUser({ ...userData, id: userId, profilePictureUrl: profilePicUrl });
                         setPoints(userData.points || 0);
                         setBroDateGroup(userGroup ? userGroup.members : []);
                     } else {
                         setError('User data not found');
                     }
                 } catch (err) {
-                    console.error('Error fetching Firestore data:', err);
+                    console.error('Error fetching data:', err);
                     setError('Failed to fetch user data.');
                 }
             } else {
@@ -351,11 +329,10 @@ const Dashboard = () => {
             }
             setLoading(false);
         });
-
         return () => unsubscribe();
     }, []);
 
-    // Fetch Google Calendar events
+    // Fetch Events
     useEffect(() => {
         const fetchEvents = async () => {
             try {
@@ -363,87 +340,85 @@ const Dashboard = () => {
                 const upcomingEvents = await getUpcomingEvents();
                 setEvents(upcomingEvents);
             } catch (error) {
-                console.error('Error initializing Google API client or fetching events:', error);
+                console.error('Error fetching events:', error);
             }
         };
         fetchEvents();
     }, []);
 
-    // Helper function to fetch target data
-    const fetchTargetData = async (userId) => {
-        const targetDocRef = doc(firestore, 'targets', userId);
-        const targetDoc = await getDoc(targetDocRef);
-        
-        if (targetDoc.exists()) {
-            let currentTarget = targetDoc.data();
-            
-            if (currentTarget.isEliminated) {
-                setTarget({ isEliminated: true });
-            } else {
-                let visited = new Set();
-                const userTargetDoc = await getDoc(doc(firestore, 'targets', currentTarget.targetId));
-                
-                if (userTargetDoc.exists()) {
-                    let nextTarget = userTargetDoc.data();
-                    
-                    while (nextTarget && nextTarget.isEliminated && !visited.has(nextTarget.targetId)) {
-                        visited.add(nextTarget.targetId);
-                        const nextTargetDoc = await getDoc(doc(firestore, 'targets', nextTarget.targetId));
-                        if (nextTargetDoc.exists()) {
-                            nextTarget = nextTargetDoc.data();
-                        } else {
-                            nextTarget = null;
-                            break;
-                        }
-                    }
-                    
-                    currentTarget.targetName = nextTarget ? `${nextTarget.firstName} ${nextTarget.lastName}` : 'No target assigned';
-                    currentTarget.targetId = nextTarget ? nextTarget.userId : null;
-                }
-                
-                setTarget(currentTarget);
-            }
-        } else {
-            console.warn('User target not found in targets collection.');
-            setTarget(null);
-        }
-    };
 
-    if (loading) return <div>Loading...</div>;
-    if (error) return <div>Error: {error}</div>;
-    if (!user) return <p>User is not logged in.</p>;
+
+    if (loading) return <div className="flex h-screen items-center justify-center text-primary">Loading...</div>;
+    if (error) return <div className="flex h-screen items-center justify-center text-red-500">{error}</div>;
+    if (!user) return <div className="flex h-screen items-center justify-center">Please log in.</div>;
 
     return (
-        <div className="dashboard-container">
-            <div className="dashboard-header">
-                <UserInfo user={user} onEditClick={() => setIsEditPopupOpen(true)} />
+        <div className="bg-white font-sans text-slate-800 transition-colors duration-300 min-h-screen">
+            <div className="fixed inset-0 -z-10 pointer-events-none opacity-20 overflow-hidden">
+                <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-primary/20 blur-[120px] rounded-full"></div>
+                <div className="absolute bottom-[10%] right-[-10%] w-[30%] h-[30%] bg-gold/10 blur-[100px] rounded-full"></div>
             </div>
 
-            {/*<div className="widgets">*/}
-            {/*    <SpoonAssassinCard target={target} />*/}
-            {/*</div>*/}
+            {/* Note: Global Header is rendered by App.js usually. The provided design had a Nav, which we omit to avoid duplication, or assume this replaces it. */}
 
-            <div className="widgets">
-                <PointsCard points={points} userId={user?.id} />
-                <CalendarCard events={events} />
-            </div>
+            <main className="max-w-7xl mx-auto px-6 py-12">
+                <header className="mb-12 flex flex-col md:flex-row items-center md:items-end gap-8 animate-gradient rounded-3xl p-8 bg-white shadow-xl">
+                    <div className="relative group">
+                        <div className="absolute -inset-1 bg-gradient-to-r from-primary to-gold rounded-full blur opacity-25 group-hover:opacity-50 transition duration-1000 group-hover:duration-200"></div>
+                        <img
+                            alt={`${user.firstName} Profile`}
+                            className="relative w-40 h-40 md:w-48 md:h-48 rounded-full object-cover border-4 border-white/10"
+                            src={user.profilePictureUrl || "https://upload.wikimedia.org/wikipedia/commons/2/2c/Default_pfp.svg"}
+                        />
+                    </div>
+                    <div className="flex-1 text-center md:text-left">
+                        <div className="flex items-center justify-center md:justify-start gap-4 mb-2">
+                            <h1 className="text-4xl md:text-5xl font-display leading-tight">Welcome, {user.firstName}</h1>
+                            <button
+                                className="p-2 glass rounded-full hover:bg-white/10 transition-all text-slate-400 hover:text-white"
+                                onClick={() => setIsEditPopupOpen(true)}
+                            >
+                                <span className="material-icons-outlined text-sm">edit</span>
+                            </button>
+                        </div>
+                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4 text-sm text-slate-400 uppercase tracking-widest font-medium">
+                            <div>
+                                <span className="block text-slate-500 text-[10px] mb-1">Email</span>
+                                <span className="text-slate-700 lowercase">{user.email}</span>
+                            </div>
+                            <div>
+                                <span className="block text-slate-500 text-[10px] mb-1">Role</span>
+                                <span className="text-gold">{user.role}</span>
+                            </div>
+                            <div>
+                                <span className="block text-slate-500 text-[10px] mb-1">Major</span>
+                                <span className="text-slate-700">{user.major}</span>
+                            </div>
+                            <div>
+                                <span className="block text-slate-500 text-[10px] mb-1">Class</span>
+                                <span className="text-slate-700">{user.class} Class</span>
+                            </div>
+                        </div>
+                    </div>
+                </header>
 
-            <div className="widgets">
-                 <BroDateCard broDateGroup={broDateGroup} /> 
-                {/*<div className="card brother-card">*/}
-                {/*    <h2>BroDates</h2>*/}
-                {/*    <p>No groups assigned.</p>*/}
-                {/*</div>*/}
-            </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <PointsCard points={points} userId={user.id} />
+                    <EventsCard events={events} />
+                    <BroDatesCard broDateGroup={broDateGroup} />
+                </div>
+
+                <FooterLinks user={user} />
+            </main>
+
+
 
             {isEditPopupOpen && (
                 <EditUserPopup
-                    user={user} 
-                    onClose={() => setIsEditPopupOpen(false)} 
+                    user={user}
+                    onClose={() => setIsEditPopupOpen(false)}
                 />
             )}
-
-            <AdminButtons user={user} />
         </div>
     );
 };

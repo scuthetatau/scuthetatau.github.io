@@ -1,11 +1,11 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import Tree from 'react-d3-tree';
-import {collection, getDocs} from 'firebase/firestore';
-import {auth, firestore} from '../firebase';
+import { collection, getDocs } from 'firebase/firestore';
+import { auth, firestore } from '../firebase';
 import genericProfile from './assets/WhiteTT.png';
 import './FamilyTree.css';
-import {useNavigate} from 'react-router-dom';
-import {onAuthStateChanged} from 'firebase/auth';
+import { useNavigate } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
 
 const FamilyTree = () => {
     const [users, setUsers] = useState([]);
@@ -50,7 +50,7 @@ const FamilyTree = () => {
 
     const buildTree = (allMembers) => {
         const memberMap = new Map(allMembers.map(member => [member.id, member]));
-        
+
         // Define the four families
         const families = [
             { name: "Filthy Fam", members: [] },
@@ -119,8 +119,8 @@ const FamilyTree = () => {
 
         return (
             <g className={`node ${isAlumni ? 'alumni' : ''}`}>
-                <circle r={30} fill={isAlumni ? '#252525' : '#881616'}/>
-                <circle r={25} fill="none" stroke={isAlumni ? '#252525' : '#881616'} strokeWidth="2"/>
+                <circle r={30} fill={isAlumni ? '#252525' : '#881616'} />
+                <circle r={25} fill="none" stroke={isAlumni ? '#252525' : '#881616'} strokeWidth="2" />
                 <image
                     href={profilePicture}
                     x="-25"
