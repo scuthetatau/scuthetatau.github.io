@@ -420,9 +420,9 @@ const Dashboard = () => {
                 <UserInfo user={user} onEditClick={() => setIsEditPopupOpen(true)} />
             </div>
 
-            {/*<div className="widgets">*/}
-            {/*    <SpoonAssassinCard target={target} />*/}
-            {/*</div>*/}
+            <div className="widgets">
+                <SpoonAssassinCard target={target} />
+            </div>
 
             <div className="widgets">
                 <PointsCard points={points} userId={user?.id} />

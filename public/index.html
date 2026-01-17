@@ -1,20 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="utf-8"/>
-    <link rel="icon" href="%PUBLIC_URL%/TT-Favicon.ico"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <meta name="theme-color" content="#000000"/>
-    <meta
-            name="description"
-            content="Web site created using create-react-app"
-    />
-    <link rel="apple-touch-icon" href="%PUBLIC_URL%/TTLogo192.png"/>
+    <meta charset="utf-8" />
+    <link rel="icon" href="%PUBLIC_URL%/TT-Favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta name="description" content="Web site created using create-react-app" />
+    <link rel="apple-touch-icon" href="%PUBLIC_URL%/TTLogo192.png" />
     <!--
       manifest.json provides metadata used when your web app is installed on a
       user's mobile device or desktop. See https://developers.google.com/web/fundamentals/web-app-manifest/
     -->
-    <link rel="manifest" href="%PUBLIC_URL%/manifest.json"/>
+    <link rel="manifest" href="%PUBLIC_URL%/manifest.json" />
     <!--
       Notice the use of %PUBLIC_URL% in the tags above.
       It will be replaced with the URL of the `public` folder during the build.
@@ -27,14 +25,60 @@
 
     <!-- Google Fonts link for IBM Plex Sans Condensed -->
     <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Condensed:wght@300;400&display=swap"
-          rel="stylesheet">
+        rel="stylesheet">
+    <!-- New Fonts for Spoon Assassins Admin -->
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,600;0,700;1,600&family=Inter:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <!-- New Fonts for Rush Page -->
+    <link href="https://fonts.googleapis.com/css2?family=Anton&family=Playfair+Display:wght@700;900&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
+
+    <!-- Tailwind CSS formatted for CDN usage -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script>
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary-burgundy": "#8b0000",
+                        "accent-gold": "#ffd700",
+                        "brand-gold": "#fcd303",
+                        "page-bg": "#ffffff",
+                        "border-light": "#e5e7eb",
+                        "text-main": "#1a1a1a",
+                        "text-muted": "#6b7280",
+                        // Rush Page Colors
+                        "primary": "#8B0000",
+                        "accent": "#FFD700",
+                        "background-light": "#F8F9FA",
+                        "background-dark": "#121212",
+                        "charcoal": "#262626",
+                    },
+                    fontFamily: {
+                        "display": ["Crimson Pro", "serif"],
+                        "sans": ["Inter", "sans-serif"],
+                        // Rush Page Fonts
+                        "anton": ["Anton", "sans-serif"],
+                        "playfair": ["Playfair Display", "serif"],
+                    },
+                    borderRadius: { "DEFAULT": "0px", "lg": "2px", "xl": "4px", "full": "9999px" },
+                },
+            },
+        }
+    </script>
 
     <title>SCU Theta Tau</title>
 </head>
+
 <body>
-<noscript>Upsilon Epsilon Chapter of Theta Tau</noscript>
-<div id="root"></div>
-<!--
+    <noscript>Upsilon Epsilon Chapter of Theta Tau</noscript>
+    <div id="root"></div>
+    <!--
   This HTML file is a template.
   If you open it directly in the browser, you will see an empty page.
 
@@ -45,4 +89,5 @@
   To create a production bundle, use `npm run build` or `yarn build`.
 -->
 </body>
+
 </html>

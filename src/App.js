@@ -15,7 +15,7 @@ import FamilyTree from './components/FamilyTree';
 import './components/Footer.css';
 import Dashboard from "./components/Dashboard/Dashboard";
 import ScribeEditor from "./components/ScribeEditor/ScribeEditor";
-// Vercel Imports
+// Vercel Imports (analytics)
 import {Analytics} from "@vercel/analytics/react"
 import {SpeedInsights} from "@vercel/speed-insights/react"
 

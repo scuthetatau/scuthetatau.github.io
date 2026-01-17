@@ -48,14 +48,13 @@
 }
 
 .user-details p {
-    margin: 3px 0;
+    margin: 0 0;
 }
 
 .edit-icon {
     cursor: pointer;
     font-size: 24px;
     color: #555;
-    margin-right: 5%;
 }
 
 .widgets {

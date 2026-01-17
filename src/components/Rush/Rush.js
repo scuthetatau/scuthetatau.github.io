@@ -1,159 +1,209 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect } from 'react';
+import iotaClass from '../assets/IotaClass.JPG';
 import './Rush.css';
-import IotaClass from '../assets/IotaClass.JPG';
 
 const Rush = () => {
-    const [timeLeft, setTimeLeft] = useState({});
-
     useEffect(() => {
-        const countdownDate = new Date('Jan 7, 2026 19:00:00').getTime();
+        // Scroll Reveal
+        const observerOptions = {
+            threshold: 0.1
+        };
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
 
-        const updateCountdown = () => {
-            const now = new Date().getTime();
-            const difference = countdownDate - now;
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-            if (difference <= 0) {
-                setTimeLeft("RUSH IS HERE!");
-                return;
+        // Parallax
+        const handleScroll = () => {
+            const scrolled = window.pageYOffset;
+            const heroText = document.getElementById('hero-text');
+            if (heroText) {
+                heroText.style.transform = `translateY(${scrolled * 0.3}px)`;
+                heroText.style.opacity = 1 - (scrolled / 700);
             }
-
-            const days = Math.floor(difference / (1000 * 60 * 60 * 24));
-            const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-            const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-            const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-
-            setTimeLeft({days, hours, minutes, seconds});
         };
 
-        const interval = setInterval(updateCountdown, 1000);
+        window.addEventListener('scroll', handleScroll);
 
-        return () => clearInterval(interval);
+        return () => {
+            // Cleanup
+            observer.disconnect();
+            window.removeEventListener('scroll', handleScroll);
+        };
     }, []);
 
     return (
-        <div className="rush-page-container">
-            <div
-                className="rush-hero-section"
-                style={{
-                    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${IotaClass})`,
-                    backgroundSize: 'cover',
-                    backgroundPosition: 'center',
-                    height: '93vh',
-                }}
-            >
-                <div className="rush-hero-content">
-                    <h1 className="hero-title">Winter Rush 2026</h1>
-                    <h2 className="rush-hero-subtitle">Rush is here!</h2>
-                    <div className="rush-countdown">
-                        {/*<span>{timeLeft.days} days</span> |*/}
-                        {/*<span>{timeLeft.hours} hours</span> |*/}
-                        {/*<span>{timeLeft.minutes} minutes</span> |*/}
-                        {/*<span>{timeLeft.seconds} seconds</span>*/}
-                    </div>
-
-
-                    <button
-                        className="rush-interest-button"
-                        onClick={() => window.location.href = 'https://forms.gle/jveLESqs2rSRiBsN8'}
-                    >
-                        APPLICATION
-                    </button>
-
-                    {/*<button*/}
-                    {/*    className="rush-interest-button"*/}
-                    {/*    onClick={() => window.location.href = 'https://docs.google.com/forms/d/e/1FAIpQLSddcxPgVoKzHPi-s0sfoEvfPr_J_Sv56HLCq_o7NDAX7dwWiA/viewform'}*/}
-                    {/*>*/}
-                    {/*    RUSH RSVP*/}
-                    {/*</button>*/}
+        <div className="bg-background-light dark:bg-background-dark text-charcoal dark:text-gray-200 font-sans selection:bg-accent selection:text-black">
+            {/* Hero Section */}
+            <section className="relative h-screen flex items-center justify-center overflow-hidden">
+                <div className="absolute inset-0 bg-black">
+                    <img
+                        alt="Fraternity Group Hero Background"
+                        className="w-full h-full object-cover opacity-60 scale-110"
+                        src={iotaClass}
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-background-dark via-transparent to-transparent"></div>
                 </div>
-            </div>
-
-            {/*<div className="rush-highlight-section">*/}
-            {/*    <div className="rush-highlight-content">*/}
-            {/*        <h2 className="rush-highlight-title">Rush Week is Here!</h2>*/}
-            {/*        <p className="rush-highlight-text">*/}
-            {/*            Don’t miss out on this exciting opportunity to join Theta Tau! Fill out*/}
-            {/*            the RSVP form and be part of our amazing community.*/}
-            {/*        </p>*/}
-            {/*        <button*/}
-            {/*            className="rush-btn"*/}
-            {/*            onClick={() => window.open('https://docs.google.com/forms/d/e/1FAIpQLSddcxPgVoKzHPi-s0sfoEvfPr_J_Sv56HLCq_o7NDAX7dwWiA/viewform', '_blank')}*/}
-            {/*        >*/}
-            {/*            RSVP NOW*/}
-            {/*        </button>*/}
-
-            {/*        <button*/}
-            {/*            className="rush-btn"*/}
-            {/*            onClick={() => window.open('https://docs.google.com/forms/d/e/1FAIpQLSetXOreUJqcYHXZJtVaqlhIKE7ek57W74BiVqrCNjX_5ZM58g/viewform?usp=sf_link', '_blank')}*/}
-            {/*        >*/}
-            {/*            APPLICATION FORM*/}
-            {/*        </button>*/}
-            {/*    </div>*/}
-            {/*</div>*/}
-
-            <div className="rush-info-section">
-                <div className="rush-info-title">What is Rush?</div>
-                <p className="rush-info-description">
-                    Rush is a series of events designed to introduce potential new members to the fraternity. During
-                    Rush,
-                    you will have the opportunity to meet current fraternity members, learn about our values, and get a
-                    sense of what life in Theta Tau is like. It's a great way to find out if our brotherhood is the
-                    right
-                    fit for you, and for us to get to know you better as well.
-                </p>
-
-                <div className="rush-timeline-section">
-                    <div className="rush-timeline-header">Rush 2026</div>
-
-                    <div className="rush-event-item">
-                        <div className="rush-event-date">Week 1<br/>Wednesday 1/07 6-9pm</div>
-                        <div className="rush-event-details">
-                            <div className="rush-event-title">Theta Tau Info Night</div>
-                            {/*<div className="rush-event-location">Daly 207</div>*/}
-                            <div className="rush-event-description">Daly 207<br/>Learn about what Theta Tau has to offer.</div>
-                        </div>
-                    </div>
-
-                    <div className="rush-event-item">
-                        <div className="rush-event-date">Week 1<br/>Thursday 1/08 6-9pm</div>
-                        <div className="rush-event-details">
-                            <div className="rush-event-title">Meet the Actives</div>
-                            {/*<div className="rush-event-location">Kenna 216</div>*/}
-                            <div className="rush-event-description">Vari 129/133/135<br/>Chat with actives and get to know them.</div>
-                        </div>
-                    </div>
-
-                    <div className="rush-event-item">
-                        <div className="rush-event-date">Week 1<br/>Friday 1/09 5:30-9pm</div>
-                        <div className="rush-event-details">
-                            <div className="rush-event-title">Innovation Night</div>
-                            {/*<div className="rush-event-location">California Mission Room</div>*/}
-                            <div className="rush-event-description">Locatelli<br/>Engage with peers and show skills</div>
-                        </div>
-                    </div>
-
-                    <div className="rush-event-item">
-                        <div className="rush-event-date">Week 2<br/>Invite Only</div>
-                        <div className="rush-event-details">
-                            <div className="rush-event-title">Coffee Chats</div>
-                            {/*<div className="rush-event-location">TBD</div>*/}
-                            <div className="rush-event-description">More details will be given later on in the rush process.</div>
-                        </div>
-                    </div>
-
-                    <div className="rush-event-item">
-                        <div className="rush-event-date">Week 2<br/>Invite Only</div>
-                        <div className="rush-event-details">
-                            <div className="rush-event-title">Interviews</div>
-                            {/*<div className="rush-event-location">TBD</div>*/}
-                            <div className="rush-event-description">More details will be given later on in the rush process.</div>
-                        </div>
+                <div className="relative z-10 text-center px-4">
+                    <h1 className="font-anton text-7xl md:text-9xl text-white uppercase tracking-tighter leading-none mb-4 drop-shadow-2xl" id="hero-text">
+                        WINTER RUSH <span className="text-accent">2026</span>
+                    </h1>
+                    <p className="text-xl md:text-2xl text-gray-300 font-playfair italic mb-8 reveal active">Excellence through Brotherhood.</p>
+                    <div className="flex flex-col md:flex-row gap-4 justify-center items-center reveal active" style={{ transitionDelay: "200ms" }}>
+                        <a className="group relative px-8 py-4 bg-accent text-black font-bold uppercase tracking-widest rounded-sm overflow-hidden transition-all hover:pr-12" href="https://forms.gle/jveLESqs2rSRiBsN8" target="_blank" rel="noreferrer">
+                            <span className="relative z-10">Application Open</span>
+                            <span className="material-icons absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all">arrow_forward</span>
+                        </a>
+                        <a className="px-8 py-4 border-2 border-white text-white font-bold uppercase tracking-widest rounded-sm hover:bg-white hover:text-black transition-all" href="#schedule">
+                            View Schedule
+                        </a>
                     </div>
                 </div>
+                <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
+                    <span className="material-icons text-white opacity-50 text-4xl">expand_more</span>
+                </div>
+            </section>
 
-                <hr className="rush-divider"/>
+            {/* What is Rush Section */}
+            <section className="py-24 px-6 md:px-24">
+                <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-16 items-center">
+                    <div className="reveal">
+                        <h2 className="text-primary font-anton text-5xl md:text-6xl mb-6">WHAT IS RUSH?</h2>
+                        <p className="text-lg leading-relaxed text-gray-600 dark:text-gray-400 mb-6">
+                            Rush is a series of events designed to introduce potential new members to the fraternity. During Rush, you will have the opportunity to meet current fraternity members, learn about our values, and get a sense of what life in Theta Tau is like.
+                        </p>
+                        <p className="text-lg leading-relaxed text-gray-600 dark:text-gray-400">
+                            It's a great way to find out if our brotherhood is the right fit for you, and for us to get to know you better as well. Join a community of professional engineers dedicated to service, integrity, and lifelong friendship.
+                        </p>
+                    </div>
+                    <div className="relative reveal h-96 md:h-[500px]" style={{ transitionDelay: "300ms" }}>
+                        <div className="absolute inset-0 border-2 border-accent translate-x-4 translate-y-4"></div>
+                        <img alt="Engineering Students Collaborating" className="relative w-full h-full object-cover shadow-2xl" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPVKBzEzyLVBF8KPzR465R-7ZTRnZ6eMsT9qD7t9MtyCnZ1TcMgn-pGzn5tYxFUKCq_5uZ7bFi8ZuHFzHD-ImRN-makJOU066rS6UmfCayhdgaIDJummCN6mHzwWNaTc3UGHYIHs5_9FeBV9WQrfT1sWMsgPItG8ePwgEFGWRfN3bbkQVLsSCqvZtLOPlk6wC5b5-eLK2nIv9ReBwSEf1HaYGnUZRNeRzWeI1Vn9esUY2AGe6v79uO-3Xcw2MgU-oH4h_CzQJuPF5A" />
+                    </div>
+                </div>
+            </section>
 
-            </div>
+            {/* Schedule Section */}
+            <section className="py-24 bg-zinc-100 dark:bg-charcoal px-6" id="schedule">
+                <div className="max-w-4xl mx-auto">
+                    <div className="text-center mb-16 reveal">
+                        <h2 className="text-primary font-anton text-5xl md:text-6xl mb-2">RUSH SCHEDULE</h2>
+                        <p className="text-gray-500 uppercase tracking-widest font-semibold">Mark Your Calendars</p>
+                    </div>
+                    <div className="relative">
+                        <div className="absolute left-1/2 -translate-x-1/2 h-full w-1 timeline-line opacity-20 hidden md:block"></div>
+                        <div className="space-y-12">
+                            {/* Event 1 */}
+                            <div className="relative flex flex-col md:flex-row items-center reveal">
+                                <div className="md:w-1/2 md:pr-12 md:text-right mb-4 md:mb-0">
+                                    <span className="text-primary font-bold text-xl">WEEK 1</span>
+                                    <h3 className="text-2xl font-anton text-charcoal dark:text-white">THETA TAU INFO NIGHT</h3>
+                                    <p className="text-accent font-semibold">Wednesday 1/07 · 6-9pm</p>
+                                </div>
+                                <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-primary rounded-full items-center justify-center z-10 border-4 border-background-light dark:border-charcoal">
+                                    <span className="material-icons text-white text-sm">info</span>
+                                </div>
+                                <div className="md:w-1/2 md:pl-12">
+                                    <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-xl event-card">
+                                        <p className="text-sm text-gray-500 mb-2 font-semibold">LOCATION: DALY 207</p>
+                                        <p className="dark:text-gray-300">Learn about what Theta Tau has to offer and meet the executive board.</p>
+                                        <button className="mt-4 flex items-center gap-2 text-primary font-bold hover:underline">
+                                            <span className="material-icons text-sm">notifications</span> REMIND ME
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* Event 2 */}
+                            <div className="relative flex flex-col md:flex-row-reverse items-center reveal" style={{ transitionDelay: "100ms" }}>
+                                <div className="md:w-1/2 md:pl-12 mb-4 md:mb-0">
+                                    <span className="text-primary font-bold text-xl">WEEK 1</span>
+                                    <h3 className="text-2xl font-anton text-charcoal dark:text-white uppercase">Meet the Actives</h3>
+                                    <p className="text-accent font-semibold">Thursday 1/08 · 6-9pm</p>
+                                </div>
+                                <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-primary rounded-full items-center justify-center z-10 border-4 border-background-light dark:border-charcoal">
+                                    <span className="material-icons text-white text-sm">groups</span>
+                                </div>
+                                <div className="md:w-1/2 md:pr-12">
+                                    <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-xl event-card">
+                                        <p className="text-sm text-gray-500 mb-2 font-semibold">LOCATION: VARI 129/133/135</p>
+                                        <p className="dark:text-gray-300">Chat with active brothers in an informal setting and get to know them personally.</p>
+                                        <button className="mt-4 flex items-center gap-2 text-primary font-bold hover:underline">
+                                            <span className="material-icons text-sm">notifications</span> REMIND ME
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            {/* Event 3 */}
+                            <div className="relative flex flex-col md:flex-row items-center reveal" style={{ transitionDelay: "200ms" }}>
+                                <div className="md:w-1/2 md:pr-12 md:text-right mb-4 md:mb-0">
+                                    <span className="text-primary font-bold text-xl">WEEK 1</span>
+                                    <h3 className="text-2xl font-anton text-charcoal dark:text-white uppercase">Innovation Night</h3>
+                                    <p className="text-accent font-semibold">Friday 1/09 · 5:30-9pm</p>
+                                </div>
+                                <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-primary rounded-full items-center justify-center z-10 border-4 border-background-light dark:border-charcoal">
+                                    <span className="material-icons text-white text-sm">lightbulb</span>
+                                </div>
+                                <div className="md:w-1/2 md:pl-12">
+                                    <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-xl event-card">
+                                        <p className="text-sm text-gray-500 mb-2 font-semibold">LOCATION: LOCATELLI</p>
+                                        <p className="dark:text-gray-300">Engage with peers, show your engineering skills, and participate in collaborative challenges.</p>
+                                        <button className="mt-4 flex items-center gap-2 text-primary font-bold hover:underline">
+                                            <span className="material-icons text-sm">notifications</span> REMIND ME
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Invite Only Divider */}
+                            <div className="pt-12 text-center reveal">
+                                <div className="inline-block bg-accent/10 border border-accent text-accent px-6 py-2 rounded-full font-bold uppercase tracking-widest text-sm mb-8">
+                                    Invite Only Events
+                                </div>
+                            </div>
+
+                            {/* Invite Only 1 */}
+                            <div className="relative flex flex-col md:flex-row-reverse items-center reveal" style={{ transitionDelay: "100ms" }}>
+                                <div className="md:w-1/2 md:pl-12 mb-4 md:mb-0">
+                                    <span className="text-primary font-bold text-xl">WEEK 2</span>
+                                    <h3 className="text-2xl font-anton text-charcoal dark:text-white uppercase">Coffee Chats</h3>
+                                    <p className="text-accent font-semibold italic">Invitation Only</p>
+                                </div>
+                                <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-accent rounded-full items-center justify-center z-10 border-4 border-background-light dark:border-charcoal">
+                                    <span className="material-icons text-black text-sm">coffee</span>
+                                </div>
+                                <div className="md:w-1/2 md:pr-12">
+                                    <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-xl border-l-4 border-accent">
+                                        <p className="dark:text-gray-300">Deeper one-on-one conversations with brothers. Details provided via email.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Invite Only 2 */}
+                            <div className="relative flex flex-col md:flex-row items-center reveal" style={{ transitionDelay: "200ms" }}>
+                                <div className="md:w-1/2 md:pr-12 md:text-right mb-4 md:mb-0">
+                                    <span className="text-primary font-bold text-xl">WEEK 2</span>
+                                    <h3 className="text-2xl font-anton text-charcoal dark:text-white uppercase">Interviews</h3>
+                                    <p className="text-accent font-semibold italic">Invitation Only</p>
+                                </div>
+                                <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-accent rounded-full items-center justify-center z-10 border-4 border-background-light dark:border-charcoal">
+                                    <span className="material-icons text-black text-sm">assignment_ind</span>
+                                </div>
+                                <div className="md:w-1/2 md:pl-12">
+                                    <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-xl border-r-4 md:border-r-0 md:border-l-4 border-accent">
+                                        <p className="dark:text-gray-300">Formal professional interviews. Dress code: Business Professional.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </section>
         </div>
     );
 };
