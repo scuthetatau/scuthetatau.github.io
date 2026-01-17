@@ -252,6 +252,124 @@ const BroDatesCard = ({ broDateGroup }) => {
     );
 }
 
+const SpoonAssassinsCard = ({ userId }) => {
+    const [spoonData, setSpoonData] = useState(null);
+    const [aliveCount, setAliveCount] = useState(0);
+    const [totalActiveCount, setTotalActiveCount] = useState(0);
+    const [roundEndTime, setRoundEndTime] = useState(null);
+    const [timeLeft, setTimeLeft] = useState('');
+
+    useEffect(() => {
+        const fetchSpoonInfo = async () => {
+            if (!userId) return;
+            try {
+                // Fetch user's own target info
+                const targetDoc = await getDoc(doc(firestore, 'targets', userId));
+                if (targetDoc.exists()) {
+                    setSpoonData(targetDoc.data());
+                }
+
+                // Fetch all targets to count alive players
+                const targetsSnapshot = await getDocs(collection(firestore, 'targets'));
+                const allTargets = targetsSnapshot.docs.map(doc => doc.data());
+                setAliveCount(allTargets.filter(t => !t.isEliminated).length);
+                setTotalActiveCount(allTargets.length);
+
+                // Fetch round end time from config
+                const configDoc = await getDoc(doc(firestore, 'game_config', 'spoon_assassins'));
+                if (configDoc.exists()) {
+                    const data = configDoc.data();
+                    if (data.roundEndTime) {
+                        // Handle both Timestamp and string formats
+                        setRoundEndTime(data.roundEndTime.toDate ? data.roundEndTime.toDate() : new Date(data.roundEndTime));
+                    }
+                }
+            } catch (error) {
+                console.error('Error fetching Spoon Assassins data:', error);
+            }
+        };
+
+        fetchSpoonInfo();
+    }, [userId]);
+
+    useEffect(() => {
+        if (!roundEndTime) return;
+
+        const timer = setInterval(() => {
+            const now = new Date();
+            const diff = roundEndTime - now;
+
+            if (diff <= 0) {
+                setTimeLeft('Round Ended');
+                clearInterval(timer);
+                return;
+            }
+
+            const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+            const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+            setTimeLeft(`${days}d ${hours}h ${minutes}m ${seconds}s`);
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [roundEndTime]);
+
+    // If there's no game active at all, don't show the card
+    if (!spoonData && totalActiveCount === 0) return null;
+
+    return (
+        <section className="glass p-8 rounded-3xl flex flex-col justify-between group hover:border-primary/30 transition-all border border-transparent">
+            <div>
+                <div className="flex items-center gap-3 mb-8 text-primary">
+                    <span className="material-icons-outlined">gps_fixed</span>
+                    <h2 className="text-xl font-display text-slate-800">Spoon Assassins</h2>
+                </div>
+
+                <div className="space-y-6 mb-8">
+                    {spoonData && !spoonData.isEliminated ? (
+                        <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10">
+                            <p className="text-[10px] uppercase font-bold text-slate-500 mb-1 tracking-widest">Active Objective</p>
+                            <p className="text-2xl font-display text-primary italic leading-tight">Eliminate: {spoonData.targetName}</p>
+                        </div>
+                    ) : spoonData?.isEliminated ? (
+                        <div className="bg-red-50 p-4 rounded-2xl border border-red-100">
+                            <p className="text-[10px] uppercase font-bold text-red-500 mb-1 tracking-widest">Status</p>
+                            <p className="text-2xl font-display text-red-600 italic">KILLED</p>
+                        </div>
+                    ) : (
+                        <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                            <p className="text-[10px] uppercase font-bold text-slate-400 mb-1 tracking-widest">Status</p>
+                            <p className="text-2xl font-display text-slate-400 italic">NOT DEPLOYED</p>
+                        </div>
+                    )}
+
+                    <div className="grid grid-cols-2 gap-4 pt-2">
+                        <div>
+                            <p className="text-[10px] uppercase font-bold text-slate-500 mb-1 tracking-widest">Round Clock</p>
+                            <p className="text-sm font-bold font-mono tracking-tight text-slate-700">{timeLeft || 'Standby...'}</p>
+                        </div>
+                        <div>
+                            <p className="text-[10px] uppercase font-bold text-slate-500 mb-1 tracking-widest">Survivors</p>
+                            <p className="text-sm font-bold text-slate-700">{aliveCount} / {totalActiveCount}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <a
+                href="https://docs.google.com/document/d/1DmNGhpRPcp2gjwYMq4Eh3rGO87Pm7l-dwk-QgcfO22g/edit?usp=sharing"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-4 border border-slate-200 rounded-xl hover:bg-slate-50 transition-all duration-300 font-semibold uppercase tracking-widest text-[10px] flex items-center justify-center gap-2 text-slate-600"
+            >
+                Rules <span className="material-icons-outlined text-sm">open_in_new</span>
+            </a>
+        </section>
+    );
+};
+
 const FooterLinks = ({ user }) => {
     // Mapping roles to links, similar to old AdminButtons
     // If user has access to any admin feature, show relevant links.
@@ -402,10 +520,15 @@ const Dashboard = () => {
                     </div>
                 </header>
 
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                    <PointsCard points={points} userId={user.id} />
-                    <EventsCard events={events} />
-                    <BroDatesCard broDateGroup={broDateGroup} />
+                <div className="flex flex-col gap-8">
+                    {/*ENABLE AND RE ENABLE CARD AS NEEDED*/}
+                    {/*<SpoonAssassinsCard userId={user.id} />*/}
+
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <PointsCard points={points} userId={user.id} />
+                        <EventsCard events={events} />
+                        <BroDatesCard broDateGroup={broDateGroup} />
+                    </div>
                 </div>
 
                 <FooterLinks user={user} />
