@@ -67,7 +67,7 @@ const AboutUs = () => {
                     </p>
                 </div>
                 <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
-                    <span className="material-icons text-white text-4xl">expand_more</span>
+                    <span className="material-icons-outlined text-white text-4xl">expand_more</span>
                 </div>
             </header>
 
@@ -192,7 +192,7 @@ const AboutUs = () => {
                             target="_blank"
                             rel="noopener noreferrer"
                         >
-                            LEARN MORE <span className="material-icons">arrow_forward</span>
+                            LEARN MORE <span className="material-icons-outlined">arrow_forward</span>
                         </a>
                     </div>
                 </div>

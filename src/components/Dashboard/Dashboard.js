@@ -122,8 +122,8 @@ const PointsCard = ({ points, userId }) => {
                 </div>
                 <p className="text-sm text-slate-500 leading-relaxed mb-6">
                     {pointsNeeded > 0
-                        ? `You're ${pointsNeeded} points away from meeting this quarter's professional requirement. Keep it up!`
-                        : "You've met the professional requirement! Great job!"}
+                        ? `You're ${pointsNeeded} points away from meeting this quarter's requirement. Keep it up!`
+                        : "You've met the requirement! Great job!"}
                 </p>
             </div>
             <button

@@ -58,7 +58,7 @@ const Rush = () => {
                     <div className="flex flex-col md:flex-row gap-4 justify-center items-center reveal active" style={{ transitionDelay: "200ms" }}>
                         <a className="group relative px-8 py-4 bg-accent text-black font-bold uppercase tracking-widest rounded-sm overflow-hidden transition-all hover:pr-12" href="https://forms.gle/jveLESqs2rSRiBsN8" target="_blank" rel="noreferrer">
                             <span className="relative z-10">Application Open</span>
-                            <span className="material-icons absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all">arrow_forward</span>
+                            <span className="material-icons-outlined absolute right-4 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-all">arrow_forward</span>
                         </a>
                         <a className="px-8 py-4 border-2 border-white text-white font-bold uppercase tracking-widest rounded-sm hover:bg-white hover:text-black transition-all" href="#schedule">
                             View Schedule
@@ -66,7 +66,7 @@ const Rush = () => {
                     </div>
                 </div>
                 <div className="absolute bottom-10 left-1/2 -translate-x-1/2 animate-bounce">
-                    <span className="material-icons text-white opacity-50 text-4xl">expand_more</span>
+                    <span className="material-icons-outlined text-white opacity-50 text-4xl">expand_more</span>
                 </div>
             </section>
 
@@ -107,7 +107,7 @@ const Rush = () => {
                                     <p className="text-accent font-semibold">Wednesday 1/07 · 6-9pm</p>
                                 </div>
                                 <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-primary rounded-full items-center justify-center z-10 border-4 border-background-light dark:border-charcoal">
-                                    <span className="material-icons text-white text-sm">info</span>
+                                    <span className="material-icons-outlined text-white text-sm">info</span>
                                 </div>
                                 <div className="md:w-1/2 md:pl-12">
                                     <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-xl event-card">
@@ -124,7 +124,7 @@ const Rush = () => {
                                     <p className="text-accent font-semibold">Thursday 1/08 · 6-9pm</p>
                                 </div>
                                 <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-primary rounded-full items-center justify-center z-10 border-4 border-background-light dark:border-charcoal">
-                                    <span className="material-icons text-white text-sm">groups</span>
+                                    <span className="material-icons-outlined text-white text-sm">groups</span>
                                 </div>
                                 <div className="md:w-1/2 md:pr-12">
                                     <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-xl event-card">
@@ -141,7 +141,7 @@ const Rush = () => {
                                     <p className="text-accent font-semibold">Friday 1/09 · 5:30-9pm</p>
                                 </div>
                                 <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-primary rounded-full items-center justify-center z-10 border-4 border-background-light dark:border-charcoal">
-                                    <span className="material-icons text-white text-sm">lightbulb</span>
+                                    <span className="material-icons-outlined text-white text-sm">lightbulb</span>
                                 </div>
                                 <div className="md:w-1/2 md:pl-12">
                                     <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-xl event-card">
@@ -166,7 +166,7 @@ const Rush = () => {
                                     <p className="text-accent font-semibold italic">Invitation Only</p>
                                 </div>
                                 <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-accent rounded-full items-center justify-center z-10 border-4 border-background-light dark:border-charcoal">
-                                    <span className="material-icons text-black text-sm">coffee</span>
+                                    <span className="material-icons-outlined text-black text-sm">coffee</span>
                                 </div>
                                 <div className="md:w-1/2 md:pr-12">
                                     <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-xl border-l-4 border-accent">
@@ -183,7 +183,7 @@ const Rush = () => {
                                     <p className="text-accent font-semibold italic">Invitation Only</p>
                                 </div>
                                 <div className="hidden md:flex absolute left-1/2 -translate-x-1/2 w-10 h-10 bg-accent rounded-full items-center justify-center z-10 border-4 border-background-light dark:border-charcoal">
-                                    <span className="material-icons text-black text-sm">assignment_ind</span>
+                                    <span className="material-icons-outlined text-black text-sm">assignment_ind</span>
                                 </div>
                                 <div className="md:w-1/2 md:pl-12">
                                     <div className="bg-white dark:bg-zinc-800 p-6 rounded-lg shadow-xl border-r-4 md:border-r-0 md:border-l-4 border-accent">
