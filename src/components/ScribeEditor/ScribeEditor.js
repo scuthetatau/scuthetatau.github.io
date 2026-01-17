@@ -48,7 +48,7 @@ const ScribeEditor = () => {
                 setEventPoints(pointsData);
             } catch (error) {
                 console.error("Error fetching data: ", error);
-                // Optionally handle error (e.g., show a message to the user)
+                alert("Error fetching data. If you are a Scribe, you may need to log out and log back in to sync your permissions.");
             }
         };
         fetchData();
@@ -93,21 +93,26 @@ const ScribeEditor = () => {
 
     const handleSave = async () => {
         try {
+            console.log("Starting save process...");
             // Update event points
-            for (const [userId, points] of Object.entries(eventPoints)) {
-                await setDoc(doc(firestore, 'eventPoints', userId), points);
-            }
+            const pointUpdates = Object.entries(eventPoints).map(([userId, points]) =>
+                setDoc(doc(firestore, 'eventPoints', userId), points)
+            );
+            await Promise.all(pointUpdates);
+            console.log("Event points updated");
 
             // Update user total points
-            for (const user of users) {
+            const userUpdates = users.map(user => {
                 const totalPoints = calculateTotalPoints(user.id);
-                await updateDoc(doc(firestore, 'users', user.id), { points: totalPoints });
-            }
+                return updateDoc(doc(firestore, 'users', user.id), { points: totalPoints });
+            });
+            await Promise.all(userUpdates);
+            console.log("User points updated");
 
             alert('Changes saved successfully!');
         } catch (error) {
             console.error("Error saving changes: ", error);
-            alert('Error saving changes. Please try again.');
+            alert(`Error saving changes: ${error.message || 'Unknown error'}. Please check your permissions.`);
         }
     };
 
@@ -118,6 +123,7 @@ const ScribeEditor = () => {
         }
 
         try {
+            console.log("Adding new event:", newEventName);
             const newEventRef = doc(collection(firestore, 'events'));
             const newEvent = {
                 id: newEventRef.id,
@@ -127,11 +133,12 @@ const ScribeEditor = () => {
             };
 
             await setDoc(newEventRef, newEvent);
-            setEvents([...events, newEvent]);
+            setEvents(prev => [...prev, newEvent]);
             setNewEventName("");
+            console.log("Event added successfully with ID:", newEventRef.id);
         } catch (error) {
             console.error("Error adding event: ", error);
-            alert('Error adding event. Please try again.');
+            alert(`Error adding event: ${error.message || 'Unknown error'}. You may not have permission to add events.`);
         }
     };
 
@@ -139,10 +146,10 @@ const ScribeEditor = () => {
         try {
             // Delete the event
             await deleteDoc(doc(firestore, 'events', eventId));
-            
+
             // Remove the event from the events state
             setEvents(events.filter(event => event.id !== eventId));
-            
+
             // Remove the event points from all users
             const updatedEventPoints = {};
             for (const [userId, points] of Object.entries(eventPoints)) {
@@ -150,12 +157,12 @@ const ScribeEditor = () => {
                 updatedEventPoints[userId] = remainingPoints;
             }
             setEventPoints(updatedEventPoints);
-            
+
             // Update Firebase with the new points
             for (const [userId, points] of Object.entries(updatedEventPoints)) {
                 await setDoc(doc(firestore, 'eventPoints', userId), points);
             }
-            
+
             setShowDeleteConfirm(false);
             setEventToDelete(null);
         } catch (error) {
@@ -175,21 +182,21 @@ const ScribeEditor = () => {
             for (const event of events) {
                 await deleteDoc(doc(firestore, 'events', event.id));
             }
-            
+
             // Delete all event points
             for (const userId of Object.keys(eventPoints)) {
                 await deleteDoc(doc(firestore, 'eventPoints', userId));
             }
-            
+
             // Reset user points to 0
             for (const user of users) {
                 await updateDoc(doc(firestore, 'users', user.id), { points: 0 });
             }
-            
+
             // Reset local state
             setEvents([]);
             setEventPoints({});
-            
+
             setShowResetConfirm(false);
             alert('All data has been reset successfully!');
         } catch (error) {
@@ -261,8 +268,8 @@ const ScribeEditor = () => {
                         <tr>
                             <th rowSpan="2">Name</th>
                             {sortedQuarters.map(quarter => (
-                                <th 
-                                    key={quarter} 
+                                <th
+                                    key={quarter}
                                     colSpan={expandedQuarters[quarter] ? groupedEvents[quarter].length + 1 : 1}
                                     className="quarter-header"
                                     onClick={() => toggleQuarter(quarter)}
@@ -281,7 +288,7 @@ const ScribeEditor = () => {
                                             {groupedEvents[quarter].map(event => (
                                                 <th key={event.id} className="sub-event-header">
                                                     {event.name}
-                                                    <button 
+                                                    <button
                                                         className="close"
                                                         onClick={(e) => {
                                                             e.stopPropagation();
@@ -308,9 +315,9 @@ const ScribeEditor = () => {
                                 <td>{user.firstName} {user.lastName}</td>
                                 {sortedQuarters.map(quarter => {
                                     const quarterEvents = groupedEvents[quarter];
-                                    const quarterTotal = quarterEvents.reduce((sum, event) => 
+                                    const quarterTotal = quarterEvents.reduce((sum, event) =>
                                         sum + (eventPoints[user.id]?.[event.id] || 0), 0);
-                                    
+
                                     return (
                                         <React.Fragment key={`${user.id}-${quarter}`}>
                                             {expandedQuarters[quarter] ? (
@@ -378,8 +385,8 @@ const ScribeEditor = () => {
             )}
 
             <div className="reset-section">
-                <button 
-                    className="rush-btn reset-btn" 
+                <button
+                    className="rush-btn reset-btn"
                     onClick={() => setShowResetConfirm(true)}
                     style={{ marginTop: '20px', backgroundColor: '#dc3545' }}
                 >
