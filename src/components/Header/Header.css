@@ -8,7 +8,7 @@
     align-items: center;
     /* Ensure items are centered vertically */
     position: relative;
-    z-index: 10;
+    z-index: 100;
     /* Set high z-index for the header */
 }
 
@@ -36,7 +36,7 @@
     align-items: center;
     justify-content: center;
     transition: max-height 0.3s ease-in-out;
-    z-index: 10;
+    z-index: 100;
     /* Set high z-index for the nav links */
 }
 
@@ -111,7 +111,7 @@
     right: 0;
     background-color: #2a2a2a;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-    z-index: 20;
+    z-index: 110;
     padding: 12px;
     border-radius: 4px;
     min-width: 130px;

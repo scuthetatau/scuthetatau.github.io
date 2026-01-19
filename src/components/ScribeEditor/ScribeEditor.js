@@ -144,6 +144,10 @@ const ScribeEditor = () => {
 
     const handleDeleteEvent = async (eventId) => {
         try {
+            // Close modal immediately to provide snappy feedback
+            setShowDeleteConfirm(false);
+            setEventToDelete(null);
+
             // Delete the event
             await deleteDoc(doc(firestore, 'events', eventId));
 
@@ -232,169 +236,184 @@ const ScribeEditor = () => {
     });
 
     return (
-        <div className="admin-page">
-            <h1>Scribe Editor</h1>
-            <div className="controls">
-                <div className="admin-input-group">
-                    <input
-                        type="text"
-                        placeholder="Search users..."
-                        value={searchTerm}
-                        onChange={handleSearchChange}
-                        className="search-bar"
-                    />
-                </div>
-                <div className="admin-input-group add-event-group">
-                    <input
-                        type="text"
-                        placeholder="New event name"
-                        value={newEventName}
-                        onChange={(e) => setNewEventName(e.target.value)}
-                    />
-                    <input
-                        type="text"
-                        placeholder="Quarter (e.g. Fall 24)"
-                        value={newEventQuarter}
-                        onChange={(e) => setNewEventQuarter(e.target.value)}
-                        style={{ width: '150px' }}
-                    />
-                    <button className="rush-btn" onClick={handleAddEvent}>Add Event</button>
-                </div>
-                <button className="rush-btn" onClick={handleSave}>Save All Changes</button>
-            </div>
-            <div className="spreadsheet-container">
-                <table className="spreadsheet">
-                    <thead>
-                        <tr>
-                            <th rowSpan="2">Name</th>
-                            {sortedQuarters.map(quarter => (
-                                <th
-                                    key={quarter}
-                                    colSpan={expandedQuarters[quarter] ? groupedEvents[quarter].length + 1 : 1}
-                                    className="quarter-header"
-                                    onClick={() => toggleQuarter(quarter)}
-                                    style={{ cursor: 'pointer' }}
-                                >
-                                    {quarter} {expandedQuarters[quarter] ? '▼' : '▶'}
-                                </th>
-                            ))}
-                            <th rowSpan="2">Total Points</th>
-                        </tr>
-                        <tr>
-                            {sortedQuarters.map(quarter => (
-                                <React.Fragment key={`${quarter}-sub`}>
-                                    {expandedQuarters[quarter] ? (
-                                        <>
-                                            {groupedEvents[quarter].map(event => (
-                                                <th key={event.id} className="sub-event-header">
-                                                    {event.name}
-                                                    <button
-                                                        className="close"
-                                                        onClick={(e) => {
-                                                            e.stopPropagation();
-                                                            confirmDelete(event);
-                                                        }}
-                                                        style={{ marginLeft: '8px', padding: '2px 6px' }}
-                                                    >
-                                                        ×
-                                                    </button>
-                                                </th>
-                                            ))}
-                                            <th className="quarter-total-header">Total</th>
-                                        </>
-                                    ) : (
-                                        <th className="quarter-summary-header">Total</th>
-                                    )}
-                                </React.Fragment>
-                            ))}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredUsers.map(user => (
-                            <tr key={user.id}>
-                                <td>{user.firstName} {user.lastName}</td>
-                                {sortedQuarters.map(quarter => {
-                                    const quarterEvents = groupedEvents[quarter];
-                                    const quarterTotal = quarterEvents.reduce((sum, event) =>
-                                        sum + (eventPoints[user.id]?.[event.id] || 0), 0);
+        <div className="scribe-editor-page">
+            <header className="scribe-header">
+                <h1>Scribe Editor</h1>
+            </header>
 
-                                    return (
-                                        <React.Fragment key={`${user.id}-${quarter}`}>
+            <div className="scribe-container">
+                <div className="controls-grid">
+                    {/* Search Card */}
+                    <div className="control-card">
+                        <h3>Search Brothers</h3>
+                        <div className="input-row">
+                            <input
+                                type="text"
+                                placeholder="Filter by name..."
+                                value={searchTerm}
+                                onChange={handleSearchChange}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Add Event Card */}
+                    <div className="control-card">
+                        <h3>Quick Add Event</h3>
+                        <div className="input-row">
+                            <input
+                                type="text"
+                                placeholder="Event Name"
+                                value={newEventName}
+                                onChange={(e) => setNewEventName(e.target.value)}
+                            />
+                            <input
+                                type="text"
+                                placeholder="Quarter"
+                                value={newEventQuarter}
+                                onChange={(e) => setNewEventQuarter(e.target.value)}
+                                style={{ width: '120px' }}
+                            />
+                            <button className="scribe-btn scribe-btn-primary" onClick={handleAddEvent}>
+                                <span className="material-icons-outlined">add</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Actions Card */}
+                    <div className="control-card">
+                        <h3>Editor Actions</h3>
+                        <div className="input-row">
+                            <button className="scribe-btn scribe-btn-primary" style={{ flex: 2 }} onClick={handleSave}>
+                                <span className="material-icons-outlined">save</span>
+                                Save Changes
+                            </button>
+                            <button className="scribe-btn scribe-btn-danger" style={{ flex: 1 }} onClick={() => setShowResetConfirm(true)}>
+                                <span className="material-icons-outlined">restart_alt</span>
+                                Reset
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="spreadsheet-section">
+                    <div className="table-wrapper">
+                        <table className="spreadsheet">
+                            <thead>
+                                <tr>
+                                    <th rowSpan="2">Brother Name</th>
+                                    {sortedQuarters.map(quarter => (
+                                        <th
+                                            key={quarter}
+                                            colSpan={expandedQuarters[quarter] ? groupedEvents[quarter].length + 1 : 1}
+                                            className="quarter-header-cell"
+                                            onClick={() => toggleQuarter(quarter)}
+                                        >
+                                            {quarter} {expandedQuarters[quarter] ? '▼' : '▶'}
+                                        </th>
+                                    ))}
+                                    <th rowSpan="2" className="final-total-cell">Total Points</th>
+                                </tr>
+                                <tr>
+                                    {sortedQuarters.map(quarter => (
+                                        <React.Fragment key={`${quarter}-sub`}>
                                             {expandedQuarters[quarter] ? (
                                                 <>
-                                                    {quarterEvents.map(event => (
-                                                        <td key={event.id}>
-                                                            <input
-                                                                type="number"
-                                                                value={eventPoints[user.id]?.[event.id] || ''}
-                                                                onChange={(e) => handleCellEdit(user.id, event.id, e.target.value)}
-                                                                min="0"
-                                                            />
-                                                        </td>
+                                                    {groupedEvents[quarter].map(event => (
+                                                        <th key={event.id} className="sub-header-cell">
+                                                            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                                                                {event.name}
+                                                                <button
+                                                                    className="delete-event-btn"
+                                                                    onClick={(e) => {
+                                                                        e.stopPropagation();
+                                                                        confirmDelete(event);
+                                                                    }}
+                                                                >
+                                                                    ×
+                                                                </button>
+                                                            </div>
+                                                        </th>
                                                     ))}
-                                                    <td className="quarter-total-cell">{quarterTotal}</td>
+                                                    <th className="sub-header-cell">Total</th>
                                                 </>
                                             ) : (
-                                                <td className="quarter-total-cell">{quarterTotal}</td>
+                                                <th className="sub-header-cell">Total</th>
                                             )}
                                         </React.Fragment>
-                                    );
-                                })}
-                                <td className="total-points">
-                                    {calculateTotalPoints(user.id)}
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                    ))}
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {filteredUsers.map(user => (
+                                    <tr key={user.id}>
+                                        <td>{user.firstName} {user.lastName}</td>
+                                        {sortedQuarters.map(quarter => {
+                                            const quarterEvents = groupedEvents[quarter];
+                                            const quarterTotal = quarterEvents.reduce((sum, event) =>
+                                                sum + (eventPoints[user.id]?.[event.id] || 0), 0);
+
+                                            return (
+                                                <React.Fragment key={`${user.id}-${quarter}`}>
+                                                    {expandedQuarters[quarter] ? (
+                                                        <>
+                                                            {quarterEvents.map(event => (
+                                                                <td key={event.id}>
+                                                                    <input
+                                                                        type="number"
+                                                                        className="point-input"
+                                                                        value={eventPoints[user.id]?.[event.id] || ''}
+                                                                        onChange={(e) => handleCellEdit(user.id, event.id, e.target.value)}
+                                                                        min="0"
+                                                                    />
+                                                                </td>
+                                                            ))}
+                                                            <td className="quarter-total-cell">{quarterTotal}</td>
+                                                        </>
+                                                    ) : (
+                                                        <td className="quarter-total-cell">{quarterTotal}</td>
+                                                    )}
+                                                </React.Fragment>
+                                            );
+                                        })}
+                                        <td className="final-total-cell">
+                                            {calculateTotalPoints(user.id)}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
 
             {showDeleteConfirm && (
-                <>
-                    <div className="admin-edit-user-overlay" onClick={() => setShowDeleteConfirm(false)} />
-                    <div className="admin-edit-user">
+                <div className="modal-overlay">
+                    <div className="modal-content">
                         <h2>Confirm Delete</h2>
-                        <p>Are you sure you want to delete the event "{eventToDelete?.name}"? This will remove all points associated with this event.</p>
-                        <div className="admin-buttons">
-                            <button className="close" onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
-                            <button className="add" onClick={() => handleDeleteEvent(eventToDelete.id)}>Delete</button>
+                        <p>Are you sure you want to delete the event <strong>"{eventToDelete?.name}"</strong>? This will remove all associated points permanently.</p>
+                        <div className="modal-actions">
+                            <button className="scribe-btn scribe-btn-secondary" onClick={() => setShowDeleteConfirm(false)}>Cancel</button>
+                            <button className="scribe-btn scribe-btn-primary" style={{ backgroundColor: '#dc3545' }} onClick={() => handleDeleteEvent(eventToDelete.id)}>Delete Event</button>
                         </div>
                     </div>
-                </>
+                </div>
             )}
 
             {showResetConfirm && (
-                <>
-                    <div className="admin-edit-user-overlay" onClick={() => setShowResetConfirm(false)} />
-                    <div className="admin-edit-user">
-                        <h2>Confirm Reset</h2>
-                        <p>Are you sure you want to reset everything? This will:</p>
-                        <ul>
-                            <li>Delete all events</li>
-                            <li>Clear all event points</li>
-                            <li>Reset all user points to zero</li>
-                        </ul>
-                        <p>This action cannot be undone!</p>
-                        <p>This also may take up to a minute for this request to complete.</p>
-                        <div className="admin-buttons">
-                            <button className="close" onClick={() => setShowResetConfirm(false)}>CANCEL</button>
-                            <button className="add" onClick={handleReset}>RESET EVERYTHING</button>
+                <div className="modal-overlay">
+                    <div className="modal-content">
+                        <h2>Danger Zone</h2>
+                        <p>You are about to reset <strong>EVERYTHING</strong>. This will delete all events and clear all points for every brother. This action is irreversible.</p>
+                        <div className="modal-actions">
+                            <button className="scribe-btn scribe-btn-secondary" onClick={() => setShowResetConfirm(false)}>Abort Mission</button>
+                            <button className="scribe-btn scribe-btn-primary" style={{ backgroundColor: '#dc3545' }} onClick={handleReset}>Reset All Data</button>
                         </div>
                     </div>
-                </>
+                </div>
             )}
-
-            <div className="reset-section">
-                <button
-                    className="rush-btn reset-btn"
-                    onClick={() => setShowResetConfirm(true)}
-                    style={{ marginTop: '20px', backgroundColor: '#dc3545' }}
-                >
-                    Reset Everything
-                </button>
-            </div>
         </div>
     );
 };
 
 export default ScribeEditor;
+
