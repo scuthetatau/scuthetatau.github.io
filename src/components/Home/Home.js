@@ -25,13 +25,7 @@ const Home = () => {
         const handleScroll = () => {
             const scrolled = window.pageYOffset;
 
-            // Hero parallax
-            const parallaxTitle = document.getElementById('parallax-title');
             const heroContent = document.getElementById('hero-content');
-
-            if (parallaxTitle) {
-                parallaxTitle.style.transform = `translateY(${scrolled * 0.4}px)`;
-            }
             if (heroContent) {
                 heroContent.style.opacity = 1 - (scrolled / 800);
             }

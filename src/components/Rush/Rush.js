@@ -24,7 +24,6 @@ const Rush = () => {
             const scrolled = window.pageYOffset;
             const heroText = document.getElementById('hero-text');
             if (heroText) {
-                heroText.style.transform = `translateY(${scrolled * 0.3}px)`;
                 heroText.style.opacity = 1 - (scrolled / 700);
             }
         };

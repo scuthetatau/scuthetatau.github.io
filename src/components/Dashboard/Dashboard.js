@@ -109,12 +109,12 @@ const PointsCard = ({ points, userId }) => {
             <div>
                 <div className="flex items-center gap-3 mb-8">
                     <span className="material-icons-outlined text-primary">analytics</span>
-                    <h2 className="text-xl font-display">Member Status</h2>
+                    <h2 className="text-xl font-anton uppercase tracking-wide">Member Status</h2>
                 </div>
                 <div className="mb-6">
                     <div className="flex justify-between items-end mb-4">
                         <span className="text-sm font-medium text-slate-500 uppercase">Points Progress</span>
-                        <span className="text-2xl font-display text-primary">{points} <span className="text-sm font-sans text-slate-500">/ {PROGRESS_GOAL}</span></span>
+                        <span className="text-2xl font-anton text-primary uppercase tracking-tight">{points} <span className="text-sm font-sans text-slate-500 normal-case">/ {PROGRESS_GOAL}</span></span>
                     </div>
                     <div className="h-3 w-full bg-slate-200 rounded-full overflow-hidden">
                         <div className="h-full bg-primary progress-glow animate-pulse" style={{ width: `${progressPercentage}%` }}></div>
@@ -183,7 +183,7 @@ const EventsCard = ({ events }) => (
     <section className="glass p-8 rounded-3xl group hover:border-gold/30 transition-all h-[500px] overflow-y-auto custom-scrollbar">
         <div className="flex items-center gap-3 mb-8 sticky top-0 bg-transparent z-10">
             <span className="material-icons-outlined text-gold">calendar_month</span>
-            <h2 className="text-xl font-display">Upcoming Events</h2>
+            <h2 className="text-xl font-anton uppercase tracking-wide">Upcoming Events</h2>
         </div>
         <div className="space-y-6">
             {events.length > 0 ? events.map((event, index) => (
@@ -217,7 +217,7 @@ const BroDatesCard = ({ broDateGroup }) => {
             <div>
                 <div className="flex items-center gap-3 mb-8">
                     <span className="material-icons-outlined text-slate-400">handshake</span>
-                    <h2 className="text-xl font-display">BroDates</h2>
+                    <h2 className="text-xl font-anton uppercase tracking-wide">BroDates</h2>
                 </div>
                 {broDateGroup.length > 0 ? (
                     <>
@@ -324,24 +324,24 @@ const SpoonAssassinsCard = ({ userId }) => {
             <div>
                 <div className="flex items-center gap-3 mb-8 text-primary">
                     <span className="material-icons-outlined">gps_fixed</span>
-                    <h2 className="text-xl font-display text-slate-800">Spoon Assassins</h2>
+                    <h2 className="text-xl font-anton uppercase tracking-wide text-slate-800">Spoon Assassins</h2>
                 </div>
 
                 <div className="space-y-6 mb-8">
                     {spoonData && !spoonData.isEliminated ? (
                         <div className="bg-primary/5 p-4 rounded-2xl border border-primary/10">
                             <p className="text-[10px] uppercase font-bold text-slate-500 mb-1 tracking-widest">Active Objective</p>
-                            <p className="text-2xl font-display text-primary italic leading-tight">Eliminate: {spoonData.targetName}</p>
+                            <p className="text-2xl font-anton text-primary uppercase italic leading-tight tracking-tight">Eliminate: {spoonData.targetName}</p>
                         </div>
                     ) : spoonData?.isEliminated ? (
                         <div className="bg-red-50 p-4 rounded-2xl border border-red-100">
                             <p className="text-[10px] uppercase font-bold text-red-500 mb-1 tracking-widest">Status</p>
-                            <p className="text-2xl font-display text-red-600 italic">KILLED</p>
+                            <p className="text-2xl font-anton text-red-600 uppercase italic tracking-tight">KILLED</p>
                         </div>
                     ) : (
                         <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
                             <p className="text-[10px] uppercase font-bold text-slate-400 mb-1 tracking-widest">Status</p>
-                            <p className="text-2xl font-display text-slate-400 italic">NOT DEPLOYED</p>
+                            <p className="text-2xl font-anton text-slate-400 uppercase italic tracking-tight">NOT DEPLOYED</p>
                         </div>
                     )}
 
@@ -491,7 +491,7 @@ const Dashboard = () => {
                     </div>
                     <div className="flex-1 text-center md:text-left">
                         <div className="flex items-center justify-center md:justify-start gap-4 mb-2">
-                            <h1 className="text-4xl md:text-5xl font-display leading-tight">Welcome, {user.firstName}</h1>
+                            <h1 className="text-4xl md:text-5xl font-anton uppercase tracking-tight leading-tight">Welcome, {user.firstName}</h1>
                             <button
                                 className="p-2 glass rounded-full hover:bg-white/10 transition-all text-slate-400 hover:text-white"
                                 onClick={() => setIsEditPopupOpen(true)}
