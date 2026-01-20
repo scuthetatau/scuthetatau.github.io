@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { auth, firestore } from '../../firebase';
 import { onAuthStateChanged } from 'firebase/auth';
-import { collection, doc, getDoc, getDocs, query, where } from 'firebase/firestore';
+import { collection, doc, getDoc, getDocs, query, setDoc, where } from 'firebase/firestore';
 import { Link, useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 import EditUserPopup from './EditUserPopup';
@@ -264,10 +264,56 @@ const SpoonAssassinsCard = ({ userId }) => {
             if (!userId) return;
             try {
                 // Fetch user's own target info
-                const targetDoc = await getDoc(doc(firestore, 'targets', userId));
-                if (targetDoc.exists()) {
-                    setSpoonData(targetDoc.data());
+                let targetDoc = await getDoc(doc(firestore, 'targets', userId));
+                let currentSpoonData = targetDoc.exists() ? targetDoc.data() : null;
+
+                // Logic: If current target is eliminated, get their target, recursively
+                if (currentSpoonData && currentSpoonData.targetId && currentSpoonData.isEliminated === false) {
+                    let tempTargetId = currentSpoonData.targetId;
+                    let targetIsEliminated = false;
+                    let currentTargetInfo = null;
+
+                    // Check if current target is eliminated
+                    const checkTargetDoc = await getDoc(doc(firestore, 'targets', tempTargetId));
+                    if (checkTargetDoc.exists() && checkTargetDoc.data().isEliminated) {
+                        targetIsEliminated = true;
+                        currentTargetInfo = checkTargetDoc.data();
+                    }
+
+                    // Loop to find the next alive target in the chain
+                    while (targetIsEliminated && currentTargetInfo && currentTargetInfo.targetId) {
+                        const nextTargetId = currentTargetInfo.targetId;
+                        const nextTargetDoc = await getDoc(doc(firestore, 'targets', nextTargetId));
+
+                        if (nextTargetDoc.exists()) {
+                            const nextTargetData = nextTargetDoc.data();
+                            if (nextTargetData.isEliminated) {
+                                tempTargetId = nextTargetId;
+                                currentTargetInfo = nextTargetData;
+                            } else {
+                                // Found an alive target!
+                                targetIsEliminated = false;
+                                currentTargetInfo = nextTargetData;
+                            }
+                        } else {
+                            // Target chain broken or target doc missing
+                            break;
+                        }
+                    }
+
+                    // If we found a new alive target, update the user's target document
+                    if (currentTargetInfo && currentTargetInfo.userId !== currentSpoonData.targetId && !currentTargetInfo.isEliminated) {
+                        const updatedData = {
+                            ...currentSpoonData,
+                            targetId: currentTargetInfo.userId,
+                            targetName: `${currentTargetInfo.firstName} ${currentTargetInfo.lastName}`.trim()
+                        };
+                        await setDoc(doc(firestore, 'targets', userId), updatedData);
+                        currentSpoonData = updatedData;
+                    }
                 }
+
+                setSpoonData(currentSpoonData);
 
                 // Fetch all targets to count alive players
                 const targetsSnapshot = await getDocs(collection(firestore, 'targets'));
@@ -522,7 +568,7 @@ const Dashboard = () => {
 
                 <div className="flex flex-col gap-8">
                     {/*ENABLE AND RE ENABLE CARD AS NEEDED*/}
-                    {/*<SpoonAssassinsCard userId={user.id} />*/}
+                    <SpoonAssassinsCard userId={user.id} />
 
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         <PointsCard points={points} userId={user.id} />
