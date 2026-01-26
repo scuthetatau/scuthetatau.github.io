@@ -80,6 +80,23 @@ const Alumni = () => {
         if (alum.dropped) {
             return groups;
         }
+
+        // June graduation rule: Don't show if it's before June of their graduation year
+        if (alum.graduationYear) {
+            const currentDate = new Date();
+            const currentYear = currentDate.getFullYear();
+            const currentMonth = currentDate.getMonth(); // 0-indexed (May is 4, June is 5)
+
+            const gradYear = parseInt(alum.graduationYear, 10);
+
+            // Hide if:
+            // 1. Current year is before graduation year
+            // 2. Current year IS graduation year, but it's before June (month index 5)
+            if (currentYear < gradYear || (currentYear === gradYear && currentMonth < 5)) {
+                return groups;
+            }
+        }
+
         const year = alum.graduationYear || 'Unknown Year';
         if (!groups[year]) {
             groups[year] = [];
