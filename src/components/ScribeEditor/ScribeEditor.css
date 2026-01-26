@@ -237,6 +237,52 @@
     background-color: #6b1212 !important;
 }
 
+.quarter-header-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+}
+
+.quarter-toggle-name {
+    padding: 4px 8px;
+    border-radius: 4px;
+}
+
+.quarter-toggle-name:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.quarter-count-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 0.7rem;
+    font-weight: 400;
+    text-transform: uppercase;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 2px 6px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.quarter-count-checkbox input {
+    margin: 0;
+    cursor: pointer;
+}
+
+.quarter-header-cell.excluded {
+    background-color: #666 !important;
+    opacity: 0.8;
+}
+
+.quarter-total-cell.excluded {
+    color: #999;
+    text-decoration: line-through;
+    font-weight: 300;
+}
+
 .sub-header-cell {
     background-color: #f4f4f4 !important;
     font-size: 0.8rem;

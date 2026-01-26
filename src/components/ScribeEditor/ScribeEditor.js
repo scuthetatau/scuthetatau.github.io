@@ -14,6 +14,7 @@ const ScribeEditor = () => {
     const [newEventName, setNewEventName] = useState("");
     const [newEventQuarter, setNewEventQuarter] = useState("");
     const [expandedQuarters, setExpandedQuarters] = useState({});
+    const [quarterConfigs, setQuarterConfigs] = useState({}); // { 'Fall 24': true, 'Spring 25': false }
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [eventToDelete, setEventToDelete] = useState(null);
     const [showResetConfirm, setShowResetConfirm] = useState(false);
@@ -46,6 +47,14 @@ const ScribeEditor = () => {
                     pointsData[doc.id] = doc.data();
                 });
                 setEventPoints(pointsData);
+
+                // Fetch quarter configs
+                const configsSnapshot = await getDocs(collection(firestore, 'quarterConfigs'));
+                const configsData = {};
+                configsSnapshot.docs.forEach(doc => {
+                    configsData[doc.id] = doc.data().counts !== false; // Default to true if not set
+                });
+                setQuarterConfigs(configsData);
             } catch (error) {
                 console.error("Error fetching data: ", error);
                 alert("Error fetching data. If you are a Scribe, you may need to log out and log back in to sync your permissions.");
@@ -88,7 +97,12 @@ const ScribeEditor = () => {
 
     const calculateTotalPoints = (userId) => {
         const userPoints = eventPoints[userId] || {};
-        return Object.values(userPoints).reduce((sum, points) => sum + (points || 0), 0);
+        return Object.entries(userPoints).reduce((sum, [eventId, points]) => {
+            const event = events.find(e => e.id === eventId);
+            const quarter = event?.quarter || 'Other';
+            const isCounted = quarterConfigs[quarter] !== false;
+            return sum + (isCounted ? (points || 0) : 0);
+        }, 0);
     };
 
     const handleSave = async () => {
@@ -100,6 +114,13 @@ const ScribeEditor = () => {
             );
             await Promise.all(pointUpdates);
             console.log("Event points updated");
+
+            // Update quarter configs
+            const configUpdates = Object.entries(quarterConfigs).map(([quarter, counts]) =>
+                setDoc(doc(firestore, 'quarterConfigs', quarter), { counts })
+            );
+            await Promise.all(configUpdates);
+            console.log("Quarter configs updated");
 
             // Update user total points
             const userUpdates = users.map(user => {
@@ -216,6 +237,13 @@ const ScribeEditor = () => {
         }));
     };
 
+    const toggleQuarterCount = (quarter) => {
+        setQuarterConfigs(prev => ({
+            ...prev,
+            [quarter]: prev[quarter] === false ? true : false
+        }));
+    };
+
     const groupedEvents = events.reduce((groups, event) => {
         const quarter = event.quarter || 'Other';
         if (!groups[quarter]) {
@@ -305,10 +333,21 @@ const ScribeEditor = () => {
                                         <th
                                             key={quarter}
                                             colSpan={expandedQuarters[quarter] ? groupedEvents[quarter].length + 1 : 1}
-                                            className="quarter-header-cell"
-                                            onClick={() => toggleQuarter(quarter)}
+                                            className={`quarter-header-cell ${quarterConfigs[quarter] === false ? 'excluded' : ''}`}
                                         >
-                                            {quarter} {expandedQuarters[quarter] ? '▼' : '▶'}
+                                            <div className="quarter-header-content">
+                                                <span className="quarter-toggle-name" onClick={() => toggleQuarter(quarter)}>
+                                                    {quarter} {expandedQuarters[quarter] ? '▼' : '▶'}
+                                                </span>
+                                                <label className="quarter-count-checkbox" title="Toggle if this quarter counts toward total points">
+                                                    <input
+                                                        type="checkbox"
+                                                        checked={quarterConfigs[quarter] !== false}
+                                                        onChange={() => toggleQuarterCount(quarter)}
+                                                    />
+                                                    Count
+                                                </label>
+                                            </div>
                                         </th>
                                     ))}
                                     <th rowSpan="2" className="final-total-cell">Total Points</th>
@@ -367,10 +406,10 @@ const ScribeEditor = () => {
                                                                     />
                                                                 </td>
                                                             ))}
-                                                            <td className="quarter-total-cell">{quarterTotal}</td>
+                                                            <td className={`quarter-total-cell ${quarterConfigs[quarter] === false ? 'excluded' : ''}`}>{quarterTotal}</td>
                                                         </>
                                                     ) : (
-                                                        <td className="quarter-total-cell">{quarterTotal}</td>
+                                                        <td className={`quarter-total-cell ${quarterConfigs[quarter] === false ? 'excluded' : ''}`}>{quarterTotal}</td>
                                                     )}
                                                 </React.Fragment>
                                             );

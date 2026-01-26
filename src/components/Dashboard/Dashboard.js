@@ -9,7 +9,7 @@ import { getUpcomingEvents, initClient } from './googleCalendarService';
 import { getProfilePictureUrl } from '../../utils/imageUtils';
 
 // Constants
-const PROGRESS_GOAL = 2500;
+const PROGRESS_GOAL = 2000;
 
 const formatEventDate = (event) => {
     if (event.start.date && !event.start.dateTime) {
@@ -45,6 +45,7 @@ const PointsCard = ({ points, userId }) => {
     const [eventPoints, setEventPoints] = useState({});
     const [allEvents, setAllEvents] = useState([]);
     const [expandedQuarters, setExpandedQuarters] = useState({});
+    const [quarterConfigs, setQuarterConfigs] = useState({});
 
     // Calculate progress
     const progressPercentage = Math.min((points / PROGRESS_GOAL) * 100, 100);
@@ -64,6 +65,14 @@ const PointsCard = ({ points, userId }) => {
                 }
                 const eventsList = eventsSnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
                 setAllEvents(eventsList);
+
+                // Fetch quarter configs
+                const configsSnapshot = await getDocs(collection(firestore, 'quarterConfigs'));
+                const configsData = {};
+                configsSnapshot.docs.forEach(doc => {
+                    configsData[doc.id] = doc.data().counts !== false;
+                });
+                setQuarterConfigs(configsData);
             } catch (error) {
                 console.error('Error fetching points data:', error);
             }
@@ -146,14 +155,19 @@ const PointsCard = ({ points, userId }) => {
                                 const isExpanded = expandedQuarters[quarter];
 
                                 return (
-                                    <div key={quarter} className="quarter-group">
+                                    <div key={quarter} className={`quarter-group ${quarterConfigs[quarter] === false ? 'excluded opacity-50' : ''}`}>
                                         <div
                                             className="event-points-row quarter-summary-row"
                                             onClick={() => toggleQuarter(quarter)}
                                             style={{ cursor: 'pointer', fontWeight: 'bold' }}
                                         >
-                                            <span className="event-name">{quarter} {isExpanded ? '▼' : '▶'}</span>
-                                            <span className="event-points">{quarterTotal} points</span>
+                                            <div className="flex flex-col">
+                                                <span className="event-name">{quarter} {isExpanded ? '▼' : '▶'}</span>
+                                                {quarterConfigs[quarter] === false && (
+                                                    <span className="text-[10px] text-red-500 font-normal uppercase tracking-wider">Not contributing to total</span>
+                                                )}
+                                            </div>
+                                            <span className={`event-points ${quarterConfigs[quarter] === false ? 'line-through' : ''}`}>{quarterTotal} points</span>
                                         </div>
                                         {isExpanded && quarterEvents.map(event => (
                                             <div key={event.id} className="event-points-row sub-event-row">
