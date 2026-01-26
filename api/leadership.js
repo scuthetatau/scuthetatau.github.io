@@ -1,4 +1,4 @@
-import { db } from './_lib/firebaseAdmin';
+import { getDb } from './_lib/firebaseAdmin';
 
 const executiveBoardRoles = ['Regent', 'Vice Regent', 'Scribe', 'Treasurer', 'Corresponding Secretary'];
 
@@ -8,6 +8,7 @@ export default async function handler(req, res) {
     }
 
     try {
+        const db = getDb();
         const snapshot = await db.collection('users').where('role', '!=', '').get();
         const users = snapshot.docs.map(doc => {
             const data = doc.data();

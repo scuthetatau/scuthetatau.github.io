@@ -1,4 +1,4 @@
-import { db } from './_lib/firebaseAdmin';
+import { getDb } from './_lib/firebaseAdmin';
 
 export default async function handler(req, res) {
     if (req.method !== 'GET') {
@@ -6,6 +6,7 @@ export default async function handler(req, res) {
     }
 
     try {
+        const db = getDb();
         const snapshot = await db.collection('users').orderBy('lastName').get();
         const brothers = snapshot.docs.map(doc => {
             const data = doc.data();
