@@ -1,75 +1,107 @@
-# Theta Tau Website
+# SCU Theta Tau Chapter Website
 
-## How to manage the backend
+Professional web platform for the Santa Clara University chapter of Theta Tau, the nation's oldest and largest professional engineering fraternity. This project serves as a central hub for brothers, alumni, and prospective recruits.
 
-Firebase Integration
-Our project utilizes Firebase to handle user authentication and data storage. Here’s a detailed explanation of the Firebase services and data management practices employed:
+---
 
-### Services Used
+## 🚀 Vision & Purpose
 
-Firebase Authentication:
-Google Auth Provider: This allows users to log in using their Google accounts. The login process utilizes the GoogleAuthProvider and signInWithPopup methods from firebase/auth.
+The platform provides an integrated experience for:
+- **Prospective Recruits**: Learning about the fraternity, upcoming rush events, and chapter values.
+- **Active Brothers**: Managing chapter operations, tracking participation points, and coordinating "BroDates".
+- **Alumni**: Maintaining connections through an interactive database and family tree.
+- **Spoon Assassins**: Hosting an internal, automated game for chapter bonding.
 
-#### Firestore:
+---
 
-User Data Management: User-related data is stored and fetched from Firestore. This includes first name, last name, email, profile picture URL, and other ancillary information such as class, graduation year, family, major, role, and points.
-Authorization Control: The application checks whether the logged-in user's email is authorized by referencing a Firestore document (`authorizedEmails` > `emails_array`).
-Key Data Points and Management
-Ensure that the following data points are up to date for smooth operation and authentication authorization:
-Authorized Emails List:
-Location: Firestore document (`authorizedEmails` > `emails_array`).
+##  Tech Stack
 
-### Structure:
+- **Frontend**: React.js with CSS3 (Vanilla + Animations)
+- **Backend/Database**: Firebase (Auth, Firestore, Storage)
+- **Deployment**: Vercel
+- **State Management**: React Hooks & Context API
 
-An array of authorized email addresses.
+---
 
-Note: **Be diligent in updating this list to control and manage access permissions for new users.**
-User Data:
-Location: Firestore collection (`users`).
-Key fields:
-`firstName`: User's first name.
+##  Key Features
 
-`lastName`: User's last name.
+### 1. **Dynamic Brotherhood Management**
+- **Meet the Brothers**: Visual directory of active members with filtered views by class and major.
+- **Family Tree**: Interactive D3-powered visualization of the chapter's lineage.
+- **Alumni Database**: searchable records for professional networking.
 
-`email`: User's email address.
+### 2. **Scribe/Admin Dashboard**
+- **Point Tracking**: Automated logging and visualization of fraternity points for events.
+- **Event Management**: Quick-add tools for Scribes to broadcast chapter meetings and social events.
+- **BroDates**: Algorithmic pairing and management of brotherhood bonding sessions.
 
-`profilePictureUrl`: URL to the user's profile picture.
+### 3. **The "Spoon Assassins" Game**
+- Integrated game logic for the chapter's traditional competition.
+- Automatic target forwarding and elimination logging via Firestore.
 
-Additional fields (conditional upon new user):
+---
 
-`class`: Default empty string.
+## ☁️ Firebase & Backend Architecture
 
-`graduationYear`: Default 0.
+The project relies heavily on **Firebase** for a serverless architecture.
 
-`family`: Default empty string.
+### Firestore Data Model
 
-`major`: Default empty string.
+- **`users/`**: Profile data (name, email, class, points, role).
+- **`admins/`**: Designated roles (Webmaster, Scribe, Brotherhood Chair) used for permission checks.
+- **`events/`**: Chapter events with timestamped participation metadata.
+- **`brodates/`**: Group assignments and status for brotherhood hangouts.
+- **`targets/` / `eliminated/`**: State management for the Spoon Assassins game.
+- **`authorizedEmails/`**: Whitelist for initial user registration to ensure only brothers can join.
 
-`role`: Default empty string.
+### Security Rules
+Standardized roles are enforced via `firestore.rules`:
+- **Webmaster**: Full CRUD access for site maintenance.
+- **Scribe**: Point management and event creation.
+- **Brotherhood Chair**: Managed control over games and social pairings.
+- **Public**: Read-only access to promotional content (Home, Rush, About Us).
 
-`points`: Default initialized to 0.
+---
 
-**Note**: Existing user data is merged to prevent overwriting previous data.
-Maintenance and Best Practices
-Ensure the Firestore rules and indexes are well configured to maintain data integrity and security.
-Regularly audit the authorized email list to make necessary updates reflecting the current user base.
+## 💻 Local Development
 
-**Keep user data up to date**, particularly the dynamic fields such as points which might change frequently.
+### Prerequisites
+- Node.js (v18+)
+- npm
 
-When adding or modifying fields in Firestore documents, ensure the React components utilizing this data reflect these changes to prevent breaking UI components or causing unexpected behavior.
-Error handling and user feedback are critical. Ensure any authentication or data access issues are clearly communicated to the user for a seamless experience.
+### Installation
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/scuthetatau/scuthetatau.github.io.git
+   ```
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
+3. Create a `.env` file in the root directory with your Firebase configuration:
+   ```env
+   REACT_APP_FIREBASE_API_KEY=your_key
+   REACT_APP_FIREBASE_AUTH_DOMAIN=your_domain
+   REACT_APP_FIREBASE_PROJECT_ID=your_id
+   REACT_APP_FIREBASE_STORAGE_BUCKET=your_bucket
+   REACT_APP_FIREBASE_MESSAGING_SENDER_ID=your_id
+   REACT_APP_FIREBASE_APP_ID=your_id
+   ```
+4. Start the development server:
+   ```bash
+   npm start
+   ```
 
-## Available Scripts
+### Available Scripts
+- `npm start`: Runs the app in development mode.
+- `npm run build`: Bundles the app for production.
+- `npm run deploy`: Deploys the latest build to GitHub Pages.
 
-In the project directory, you can run:
+---
 
-#####
-`npm install`
+## 📦 Deployment & Maintenance
 
-Test this code locally `npm start`
+The site is configured for automated deployment via **Vercel**.
+Log in using the Theta Tau vercel account to make changes there as needed.
 
-`npm test`
-
-Build the website `npm run build`
-
-`npm run eject`
+Ensure all changes are committed and pushed to `main`.
