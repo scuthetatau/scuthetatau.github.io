@@ -54,7 +54,7 @@ const Home = () => {
 
                 <div className="relative z-10 text-center px-4" id="hero-content">
                     <p className="text-accent font-semibold tracking-[0.3em] uppercase mb-4 reveal active">Santa Clara University</p>
-                    <h1 className="font-anton text-8xl md:text-[11rem] text-white uppercase tracking-tighter leading-none mb-2 drop-shadow-2xl" id="parallax-title">
+                    <h1 className="font-anton text-8xl md:text-[11rem] text-white uppercase leading-none mb-2 drop-shadow-2xl" id="parallax-title">
                         THETA TAU
                     </h1>
                     <h2 className="text-2xl md:text-4xl text-white font-playfair italic mb-4 tracking-wider reveal active" style={{ transitionDelay: "200ms" }}>UPSILON EPSILON CHAPTER</h2>
@@ -90,7 +90,8 @@ const Home = () => {
                         <div className="reveal-right">
                             <h2 className="text-primary font-anton text-5xl md:text-7xl mb-8 leading-tight">A MESSAGE FROM<br />THE REGENT</h2>
                             <div className="space-y-6 text-lg leading-relaxed text-gray-600 dark:text-gray-400">
-                                <p className="font-semibold text-charcoal dark:text-white text-xl">Hi!</p>
+                                {/*<p className="font-semibold text-charcoal dark:text-white text-xl">Hi!</p>*/}
+                                <p>Hi!</p>
                                 <p>My name is Xander Fruin, and I'm currently a senior at SCU majoring in Mechanical Engineering with a minor in Aerospace Engineering, part of the Theta class. Theta Tau has been integral to my college journey, where I've been able to grow professionally and meet some of my closest friends.</p>
                                 <p>Theta Tau stands out as a fraternity where excellence is nurtured in every aspect. Our members are not only dedicated to their academic and professional achievements, but they also bring a vibrant, engaging spirit to everything we do.</p>
                                 <div className="pt-8 border-t border-gray-200 dark:border-gray-700">
