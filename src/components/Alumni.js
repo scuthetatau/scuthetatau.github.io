@@ -9,8 +9,22 @@ import './MeetTheBrothers/MeetTheBrothers.css'; // Use styling similar to `MeetT
 
 const Alumni = () => {
     const [alumni, setAlumni] = useState([]);
+    const [randomLogos, setRandomLogos] = useState([]);
     const [error, setError] = useState(null);
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    // Load company logos dynamically
+    useEffect(() => {
+        try {
+            const context = require.context('./assets/company_logos', false, /\.(png|jpe?g|svg)$/);
+            const logos = context.keys().map(context);
+            // Shuffle logos
+            const shuffled = [...logos].sort(() => 0.5 - Math.random());
+            setRandomLogos(shuffled);
+        } catch (err) {
+            console.error('Error loading company logos:', err);
+        }
+    }, []);
 
     const foundersIDs = new Set([
         'K26DTygVlTGCbSOtYqnh',
@@ -139,6 +153,67 @@ const Alumni = () => {
             </div>
 
             {error && <p className="error-message">{error}</p>}
+
+            {/* Where Our Alumni Work Section */}
+            <section className="alumni-careers-section">
+                <div className="alumni-section-header">
+                    <h2 className="alumni-section-title">WHERE OUR ALUMNI WORK</h2>
+                    <div className="alumni-section-divider"></div>
+                    <p className="alumni-section-description">
+                        Our brothers transition into industry leaders at the world's most innovative engineering and technology companies.
+                    </p>
+                </div>
+                <div className="alumni-logos-grid">
+                    {randomLogos.map((logo, index) => (
+                        <div key={index} className="alumni-logo-item">
+                            <img alt={`Company Logo ${index}`} src={logo} />
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            {/* Success Stories Section */}
+            {/*<section className="alumni-success-stories">*/}
+            {/*    <div className="alumni-section-header">*/}
+            {/*        <h2 className="alumni-section-title">SUCCESS STORIES</h2>*/}
+            {/*        /!*<p className="alumni-section-subtitle text-accent">ALUMNI SPOTLIGHT</p>*!/*/}
+            {/*    </div>*/}
+            {/*    <div className="alumni-stories-grid">*/}
+            {/*        <div className="alumni-story-card">*/}
+            {/*            <div className="alumni-story-image-container">*/}
+            {/*                <img alt="Marcus Thorne" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBbuwhSe4-67g0zFrGvqBlPfZG9PB72a0VSAMD4hPuosNGGvxC-aYGfMLeZ4ritaK632MM64r2xU55K-5ygkEr_ZqSj63TtBMj9mtNoAhovYxBA6hgAPOp0GMpGSOdsOlKeW1bbOQl7VhGasZ8QYwq4ZviXqQMK6Ad3A3U25hGjBB_HL00AZsme9rjXFaXM4r_HT95wjaXj2RC5Dk-aJaXYaTyldIqTyiVzqB0FZHLHvaV3UT74cGWbqXLe1jVMV7nTrGr7fUmtro0T" />*/}
+            {/*            </div>*/}
+            {/*            <h3 className="alumni-story-name">Marcus Thorne</h3>*/}
+            {/*            <p className="alumni-story-role">SpaceX | Propulsion Engineer</p>*/}
+            {/*            <p className="alumni-story-quote">*/}
+            {/*                "The leadership skills I gained as Regent prepared me for the high-stakes environment of aerospace engineering."*/}
+            {/*            </p>*/}
+            {/*            <span className="alumni-story-class">Class of 2018</span>*/}
+            {/*        </div>*/}
+            {/*        <div className="alumni-story-card">*/}
+            {/*            <div className="alumni-story-image-container">*/}
+            {/*                <img alt="Elena Rodriguez" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAxFgVTawuWFmFNXMq2op2FlnMu0EqA2fhwNfsYJ6dg81KcfW1fPeVxZ5E93vtpUQbSUNu_2dRSejj90NAKWboaOei0ygxlkLRNUev83Cbh-AG4cXprkWy6B3QLw7buqjr5fegYepOx1leC9fRL5WUyb-zc3TMAoH_nrCvZqrE9CKIfQcnZbNheHuBoQ4DKCTe51LjzvTIY-46kvVurhvGxYo_HC9A8xaQCEL034BLcc0neW0KT8z8Y2acp0-jQyd2GGMjScQTlOaSW" />*/}
+            {/*            </div>*/}
+            {/*            <h3 className="alumni-story-name">Elena Rodriguez</h3>*/}
+            {/*            <p className="alumni-story-role">Google | Senior SWE</p>*/}
+            {/*            <p className="alumni-story-quote">*/}
+            {/*                "Our brotherhood network was instrumental in landing my first internship. Now I mentor active members every year."*/}
+            {/*            </p>*/}
+            {/*            <span className="alumni-story-class">Class of 2019</span>*/}
+            {/*        </div>*/}
+            {/*        <div className="alumni-story-card">*/}
+            {/*            <div className="alumni-story-image-container">*/}
+            {/*                <img alt="Julian Chen" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAox6yTVJwDTzp-CyQ-8jQPSDe0PhqJD3-vqE8jBQaYCx35LPCvbRRerqyirvE5Fi5XSD3azDJRsG6FeJW3IUs5H2rTbwa7pGhRrXyo6IgLjoM5IYmdA6kjgG8OcDMp4N2ShrP2cxZ-4I4a7YVIQQbs-tXN7R79VgX6nbznZD-4zfzBUIXoYkt3zhp0-5X1yc4Wx_JeVr1RW9us7VO8VIB0dWGPezmWyUHaVxLxUVYAkXV8xDYj1A21jaDIRNk6_9uK3mXm4T7vE_wU" />*/}
+            {/*            </div>*/}
+            {/*            <h3 className="alumni-story-name">Julian Chen</h3>*/}
+            {/*            <p className="alumni-story-role">Boeing | Systems Lead</p>*/}
+            {/*            <p className="alumni-story-quote">*/}
+            {/*                "The professional standards of Theta Tau gave me a competitive edge in the job market right after graduation."*/}
+            {/*            </p>*/}
+            {/*            <span className="alumni-story-class">Class of 2017</span>*/}
+            {/*        </div>*/}
+            {/*    </div>*/}
+            {/*</section>*/}
 
             {sortedYears.map((year) => (
                 <div key={year} className="meet-the-brothers-class-group">
