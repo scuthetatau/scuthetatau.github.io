@@ -1,10 +1,10 @@
-import React, {useEffect, useState} from 'react';
-import {addDoc, collection, deleteDoc, doc, getDocs, updateDoc, setDoc} from 'firebase/firestore';
-import {getDownloadURL, ref, uploadBytes} from 'firebase/storage';
-import {firestore, storage} from '../../firebase';
+import React, { useEffect, useState } from 'react';
+import { addDoc, collection, deleteDoc, doc, getDocs, updateDoc, setDoc } from 'firebase/firestore';
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { firestore, storage } from '../../firebase';
 import './Admin.css';
-import {checkUserRole} from './auth';
-import {useNavigate} from 'react-router-dom';
+import { checkUserRole } from './auth';
+import { useNavigate } from 'react-router-dom';
 
 // Constants
 const AVAILABLE_ROLES = [
@@ -109,24 +109,24 @@ const UserManagement = () => {
             getDocs(collection(firestore, 'users')),
             getDocs(collection(firestore, 'alumni'))
         ]);
-        
-        const usersData = usersSnapshot.docs.map(doc => ({ 
-            id: doc.id, 
+
+        const usersData = usersSnapshot.docs.map(doc => ({
+            id: doc.id,
             ...doc.data(),
-            isAlumni: false 
+            isAlumni: false
         }));
-        
-        const alumniData = alumniSnapshot.docs.map(doc => ({ 
-            id: doc.id, 
+
+        const alumniData = alumniSnapshot.docs.map(doc => ({
+            id: doc.id,
             ...doc.data(),
-            isAlumni: true 
+            isAlumni: true
         }));
 
         setAvailableBigs([...usersData, ...alumniData]);
     };
 
     // CRUD operations
-    const addUser = async (userData, profilePicture) => {
+    const addUser = async (userData, profilePicture, forcedId = null) => {
         if (!validateLinkedInUrl(userData.linkedinUrl)) {
             alert('LinkedIn URL must start with https://www.linkedin.com/in/');
             return;
@@ -134,20 +134,21 @@ const UserManagement = () => {
 
         const profilePictureUrl = await uploadProfilePicture(profilePicture);
         if (profilePictureUrl) userData.profilePictureUrl = profilePictureUrl;
-        
-        await addDoc(collection(firestore, 'users'), userData);
-        
+
+        let userId = forcedId;
+        if (forcedId) {
+            await setDoc(doc(firestore, 'users', forcedId), userData);
+        } else {
+            const docRef = await addDoc(collection(firestore, 'users'), userData);
+            userId = docRef.id;
+        }
+
         // Sync admin role to 'admins' collection for security rules
         if (ADMIN_ROLES.includes(userData.role)) {
-            // We need the ID from the newly created doc
-            const usersSnapshot = await getDocs(collection(firestore, 'users'));
-            const newDoc = usersSnapshot.docs.find(d => d.data().email === userData.email);
-            if (newDoc) {
-                await setDoc(doc(firestore, 'admins', userData.email), {
-                    role: userData.role,
-                    userId: newDoc.id
-                });
-            }
+            await setDoc(doc(firestore, 'admins', userData.email), {
+                role: userData.role,
+                userId: userId
+            });
         }
 
         const updatedUsers = await fetchUsers();
@@ -162,7 +163,7 @@ const UserManagement = () => {
 
         const profilePictureUrl = await uploadProfilePicture(profilePicture);
         if (profilePictureUrl) userData.profilePictureUrl = profilePictureUrl;
-        
+
         const userRef = doc(firestore, 'users', userData.id);
         await updateDoc(userRef, userData);
 
@@ -185,7 +186,7 @@ const UserManagement = () => {
         setUsers(updatedUsers);
     };
 
-    const addAlumni = async (alumniData, profilePicture) => {
+    const addAlumni = async (alumniData, profilePicture, forcedId = null) => {
         if (!validateLinkedInUrl(alumniData.linkedinUrl)) {
             alert('LinkedIn URL must start with https://www.linkedin.com/in/');
             return;
@@ -193,8 +194,13 @@ const UserManagement = () => {
 
         const profilePictureUrl = await uploadProfilePicture(profilePicture);
         if (profilePictureUrl) alumniData.profilePictureUrl = profilePictureUrl;
-        
-        await addDoc(collection(firestore, 'alumni'), alumniData);
+
+        if (forcedId) {
+            await setDoc(doc(firestore, 'alumni', forcedId), alumniData);
+        } else {
+            await addDoc(collection(firestore, 'alumni'), alumniData);
+        }
+
         const updatedAlumni = await fetchAlumni();
         setAlumni(updatedAlumni);
     };
@@ -207,7 +213,7 @@ const UserManagement = () => {
 
         const profilePictureUrl = await uploadProfilePicture(profilePicture);
         if (profilePictureUrl) alumniData.profilePictureUrl = profilePictureUrl;
-        
+
         const alumniRef = doc(firestore, 'alumni', alumniData.id);
         await updateDoc(alumniRef, alumniData);
         const updatedAlumni = await fetchAlumni();
@@ -218,9 +224,9 @@ const UserManagement = () => {
         const confirmed = window.confirm(
             `Are you sure you want to convert ${userData.firstName} ${userData.lastName} to alumni? This action cannot be undone.`
         );
-        
+
         if (!confirmed) return;
-        
+
         try {
             const alumniData = {
                 firstName: userData.firstName,
@@ -234,14 +240,14 @@ const UserManagement = () => {
                 linkedinUrl: userData.linkedinUrl || ''
             };
 
-            await addAlumni(alumniData, null);
+            await addAlumni(alumniData, null, userData.id);
             await deleteDoc(doc(firestore, 'users', userData.id));
-            
+
             const [updatedUsers, updatedAlumni] = await Promise.all([
                 fetchUsers(),
                 fetchAlumni()
             ]);
-            
+
             setUsers(updatedUsers);
             setAlumni(updatedAlumni);
             setEditingUser(null);
@@ -274,7 +280,7 @@ const UserManagement = () => {
                 linkedinUrl: alumniData.linkedinUrl || ''
             };
 
-            await addUser(userData, null);
+            await addUser(userData, null, alumniData.id);
             await deleteDoc(doc(firestore, 'alumni', alumniData.id));
 
             const [updatedUsers, updatedAlumni] = await Promise.all([
@@ -381,7 +387,7 @@ const UserManagement = () => {
             {/* Add user section */}
             <div className="admin-add-user">
                 <h2>Add New User</h2>
-                <ProfilePictureInput 
+                <ProfilePictureInput
                     onChange={setProfilePictureEdit}
                     label="Profile Picture"
                 />
@@ -488,7 +494,7 @@ const UserManagement = () => {
                     <div className="admin-edit-user-overlay" onClick={() => setEditingUser(null)}></div>
                     <div className="admin-edit-user">
                         <h2>Edit User</h2>
-                        <ProfilePictureInput 
+                        <ProfilePictureInput
                             onChange={setProfilePictureEdit}
                             label="Profile Picture"
                         />
@@ -593,7 +599,7 @@ const UserManagement = () => {
             {/* Add alumni section */}
             <div className="admin-add-user">
                 <h2>Add New Alumni</h2>
-                <ProfilePictureInput 
+                <ProfilePictureInput
                     onChange={setAlumniProfilePictureEdit}
                     label="Profile Picture"
                 />
@@ -696,7 +702,7 @@ const UserManagement = () => {
                     <div className="admin-edit-user-overlay" onClick={() => setEditingAlumni(null)}></div>
                     <div className="admin-edit-user">
                         <h2>Edit Alumni</h2>
-                        <ProfilePictureInput 
+                        <ProfilePictureInput
                             onChange={setAlumniProfilePictureEdit}
                             label="Profile Picture"
                         />
